@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { X, ShieldCheck, UserCheck, ArrowRight, Sparkles } from 'lucide-react'
+import { X, ArrowRight, Mail } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
-import { ADMIN_EMAILS } from '../types/auth'
 import { Language } from '../data/translations'
 
 interface LoginModalProps {
@@ -11,8 +10,8 @@ interface LoginModalProps {
 }
 
 export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang }) => {
-  const { loginWithGoogle, loginWithFacebook, loginAsAdmin, loginAsUser } = useAuth()
-  const [customEmail, setCustomEmail] = useState('')
+  const { loginWithGoogle, loginWithFacebook, loginWithEmail } = useAuth()
+  const [emailInput, setEmailInput] = useState('')
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -27,7 +26,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang })
   if (!isOpen) return null
 
   const handleGoogleLogin = () => {
-    loginWithGoogle(customEmail.trim() || undefined)
+    loginWithGoogle()
     onClose()
   }
 
@@ -36,13 +35,11 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang })
     onClose()
   }
 
-  const handleAdminQuickLogin = () => {
-    loginAsAdmin()
-    onClose()
-  }
-
-  const handleUserQuickLogin = () => {
-    loginAsUser()
+  const handleEmailSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!emailInput.trim()) return
+    loginWithEmail(emailInput.trim())
+    setEmailInput('')
     onClose()
   }
 
@@ -65,7 +62,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang })
         </button>
 
         {/* Brand Header */}
-        <div className="flex items-center gap-3 mb-5">
+        <div className="flex items-center gap-3 mb-4">
           <div className="w-10 h-10 rounded-xl overflow-hidden border border-brand-border bg-black shrink-0">
             <img
               src="/assets/nmc-gwm-logo.jpeg"
@@ -75,7 +72,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang })
           </div>
           <div>
             <h3 className="font-display font-bold text-lg text-brand-text tracking-tight uppercase leading-tight">
-              {lang === 'VI' ? 'ĐĂNG NHẬP HỆ THỐNG' : 'SIGN IN / PORTAL'}
+              {lang === 'VI' ? 'ĐĂNG NHẬP' : 'SIGN IN'}
             </h3>
             <span className="font-mono text-[10px] text-brand-accent tracking-wider uppercase block">
               GAMING WITH MEEE // NMC CORP
@@ -85,8 +82,8 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang })
 
         <p className="text-xs text-brand-subtext mb-6 font-light leading-relaxed">
           {lang === 'VI'
-            ? 'Đăng nhập để tương tác, lưu bài viết yêu thích hoặc quản lý nội dung nếu bạn là Quản trị viên.'
-            : 'Sign in to interact, save favorite stories, or manage site dispatches if you are an Administrator.'}
+            ? 'Đăng nhập để tương tác, bình luận, lưu bài viết yêu thích hoặc quản lý nội dung.'
+            : 'Sign in to interact, leave comments, save favorite dispatches or manage content.'}
         </p>
 
         {/* Social Login Buttons */}
@@ -135,78 +132,39 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang })
         <div className="relative flex items-center justify-center my-6">
           <div className="border-t border-brand-border w-full" />
           <span className="bg-brand-secondary px-3 text-[10px] font-mono text-brand-muted uppercase tracking-widest absolute">
-            {lang === 'VI' ? 'HOẶC THỬ NGHIỆM PHÂN QUYỀN' : 'OR QUICK ROLE DEMO'}
+            {lang === 'VI' ? 'HOẶC DÙNG ĐỊA CHỈ EMAIL' : 'OR USE YOUR EMAIL'}
           </span>
         </div>
 
-        {/* Quick Role Tester */}
-        <div className="space-y-2.5">
-          <button
-            onClick={handleAdminQuickLogin}
-            className="w-full p-3 rounded-xl bg-brand-elevated border border-brand-accent/40 hover:border-brand-accent text-left transition-all group flex items-center justify-between"
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-lg bg-brand-accent/10 border border-brand-accent/30 text-brand-accent">
-                <ShieldCheck className="w-4 h-4" />
-              </div>
-              <div>
-                <span className="font-display font-bold text-xs text-brand-text group-hover:text-brand-accent transition-colors block">
-                  {lang === 'VI' ? 'Đăng nhập vai trò Admin (Quản trị viên)' : 'Login as Admin (Mr. Cuong)'}
-                </span>
-                <span className="font-mono text-[10px] text-brand-muted">
-                  nmc.corp16@gmail.com • {lang === 'VI' ? 'Toàn quyền đăng bài' : 'Full publishing rights'}
-                </span>
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-brand-muted group-hover:text-brand-accent group-hover:translate-x-0.5 transition-all" />
-          </button>
-
-          <button
-            onClick={handleUserQuickLogin}
-            className="w-full p-3 rounded-xl bg-brand-elevated border border-brand-border hover:border-emerald-500/50 text-left transition-all group flex items-center justify-between"
-          >
-            <div className="flex items-center gap-2.5">
-              <div className="p-2 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-emerald-400">
-                <UserCheck className="w-4 h-4" />
-              </div>
-              <div>
-                <span className="font-display font-bold text-xs text-brand-text group-hover:text-emerald-400 transition-colors block">
-                  {lang === 'VI' ? 'Đăng nhập vai trò User (Thành viên)' : 'Login as Member (User)'}
-                </span>
-                <span className="font-mono text-[10px] text-brand-muted">
-                  user.demo@gmail.com • {lang === 'VI' ? 'Đọc & Tương tác' : 'Read & Comment'}
-                </span>
-              </div>
-            </div>
-            <ArrowRight className="w-4 h-4 text-brand-muted group-hover:text-emerald-400 group-hover:translate-x-0.5 transition-all" />
-          </button>
-        </div>
-
-        {/* Custom Email Role Tester */}
-        <div className="mt-4 pt-4 border-t border-brand-border/40">
-          <label className="block text-[10px] font-mono text-brand-muted uppercase mb-1.5 flex items-center gap-1">
-            <Sparkles className="w-3 h-3 text-brand-accent" />
-            <span>{lang === 'VI' ? 'Kiểm tra email Admin tự động:' : 'Test auto Admin email check:'}</span>
-          </label>
-          <div className="flex gap-2">
+        {/* Email Login Form */}
+        <form onSubmit={handleEmailSubmit} className="space-y-3">
+          <div className="relative">
+            <Mail className="w-4 h-4 text-brand-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
             <input
               type="email"
-              placeholder="Nhập email bất kỳ..."
-              value={customEmail}
-              onChange={(e) => setCustomEmail(e.target.value)}
-              className="flex-1 px-3 py-1.5 rounded-lg bg-brand-elevated border border-brand-border text-xs text-brand-text font-mono focus:outline-none focus:border-brand-accent"
+              required
+              placeholder={lang === 'VI' ? 'Nhập email của bạn (ví dụ: name@gmail.com)...' : 'Enter your email...'}
+              value={emailInput}
+              onChange={(e) => setEmailInput(e.target.value)}
+              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-brand-elevated border border-brand-border text-xs text-brand-text placeholder:text-brand-muted font-mono focus:outline-none focus:border-brand-accent transition-colors"
             />
-            <button
-              onClick={handleGoogleLogin}
-              className="px-3 py-1.5 rounded-lg bg-brand-accent hover:bg-brand-accent-hover text-white text-xs font-mono font-bold"
-            >
-              OK
-            </button>
           </div>
-          <span className="text-[10px] font-mono text-brand-muted/70 block mt-1">
-            (Email: <code className="text-brand-accent">{ADMIN_EMAILS[0]}</code> {lang === 'VI' ? 'tự động nhận quyền Admin' : 'auto grants Admin'})
-          </span>
-        </div>
+
+          <button
+            type="submit"
+            className="w-full py-2.5 px-4 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white font-mono text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-md shadow-brand-accent/20"
+          >
+            <span>{lang === 'VI' ? 'TIẾP TỤC ĐĂNG NHẬP' : 'CONTINUE'}</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </button>
+        </form>
+
+        {/* Subtext info */}
+        <p className="mt-4 text-[10px] font-mono text-center text-brand-muted/70 leading-relaxed">
+          {lang === 'VI'
+            ? 'Quyền Quản trị viên (Admin) hoặc Thành viên (Member) sẽ được hệ thống tự động nhận diện dựa trên tài khoản của bạn.'
+            : 'Your role (Admin or Member) is automatically granted based on your authenticated account credentials.'}
+        </p>
       </div>
     </div>
   )

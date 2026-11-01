@@ -1,6 +1,6 @@
 export type UserRole = 'admin' | 'user'
 
-export type AuthProvider = 'google' | 'facebook' | 'demo'
+export type AuthProvider = 'google' | 'facebook' | 'email'
 
 export const ADMIN_EMAILS = [
   'nmc.corp16@gmail.com',

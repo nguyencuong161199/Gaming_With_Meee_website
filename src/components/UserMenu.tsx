@@ -124,3 +124,4 @@ export const UserMenu: React.FC<UserMenuProps> = ({ lang }) => {
     </div>
   )
 }
+
