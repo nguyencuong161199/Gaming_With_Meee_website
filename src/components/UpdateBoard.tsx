@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo, memo } from 'react'
+import { createPortal } from 'react-dom'
 import { UpdateItem, UpdateTag } from '../types/content'
 import { INITIAL_UPDATES } from '../data/updatesData'
 import { Language, TRANSLATIONS } from '../data/translations'
@@ -126,10 +127,6 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
   }, [updates, activeTag, searchQuery])
 
   const handleOpenAddModal = () => {
-    if (!isAdmin) {
-      onRequireLogin?.()
-      return
-    }
     setIsAddModalOpen(true)
   }
 
@@ -217,23 +214,17 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
           />
 
           <div className="flex items-center gap-3">
-            {isAdmin ? (
-              <button
-                onClick={handleOpenAddModal}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-amber-500/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
-              >
-                <ShieldCheck className="w-4 h-4" />
-                <span>{t.addBtn}</span>
-              </button>
-            ) : (
-              <button
-                onClick={handleOpenAddModal}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-elevated border border-brand-border hover:border-brand-accent text-brand-subtext hover:text-white font-mono text-xs font-medium uppercase tracking-wider transition-all"
-              >
-                <Plus className="w-4 h-4 text-brand-accent" />
-                <span>{lang === 'VI' ? 'ĐĂNG TIN (CẦN ADMIN)' : 'POST UPDATE (ADMIN)'}</span>
-              </button>
-            )}
+            <button
+              onClick={handleOpenAddModal}
+              className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-md focus:outline-none focus-visible:ring-2 ${
+                isAdmin
+                  ? 'bg-amber-500 hover:bg-amber-600 text-slate-950 shadow-amber-500/20 focus-visible:ring-amber-400'
+                  : 'bg-brand-accent hover:bg-brand-accent-hover text-white shadow-brand-accent/20 focus-visible:ring-brand-accent'
+              }`}
+            >
+              {isAdmin ? <ShieldCheck className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+              <span>{t.addBtn}</span>
+            </button>
           </div>
         </div>
 
@@ -359,7 +350,7 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
       </div>
 
       {/* Add New Post Modal */}
-      {isAddModalOpen && (
+      {isAddModalOpen && createPortal(
         <div className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-bg/85 backdrop-blur-md animate-fade-in">
           <div
             data-scrollable="true"
@@ -376,9 +367,29 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
             <div className="flex items-center gap-2 mb-2 text-amber-400">
               <ShieldCheck className="w-4 h-4" />
               <span className="font-mono text-xs uppercase tracking-wider font-semibold">
-                {lang === 'VI' ? 'BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN' : 'ADMIN DISPATCH CONTROL'}
+                {isAdmin
+                  ? (lang === 'VI' ? 'BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN' : 'ADMIN DISPATCH CONTROL')
+                  : (lang === 'VI' ? 'ĐĂNG THÔNG BÁO MỚI' : 'POST NEW UPDATE')}
               </span>
             </div>
+
+            {!isAdmin && onRequireLogin && (
+              <div className="flex items-center justify-between gap-2 p-2.5 mb-3 rounded-xl bg-brand-elevated border border-brand-border text-xs font-mono">
+                <span className="text-brand-subtext text-[11px]">
+                  {lang === 'VI' ? '💡 Đang ở chế độ khách.' : '💡 Guest dispatch mode.'}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsAddModalOpen(false)
+                    onRequireLogin()
+                  }}
+                  className="text-brand-accent hover:underline text-[11px] font-bold"
+                >
+                  {lang === 'VI' ? 'Đăng nhập Admin →' : 'Sign in as Admin →'}
+                </button>
+              </div>
+            )}
 
             <h3 className="font-display font-bold text-xl sm:text-2xl text-brand-text mb-5">
               {t.modalTitle}
@@ -489,7 +500,8 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
               </div>
             </form>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </section>
   )

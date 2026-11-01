@@ -68,3 +68,4 @@ ON public.comments FOR INSERT WITH CHECK (true);
 -- Cho phép xóa bình luận
 CREATE POLICY "Allow delete on comments"
 ON public.comments FOR DELETE USING (true);
+

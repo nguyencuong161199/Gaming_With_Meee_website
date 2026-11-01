@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { createPortal } from 'react-dom'
 import { X, ArrowRight, Mail } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { Language } from '../data/translations'
@@ -43,7 +44,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang })
     onClose()
   }
 
-  return (
+  return createPortal(
     <div className="modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-bg/85 backdrop-blur-md animate-fade-in">
       <div
         data-scrollable="true"
@@ -166,6 +167,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang })
             : 'Your role (Admin or Member) is automatically granted based on your authenticated account credentials.'}
         </p>
       </div>
-    </div>
+    </div>,
+    document.body
   )
 }
