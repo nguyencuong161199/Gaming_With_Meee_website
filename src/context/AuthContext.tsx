@@ -1,11 +1,18 @@
-import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode } from 'react'
+import React, { createContext, useContext, useState, useEffect, useMemo, ReactNode, useCallback } from 'react'
 import { User, UserRole, ADMIN_EMAILS } from '../types/auth'
 import { supabase } from '../lib/supabase'
+
+interface AuthNotification {
+  type: 'info' | 'error' | 'success'
+  message: string
+}
 
 interface AuthContextType {
   user: User | null
   isAuthenticated: boolean
   isAdmin: boolean
+  authNotification: AuthNotification | null
+  setAuthNotification: (notif: AuthNotification | null) => void
   loginWithGoogle: () => Promise<void>
   loginWithFacebook: () => Promise<void>
   loginWithEmail: (email: string, name?: string) => void
@@ -17,6 +24,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined)
 const STORAGE_KEY = 'gwm_auth_user'
 
 export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const [authNotification, setAuthNotification] = useState<AuthNotification | null>(null)
   const [user, setUser] = useState<User | null>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY)
@@ -27,124 +35,204 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
     return null
   })
 
-  useEffect(() => {
+  // Automatically check if user is Admin based on email or owner name
+  const checkRole = useCallback((email: string, name?: string): UserRole => {
+    const normEmail = (email || '').toLowerCase().trim()
+    const normName = (name || '').toLowerCase().trim()
+    const isAdminEmail = ADMIN_EMAILS.some((adminEmail) => adminEmail.toLowerCase() === normEmail)
+    const isAdminName =
+      normName.includes('cuong') ||
+      normName.includes('cường') ||
+      normName.includes('edward') ||
+      normName.includes('nmc')
+
+    return isAdminEmail || isAdminName ? 'admin' : 'user'
+  }, [])
+
+  const handleSession = useCallback((session: any) => {
+    if (!session?.user) return
+    const userObj = session.user
+    const meta = userObj.user_metadata || {}
+
+    const email = userObj.email || meta.email || ''
+    const rawName = meta.full_name || meta.name || meta.user_name || ''
+    const role = checkRole(email, rawName)
+
+    const displayName =
+      rawName || (role === 'admin' ? 'Mr. Cuong (Edward)' : email ? email.split('@')[0] : 'Thành viên')
+
+    const rawAvatar =
+      meta.avatar_url ||
+      meta.picture?.data?.url ||
+      meta.picture ||
+      (role === 'admin' ? '/assets/nmc-gwm-logo.jpeg' : '')
+
+    const providerType = userObj.app_metadata?.provider || 'facebook'
+    const provider = providerType === 'google' ? 'google' : providerType === 'facebook' ? 'facebook' : 'email'
+
+    const newUser: User = {
+      id: userObj.id,
+      name: displayName,
+      email: email || `${displayName.toLowerCase().replace(/\s+/g, '')}@facebook.com`,
+      avatar: rawAvatar || '/assets/nmc-gwm-logo.jpeg',
+      provider: provider,
+      role: role
+    }
+
+    setUser(newUser)
     try {
-      if (user) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(user))
-      } else {
-        localStorage.removeItem(STORAGE_KEY)
-      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser))
     } catch {
       // ignore
     }
-  }, [user])
+    setAuthNotification({
+      type: 'success',
+      message: `Đăng nhập thành công! Chào mừng ${displayName} (${role === 'admin' ? 'QUẢN TRỊ VIÊN' : 'THÀNH VIÊN'}).`
+    })
+  }, [checkRole])
 
-  // Automatically check if user is Admin based on email
-  const checkRole = (email: string): UserRole => {
-    const normalized = email.toLowerCase().trim()
-    const isAdminEmail = ADMIN_EMAILS.some((adminEmail) => adminEmail.toLowerCase() === normalized)
-    return isAdminEmail ? 'admin' : 'user'
-  }
-
-  // Listen to Supabase Real Auth State Changes
+  // Listen to Supabase Real Auth State Changes & handle PKCE/OAuth redirects
   useEffect(() => {
-    const getInitialSession = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession()
-        if (session?.user) {
-          const email = session.user.email || ''
-          const role = checkRole(email)
-          const name =
-            session.user.user_metadata?.full_name ||
-            session.user.user_metadata?.name ||
-            (role === 'admin' ? 'Mr. Cuong (Edward)' : email.split('@')[0])
-          const avatar =
-            session.user.user_metadata?.avatar_url ||
-            (role === 'admin' ? '/assets/nmc-gwm-logo.jpeg' : '')
+    console.log('%c[GWM AUTH] App mounted at URL:', 'color: #38bdf8; font-weight: bold;', window.location.href)
 
-          setUser({
-            id: session.user.id,
-            name,
-            email,
-            avatar: avatar || '/assets/nmc-gwm-logo.jpeg',
-            provider: (session.user.app_metadata?.provider as any) || 'google',
-            role
-          })
-        }
-      } catch {
-        // ignore
+    // 1. Clean Facebook's legacy hash fragment #_=_
+    if (typeof window !== 'undefined' && window.location.hash.includes('_=_')) {
+      window.history.replaceState(null, '', window.location.pathname + window.location.search)
+    }
+
+    // 2. Check URL error parameters (from Facebook or Supabase)
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search)
+      const error = urlParams.get('error')
+      const errorDesc = urlParams.get('error_description')
+      const errorCode = urlParams.get('error_code')
+
+      if (error || errorDesc) {
+        console.error('%c[GWM AUTH] OAuth Redirect Error:', 'color: #f43f5e; font-weight: bold;', { error, errorCode, errorDesc })
+        setAuthNotification({
+          type: 'error',
+          message: `Lỗi OAuth (${error || 'Error'}): ${errorDesc || errorCode || 'Không thể hoàn tất đăng nhập.'}`
+        })
+        // Clean URL to prevent recurring notice
+        window.history.replaceState(null, '', window.location.pathname)
       }
     }
 
-    getInitialSession()
+    // 3. Process OAuth Code exchange or check active session
+    const processOAuthRedirect = async () => {
+      if (typeof window !== 'undefined') {
+        const urlParams = new URLSearchParams(window.location.search)
+        const code = urlParams.get('code')
+        if (code) {
+          console.log('%c[GWM AUTH] Detected OAuth code:', 'color: #eab308;', code.slice(0, 8) + '...')
+          try {
+            const { data, error: exchangeError } = await supabase.auth.exchangeCodeForSession(code)
+            if (exchangeError) {
+              console.warn('[GWM AUTH] exchangeCodeForSession notice:', exchangeError.message)
+            } else if (data?.session) {
+              console.log('[GWM AUTH] Session exchanged successfully!', data.session.user.id)
+              handleSession(data.session)
+              window.history.replaceState(null, '', window.location.pathname)
+              return
+            }
+          } catch (e: any) {
+            console.warn('[GWM AUTH] Code exchange caught:', e?.message || e)
+          }
+        }
+      }
 
-    const { data: authListener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      // Check existing session
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession()
+        console.log('[GWM AUTH] getSession check:', session?.user ? `Logged in as ${session.user.email || session.user.id}` : 'No active session', error || '')
+        if (session?.user) {
+          handleSession(session)
+        }
+      } catch (err) {
+        console.warn('[GWM AUTH] getSession error:', err)
+      }
+    }
+
+    processOAuthRedirect()
+
+    // 4. Listen to live Auth state change
+    const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log('%c[GWM AUTH] onAuthStateChange event:', 'color: #a855f7;', event, session?.user?.id || 'null')
       if (session?.user) {
-        const email = session.user.email || ''
-        const role = checkRole(email)
-        const name =
-          session.user.user_metadata?.full_name ||
-          session.user.user_metadata?.name ||
-          (role === 'admin' ? 'Mr. Cuong (Edward)' : email.split('@')[0])
-        const avatar =
-          session.user.user_metadata?.avatar_url ||
-          (role === 'admin' ? '/assets/nmc-gwm-logo.jpeg' : '')
-
-        setUser({
-          id: session.user.id,
-          name,
-          email,
-          avatar: avatar || '/assets/nmc-gwm-logo.jpeg',
-          provider: (session.user.app_metadata?.provider as any) || 'google',
-          role
-        })
+        handleSession(session)
+      } else if (event === 'SIGNED_OUT') {
+        setUser(null)
       }
     })
 
     return () => {
       authListener?.subscription?.unsubscribe()
     }
-  }, [])
+  }, [handleSession])
 
   const loginWithGoogle = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      setAuthNotification({ type: 'info', message: 'Đang kết nối tới Google OAuth...' })
+      console.log('[GWM AUTH] Starting loginWithGoogle...')
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
           redirectTo: window.location.origin
         }
       })
       if (error) {
-        // If Google OAuth is not enabled in Supabase yet, sign in as Admin for testing
         console.warn('Supabase OAuth notice:', error.message)
-        loginWithEmail('nguyencuong161199@gmail.com', 'Mr. Cuong (Edward)')
+        setAuthNotification({ type: 'error', message: `Google OAuth: ${error.message}` })
+      } else if (data?.url) {
+        window.location.href = data.url
       }
-    } catch {
-      loginWithEmail('nguyencuong161199@gmail.com', 'Mr. Cuong (Edward)')
+    } catch (e: any) {
+      setAuthNotification({ type: 'error', message: `Google error: ${e?.message || e}` })
     }
   }
 
   const loginWithFacebook = async () => {
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      setAuthNotification({ type: 'info', message: 'Đang kết nối tới Facebook OAuth...' })
+      console.log('[GWM AUTH] 1. Calling signInWithOAuth for Facebook with origin:', window.location.origin)
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: 'facebook',
         options: {
           redirectTo: window.location.origin,
           scopes: 'public_profile'
         }
       })
+
+      console.log('[GWM AUTH] 2. signInWithOAuth response:', { data, error })
+
       if (error) {
-        console.warn('Supabase OAuth notice:', error.message)
-        loginWithEmail('facebook.user@gmail.com', 'Facebook Member')
+        console.error('[GWM AUTH] Supabase OAuth returned error:', error)
+        setAuthNotification({
+          type: 'error',
+          message: `Lỗi Supabase: ${error.message}`
+        })
+      } else if (data?.url) {
+        console.log('[GWM AUTH] 3. Redirecting browser to:', data.url)
+        window.location.href = data.url
+      } else {
+        console.warn('[GWM AUTH] No URL returned from signInWithOAuth!')
+        setAuthNotification({
+          type: 'error',
+          message: 'Không nhận được đường dẫn đăng nhập từ Facebook.'
+        })
       }
-    } catch {
-      loginWithEmail('facebook.user@gmail.com', 'Facebook Member')
+    } catch (err: any) {
+      console.error('[GWM AUTH] Exception in loginWithFacebook:', err)
+      setAuthNotification({
+        type: 'error',
+        message: `Lỗi kết nối Facebook: ${err?.message || err}`
+      })
     }
   }
 
   const loginWithEmail = (email: string, name?: string) => {
     if (!email.trim()) return
-    const role = checkRole(email)
+    const role = checkRole(email, name)
     const displayName =
       name || (role === 'admin' ? 'Mr. Cuong (Edward)' : email.split('@')[0])
 
@@ -160,6 +248,15 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
       role: role
     }
     setUser(newUser)
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(newUser))
+    } catch {
+      // ignore
+    }
+    setAuthNotification({
+      type: 'success',
+      message: `Đăng nhập Email thành công! Chào ${displayName} (${role === 'admin' ? 'ADMIN' : 'USER'}).`
+    })
   }
 
   const logout = async () => {
@@ -169,7 +266,15 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
       // ignore
     }
     setUser(null)
-    localStorage.removeItem(STORAGE_KEY)
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+    } catch {
+      // ignore
+    }
+    setAuthNotification({
+      type: 'info',
+      message: 'Bạn đã đăng xuất.'
+    })
   }
 
   const value = useMemo(
@@ -177,15 +282,55 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
       user,
       isAuthenticated: Boolean(user),
       isAdmin: user?.role === 'admin',
+      authNotification,
+      setAuthNotification,
       loginWithGoogle,
       loginWithFacebook,
       loginWithEmail,
       logout
     }),
-    [user]
+    [user, authNotification, loginWithGoogle, loginWithFacebook]
   )
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+      {/* Real-time On-Screen Auth Feedback Toast */}
+      {authNotification && (
+        <div
+          role="status"
+          aria-live="polite"
+          className={`fixed bottom-6 right-6 z-[99999] max-w-sm sm:max-w-md p-4 rounded-2xl border shadow-2xl backdrop-blur-xl transition-all duration-300 animate-slide-up flex items-start gap-3 ${
+            authNotification.type === 'error'
+              ? 'bg-rose-950/95 border-rose-500/60 text-rose-100'
+              : authNotification.type === 'success'
+              ? 'bg-emerald-950/95 border-emerald-500/60 text-emerald-100'
+              : 'bg-slate-900/95 border-cyan-500/60 text-cyan-100'
+          }`}
+        >
+          <div className="flex-1 text-xs sm:text-sm font-sans leading-relaxed">
+            <div className="font-bold uppercase tracking-wider text-[11px] mb-1 opacity-90 flex items-center gap-1.5">
+              <span>
+                {authNotification.type === 'error'
+                  ? '⚠️ Lỗi Đăng Nhập'
+                  : authNotification.type === 'success'
+                  ? '✅ Thông Báo'
+                  : 'ℹ️ Trạng Thái'}
+              </span>
+            </div>
+            <div>{authNotification.message}</div>
+          </div>
+          <button
+            onClick={() => setAuthNotification(null)}
+            className="p-1 rounded-lg hover:bg-white/10 text-white/70 hover:text-white transition-colors text-xs shrink-0"
+            aria-label="Đóng thông báo"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+    </AuthContext.Provider>
+  )
 }
 
 export const useAuth = (): AuthContextType => {
