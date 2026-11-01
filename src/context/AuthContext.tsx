@@ -129,7 +129,8 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'facebook',
         options: {
-          redirectTo: window.location.origin
+          redirectTo: window.location.origin,
+          scopes: 'public_profile'
         }
       })
       if (error) {
