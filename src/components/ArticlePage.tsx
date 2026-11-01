@@ -1,17 +1,69 @@
 import React, { useEffect, useState, memo } from 'react'
 import { StoryItem, UpdateItem } from '../types/content'
+import { CommentItem } from '../types/auth'
 import { Language } from '../data/translations'
-import { ArrowLeft, Calendar, Clock, Share2, ArrowUpRight, Check, User } from 'lucide-react'
+import {
+  ArrowLeft,
+  Calendar,
+  Clock,
+  Share2,
+  ArrowUpRight,
+  Check,
+  User as UserIcon,
+  Heart,
+  Bookmark,
+  MessageSquare,
+  Send,
+  Trash2,
+  ShieldCheck
+} from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
 interface ArticlePageProps {
   item: StoryItem | UpdateItem
   type: 'story' | 'update'
   lang: Language
   onBack: () => void
+  onRequireLogin?: () => void
 }
 
-export const ArticlePage: React.FC<ArticlePageProps> = memo(({ item, type, lang, onBack }) => {
+export const ArticlePage: React.FC<ArticlePageProps> = memo(({
+  item,
+  type,
+  lang,
+  onBack,
+  onRequireLogin
+}) => {
+  const { user, isAdmin, isAuthenticated } = useAuth()
   const [copied, setCopied] = useState(false)
+  const [isLiked, setIsLiked] = useState(false)
+  const [likeCount, setLikeCount] = useState(42)
+  const [isBookmarked, setIsBookmarked] = useState(false)
+
+  // Comments state
+  const [comments, setComments] = useState<CommentItem[]>(() => {
+    try {
+      const saved = localStorage.getItem(`gwm_comments_${item.id}`)
+      if (saved) return JSON.parse(saved)
+    } catch {
+      // fallback
+    }
+    return [
+      {
+        id: 'c1',
+        articleId: item.id,
+        userId: 'admin-01',
+        userName: 'Mr. Cuong (Edward)',
+        userAvatar: '/assets/nmc-gwm-logo.jpeg',
+        userRole: 'admin',
+        content: lang === 'VI'
+          ? 'Chào mừng các bạn! Hãy để lại bình luận hoặc câu hỏi về công nghệ bên dưới nhé.'
+          : 'Welcome! Feel free to leave your thoughts or questions about interactive tech below.',
+        createdAt: 'Hôm nay'
+      }
+    ]
+  })
+  const [commentInput, setCommentInput] = useState('')
 
   useEffect(() => {
     // Scroll to top when opening an article
@@ -27,10 +79,64 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({ item, type, lang,
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [onBack])
 
+  useEffect(() => {
+    try {
+      localStorage.setItem(`gwm_comments_${item.id}`, JSON.stringify(comments))
+    } catch {
+      // ignore
+    }
+  }, [comments, item.id])
+
   const handleShare = () => {
     navigator.clipboard?.writeText(window.location.href)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  const handleToggleLike = () => {
+    if (!isAuthenticated) {
+      onRequireLogin?.()
+      return
+    }
+    setIsLiked((prev) => !prev)
+    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1))
+  }
+
+  const handleToggleBookmark = () => {
+    if (!isAuthenticated) {
+      onRequireLogin?.()
+      return
+    }
+    setIsBookmarked((prev) => !prev)
+  }
+
+  const handleAddComment = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!commentInput.trim()) return
+
+    if (!isAuthenticated || !user) {
+      onRequireLogin?.()
+      return
+    }
+
+    const newComment: CommentItem = {
+      id: `comm-${Date.now()}`,
+      articleId: item.id,
+      userId: user.id,
+      userName: user.name,
+      userAvatar: user.avatar,
+      userRole: user.role,
+      content: commentInput.trim(),
+      createdAt: lang === 'VI' ? 'Vừa xong' : 'Just now'
+    }
+
+    setComments((prev) => [newComment, ...prev])
+    setCommentInput('')
+  }
+
+  const handleDeleteComment = (commentId: string) => {
+    if (!isAdmin) return
+    setComments((prev) => prev.filter((c) => c.id !== commentId))
   }
 
   // Type guards and properties
@@ -71,14 +177,42 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({ item, type, lang,
             <span>{lang === 'VI' ? 'QUAY LẠI TRANG CHỦ' : 'BACK TO HOME'}</span>
           </button>
 
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2.5">
             <span className="px-2.5 py-0.5 rounded-full text-xs font-mono border border-brand-accent/30 bg-brand-accent/10 text-brand-accent uppercase">
               {categoryName}
             </span>
 
+            {/* Like button */}
+            <button
+              onClick={handleToggleLike}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl border text-xs font-mono transition-colors ${
+                isLiked
+                  ? 'bg-rose-500/20 border-rose-500/50 text-rose-400'
+                  : 'bg-brand-elevated border-brand-border text-brand-muted hover:text-rose-400'
+              }`}
+              title="Like"
+            >
+              <Heart className={`w-3.5 h-3.5 ${isLiked ? 'fill-current' : ''}`} />
+              <span>{likeCount}</span>
+            </button>
+
+            {/* Bookmark button */}
+            <button
+              onClick={handleToggleBookmark}
+              className={`p-2 rounded-xl border transition-colors ${
+                isBookmarked
+                  ? 'bg-brand-accent/20 border-brand-accent text-brand-accent'
+                  : 'bg-brand-elevated border-brand-border text-brand-muted hover:text-brand-accent'
+              }`}
+              title="Bookmark"
+            >
+              <Bookmark className={`w-3.5 h-3.5 ${isBookmarked ? 'fill-current' : ''}`} />
+            </button>
+
+            {/* Share button */}
             <button
               onClick={handleShare}
-              className="p-2 rounded-xl bg-brand-elevated border border-brand-border text-brand-muted hover:text-brand-accent transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
+              className="p-2 rounded-xl bg-brand-elevated border border-brand-border text-brand-muted hover:text-brand-accent transition-colors"
               title="Share link"
               aria-label="Share article"
             >
@@ -103,7 +237,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({ item, type, lang,
           </span>
           <span>•</span>
           <span className="flex items-center gap-1.5 text-brand-subtext">
-            <User className="w-3.5 h-3.5" />
+            <UserIcon className="w-3.5 h-3.5" />
             <span>Mr. Cuong (Edward) // NMC Corp</span>
           </span>
         </div>
@@ -176,6 +310,120 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({ item, type, lang,
             </div>
           )}
         </div>
+
+        {/* Comment Section (Interactive User & Admin) */}
+        <section className="mt-16 pt-10 border-t border-brand-border">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <MessageSquare className="w-5 h-5 text-brand-accent" />
+              <h3 className="font-display font-bold text-xl text-brand-text uppercase">
+                {lang === 'VI' ? `BÌNH LUẬN (${comments.length})` : `COMMENTS (${comments.length})`}
+              </h3>
+            </div>
+            {!isAuthenticated && (
+              <button
+                onClick={onRequireLogin}
+                className="text-xs font-mono text-brand-accent hover:underline"
+              >
+                {lang === 'VI' ? 'Đăng nhập để bình luận →' : 'Sign in to comment →'}
+              </button>
+            )}
+          </div>
+
+          {/* Comment Form */}
+          <form onSubmit={handleAddComment} className="mb-8">
+            <div className="flex gap-3">
+              <div className="w-9 h-9 rounded-full overflow-hidden bg-brand-elevated border border-brand-border shrink-0">
+                <img
+                  src={user?.avatar || '/assets/nmc-gwm-logo.jpeg'}
+                  alt="avatar"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex-1 flex gap-2">
+                <input
+                  type="text"
+                  placeholder={
+                    isAuthenticated
+                      ? lang === 'VI'
+                        ? `Bình luận với tên ${user?.name}...`
+                        : `Comment as ${user?.name}...`
+                      : lang === 'VI'
+                      ? 'Đăng nhập để viết bình luận...'
+                      : 'Sign in to leave a comment...'
+                  }
+                  value={commentInput}
+                  onChange={(e) => setCommentInput(e.target.value)}
+                  onFocus={() => {
+                    if (!isAuthenticated) onRequireLogin?.()
+                  }}
+                  className="flex-1 px-4 py-2 rounded-xl bg-brand-elevated border border-brand-border text-sm text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-accent font-sans"
+                />
+                <button
+                  type="submit"
+                  className="px-4 py-2 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-md shadow-brand-accent/20"
+                >
+                  <Send className="w-3.5 h-3.5" />
+                  <span>{lang === 'VI' ? 'GỬI' : 'POST'}</span>
+                </button>
+              </div>
+            </div>
+          </form>
+
+          {/* Comment List */}
+          <div className="space-y-4">
+            {comments.map((comm) => (
+              <div
+                key={comm.id}
+                className="p-4 rounded-xl bg-brand-secondary/70 border border-brand-border/70 flex items-start justify-between gap-3"
+              >
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full overflow-hidden border border-brand-border bg-black shrink-0 mt-0.5">
+                    <img
+                      src={comm.userAvatar}
+                      alt={comm.userName}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-display font-bold text-xs text-brand-text">
+                        {comm.userName}
+                      </span>
+                      {comm.userRole === 'admin' ? (
+                        <span className="inline-flex items-center gap-0.5 px-1.5 py-0.2 rounded text-[9px] font-mono font-bold bg-amber-400/10 text-amber-300 border border-amber-400/30">
+                          <ShieldCheck className="w-2.5 h-2.5" />
+                          ADMIN
+                        </span>
+                      ) : (
+                        <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-emerald-400/10 text-emerald-400 border border-emerald-400/30">
+                          USER
+                        </span>
+                      )}
+                      <span className="text-[10px] font-mono text-brand-muted">
+                        • {comm.createdAt}
+                      </span>
+                    </div>
+                    <p className="text-xs sm:text-sm text-brand-subtext font-light leading-relaxed">
+                      {comm.content}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Admin moderation */}
+                {isAdmin && (
+                  <button
+                    onClick={() => handleDeleteComment(comm.id)}
+                    title={lang === 'VI' ? 'Xóa bình luận này (Admin)' : 'Delete comment (Admin)'}
+                    className="p-1 rounded text-brand-muted hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* Footer of the article */}
         <div className="mt-14 pt-8 border-t border-brand-border/60 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">

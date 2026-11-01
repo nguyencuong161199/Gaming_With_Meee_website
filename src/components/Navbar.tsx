@@ -1,21 +1,26 @@
 import React, { useState, useMemo, memo } from 'react'
-import { Menu, X, ArrowUpRight, Sparkles, Globe } from 'lucide-react'
+import { Menu, X, ArrowUpRight, Sparkles, Globe, LogIn } from 'lucide-react'
 import { Language, TRANSLATIONS } from '../data/translations'
+import { useAuth } from '../context/AuthContext'
+import { UserMenu } from './UserMenu'
 
 interface NavbarProps {
   currentScreen?: number
   onNavigateScreen?: (index: number) => void
   lang: Language
   onToggleLang: (lang: Language) => void
+  onOpenLogin: () => void
 }
 
 export const Navbar: React.FC<NavbarProps> = memo(({
   currentScreen = 0,
   onNavigateScreen,
   lang,
-  onToggleLang
+  onToggleLang,
+  onOpenLogin
 }) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user, isAuthenticated } = useAuth()
   const t = TRANSLATIONS[lang].nav
 
   const navLinks = useMemo(() => [
@@ -64,7 +69,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({
         </button>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-6" aria-label="Main navigation">
+        <nav className="hidden md:flex items-center gap-5 lg:gap-6" aria-label="Main navigation">
           {navLinks.map((link) => {
             const isActive = currentScreen === link.screenIndex
             return (
@@ -87,7 +92,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({
           {/* Quick CTA to Labs */}
           <button
             onClick={(e) => handleLinkClick(e, 4)}
-            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-brand-elevated border border-brand-border hover:border-brand-accent text-xs font-mono text-brand-text hover:text-white transition-all shadow-sm group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-brand-elevated border border-brand-border hover:border-brand-accent text-xs font-mono text-brand-text hover:text-white transition-all shadow-sm group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
           >
             <Sparkles className="w-3.5 h-3.5 text-brand-accent group-hover:rotate-12 transition-transform" />
             <span>LABS</span>
@@ -121,10 +126,35 @@ export const Navbar: React.FC<NavbarProps> = memo(({
               VI
             </button>
           </div>
+
+          {/* User Auth Section */}
+          {isAuthenticated && user ? (
+            <UserMenu lang={lang} />
+          ) : (
+            <button
+              onClick={onOpenLogin}
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white text-xs font-mono font-bold tracking-wider uppercase transition-all shadow-md shadow-brand-accent/25 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
+            >
+              <LogIn className="w-3.5 h-3.5" />
+              <span>{lang === 'VI' ? 'ĐĂNG NHẬP' : 'SIGN IN'}</span>
+            </button>
+          )}
         </nav>
 
         {/* Mobile menu button and quick lang */}
         <div className="flex md:hidden items-center gap-2">
+          {/* Quick User / Login for mobile */}
+          {isAuthenticated && user ? (
+            <UserMenu lang={lang} />
+          ) : (
+            <button
+              onClick={onOpenLogin}
+              className="px-2.5 py-1 rounded-lg bg-brand-accent text-white text-[11px] font-mono font-bold"
+            >
+              {lang === 'VI' ? 'LOGIN' : 'SIGN IN'}
+            </button>
+          )}
+
           {/* Quick lang for mobile */}
           <div className="inline-flex items-center p-0.5 rounded-lg bg-brand-elevated border border-brand-border" role="group" aria-label="Language selector">
             <button

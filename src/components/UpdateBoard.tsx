@@ -3,11 +3,13 @@ import { UpdateItem, UpdateTag } from '../types/content'
 import { INITIAL_UPDATES } from '../data/updatesData'
 import { Language, TRANSLATIONS } from '../data/translations'
 import { SectionHeading } from './SectionHeading'
-import { Pin, ArrowUpRight, Plus, X, Search, Calendar, Sparkles } from 'lucide-react'
+import { Pin, ArrowUpRight, Plus, X, Search, Calendar, ShieldCheck, Trash2 } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
 interface UpdateBoardProps {
   lang?: Language
   onSelectUpdate?: (update: UpdateItem) => void
+  onRequireLogin?: () => void
 }
 
 const TAG_STYLES: Record<UpdateTag, string> = {
@@ -18,7 +20,13 @@ const TAG_STYLES: Record<UpdateTag, string> = {
   'PATCH NOTES': 'text-slate-300 border-slate-500/30 bg-slate-500/10'
 }
 
-export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({ lang = 'EN', onSelectUpdate }) => {
+export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
+  lang = 'EN',
+  onSelectUpdate,
+  onRequireLogin
+}) => {
+  const { user, isAdmin } = useAuth()
+
   const [updates, setUpdates] = useState<UpdateItem[]>(() => {
     try {
       const saved = localStorage.getItem('gwm_board_updates')
@@ -81,6 +89,25 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({ lang = 'EN', onSe
       })
   }, [updates, activeTag, searchQuery])
 
+  const handleOpenAddModal = () => {
+    if (!isAdmin) {
+      onRequireLogin?.()
+      return
+    }
+    setIsAddModalOpen(true)
+  }
+
+  const handleDeletePost = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    if (!isAdmin) return
+    const confirmed = window.confirm(
+      lang === 'VI' ? 'Bạn có chắc chắn muốn xóa tin này?' : 'Delete this update post?'
+    )
+    if (confirmed) {
+      setUpdates((prev) => prev.filter((item) => item.id !== id))
+    }
+  }
+
   const handleCreatePost = (e: React.FormEvent) => {
     e.preventDefault()
     if (!newTitle.trim() || !newSummary.trim()) return
@@ -100,7 +127,7 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({ lang = 'EN', onSe
       pinned: isPinned,
       link: newLink.trim() || undefined,
       linkText: newLinkText.trim() || (newLink ? (lang === 'VI' ? 'Xem chi tiết' : 'View Link') : undefined),
-      author: 'Gaming with meee'
+      author: user?.name || 'Mr. Cuong (Edward)'
     }
 
     setUpdates((prev) => [newPost, ...prev])
@@ -130,13 +157,23 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({ lang = 'EN', onSe
           />
 
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsAddModalOpen(true)}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-brand-accent/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
-            >
-              <Plus className="w-4 h-4" />
-              <span>{t.addBtn}</span>
-            </button>
+            {isAdmin ? (
+              <button
+                onClick={handleOpenAddModal}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-md shadow-amber-500/20 focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+              >
+                <ShieldCheck className="w-4 h-4" />
+                <span>{t.addBtn}</span>
+              </button>
+            ) : (
+              <button
+                onClick={handleOpenAddModal}
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-brand-elevated border border-brand-border hover:border-brand-accent text-brand-subtext hover:text-white font-mono text-xs font-medium uppercase tracking-wider transition-all"
+              >
+                <Plus className="w-4 h-4 text-brand-accent" />
+                <span>{lang === 'VI' ? 'ĐĂNG TIN (CẦN ADMIN)' : 'POST UPDATE (ADMIN)'}</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -210,10 +247,23 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({ lang = 'EN', onSe
                     )}
                   </div>
 
-                  <span className="text-[11px] font-mono text-brand-muted flex items-center gap-1">
-                    <Calendar className="w-3.5 h-3.5" />
-                    <span>{item.date}</span>
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] font-mono text-brand-muted flex items-center gap-1">
+                      <Calendar className="w-3.5 h-3.5" />
+                      <span>{item.date}</span>
+                    </span>
+
+                    {/* Admin Delete Action */}
+                    {isAdmin && (
+                      <button
+                        onClick={(e) => handleDeletePost(e, item.id)}
+                        title={lang === 'VI' ? 'Xóa bài đăng này' : 'Delete update'}
+                        className="p-1 rounded hover:bg-rose-500/20 text-brand-muted hover:text-rose-400 transition-colors"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    )}
+                  </div>
                 </div>
 
                 <h3 className="font-display font-bold text-base sm:text-lg text-brand-text group-hover:text-brand-accent transition-colors tracking-tight line-clamp-2 mb-2">
@@ -263,10 +313,10 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({ lang = 'EN', onSe
               <X className="w-5 h-5" />
             </button>
 
-            <div className="flex items-center gap-2 mb-2 text-brand-accent">
-              <Sparkles className="w-4 h-4" />
+            <div className="flex items-center gap-2 mb-2 text-amber-400">
+              <ShieldCheck className="w-4 h-4" />
               <span className="font-mono text-xs uppercase tracking-wider font-semibold">
-                {lang === 'VI' ? 'BẢNG ĐIỀU KHIỂN ĐĂNG TIN' : 'DISPATCH CONTROL'}
+                {lang === 'VI' ? 'BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN' : 'ADMIN DISPATCH CONTROL'}
               </span>
             </div>
 
@@ -372,7 +422,7 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({ lang = 'EN', onSe
                 </button>
                 <button
                   type="submit"
-                  className="px-5 py-2 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white font-bold transition-colors"
+                  className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold transition-colors shadow-md"
                 >
                   {t.submit}
                 </button>

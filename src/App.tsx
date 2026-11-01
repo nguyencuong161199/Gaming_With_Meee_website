@@ -8,6 +8,7 @@ import { PlaygroundSection } from './components/PlaygroundSection'
 import { AboutSection } from './components/AboutSection'
 import { ConnectSection } from './components/ConnectSection'
 import { ScreenNavigator } from './components/ScreenNavigator'
+import { LoginModal } from './components/LoginModal'
 import { ActiveArticle } from './types/content'
 import { Language, TRANSLATIONS } from './data/translations'
 import { useScreenSlider } from './hooks/useScreenSlider'
@@ -21,10 +22,11 @@ const TOTAL_SCREENS = 7
 export const App: React.FC = () => {
   const [lang, setLang] = useLocalStorage<Language>('gwm_lang', 'EN')
   const [activeArticle, setActiveArticle] = useState<ActiveArticle>(null)
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
 
   const { currentScreen, goToScreen } = useScreenSlider({
     totalScreens: TOTAL_SCREENS,
-    disabled: activeArticle !== null,
+    disabled: activeArticle !== null || isLoginModalOpen,
     transitionDuration: 650
   })
 
@@ -62,6 +64,12 @@ export const App: React.FC = () => {
           type={activeArticle.type}
           lang={lang}
           onBack={() => setActiveArticle(null)}
+          onRequireLogin={() => setIsLoginModalOpen(true)}
+        />
+        <LoginModal
+          isOpen={isLoginModalOpen}
+          onClose={() => setIsLoginModalOpen(false)}
+          lang={lang}
         />
       </Suspense>
     )
@@ -75,6 +83,7 @@ export const App: React.FC = () => {
         onNavigateScreen={goToScreen}
         lang={lang}
         onToggleLang={handleToggleLang}
+        onOpenLogin={() => setIsLoginModalOpen(true)}
       />
 
       {/* Atmospheric Logo Watermark Background (Fades in from Screen 1 onwards) */}
@@ -131,6 +140,7 @@ export const App: React.FC = () => {
           <UpdateBoard
             lang={lang}
             onSelectUpdate={(update) => setActiveArticle({ item: update, type: 'update' })}
+            onRequireLogin={() => setIsLoginModalOpen(true)}
           />
         </div>
 
@@ -150,6 +160,13 @@ export const App: React.FC = () => {
           onNavigateScreen={goToScreen}
         />
       </main>
+
+      {/* Login & Authentication Modal */}
+      <LoginModal
+        isOpen={isLoginModalOpen}
+        onClose={() => setIsLoginModalOpen(false)}
+        lang={lang}
+      />
     </div>
   )
 }
