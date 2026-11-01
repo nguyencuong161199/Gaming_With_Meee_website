@@ -1,0 +1,71 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --color-bg-primary: #080D18;
+    --color-bg-secondary: #111B2B;
+    --color-bg-elevated: #17243A;
+    --color-accent: #398BFF;
+    --color-text-primary: #F4F7FC;
+    --color-text-secondary: #A3B2C7;
+    --color-text-muted: #71829B;
+    --color-border: #26354A;
+  }
+
+  html {
+    background-color: #080D18;
+    color: #F4F7FC;
+    scroll-behavior: smooth;
+  }
+
+  /* Custom subtle scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #080D18;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #26354A;
+    border-radius: 3px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: #398BFF;
+  }
+}
+
+/* Reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Editorial typographic accents */
+.editorial-title {
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+
+.text-stroke-tech {
+  -webkit-text-stroke: 1px rgba(244, 247, 252, 0.2);
+  color: transparent;
+}
+
+.grid-backdrop {
+  background-size: 32px 32px;
+  background-image: 
+    linear-gradient(to right, rgba(38, 53, 74, 0.25) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(38, 53, 74, 0.25) 1px, transparent 1px);
+}
