@@ -5,6 +5,7 @@ import { Language, TRANSLATIONS } from '../data/translations'
 import { SectionHeading } from './SectionHeading'
 import { Pin, ArrowUpRight, Plus, X, Search, Calendar, ShieldCheck, Trash2 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { supabase } from '../lib/supabase'
 
 interface UpdateBoardProps {
   lang?: Language
@@ -52,6 +53,41 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
   const [newLinkText, setNewLinkText] = useState('')
   const [isPinned, setIsPinned] = useState(false)
 
+  // Fetch live updates from Supabase Cloud Database
+  useEffect(() => {
+    const fetchCloudUpdates = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('updates')
+          .select('*')
+          .order('pinned', { ascending: false })
+          .order('created_at', { ascending: false })
+
+        if (!error && data && data.length > 0) {
+          const cloudUpdates: UpdateItem[] = data.map((d: any) => ({
+            id: d.id,
+            date: d.date,
+            time: d.time,
+            tag: d.tag,
+            title: d.title,
+            summary: d.summary,
+            content: d.content,
+            pinned: Boolean(d.pinned),
+            link: d.link || undefined,
+            linkText: d.link_text || undefined,
+            author: d.author || 'Gaming with meee'
+          }))
+          setUpdates(cloudUpdates)
+          localStorage.setItem('gwm_board_updates', JSON.stringify(cloudUpdates))
+        }
+      } catch {
+        // Fallback to local storage if offline or tables not initialized yet
+      }
+    }
+
+    fetchCloudUpdates()
+  }, [])
+
   useEffect(() => {
     try {
       localStorage.setItem('gwm_board_updates', JSON.stringify(updates))
@@ -97,7 +133,7 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
     setIsAddModalOpen(true)
   }
 
-  const handleDeletePost = (e: React.MouseEvent, id: string) => {
+  const handleDeletePost = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation()
     if (!isAdmin) return
     const confirmed = window.confirm(
@@ -105,10 +141,15 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
     )
     if (confirmed) {
       setUpdates((prev) => prev.filter((item) => item.id !== id))
+      try {
+        await supabase.from('updates').delete().eq('id', id)
+      } catch {
+        // ignore
+      }
     }
   }
 
-  const handleCreatePost = (e: React.FormEvent) => {
+  const handleCreatePost = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!newTitle.trim() || !newSummary.trim()) return
 
@@ -138,6 +179,25 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
     setNewLinkText('')
     setIsPinned(false)
     setIsAddModalOpen(false)
+
+    // Save to Supabase Cloud Database
+    try {
+      await supabase.from('updates').insert({
+        id: newPost.id,
+        date: newPost.date,
+        time: newPost.time,
+        tag: newPost.tag,
+        title: newPost.title,
+        summary: newPost.summary,
+        content: newPost.content,
+        pinned: newPost.pinned,
+        link: newPost.link || null,
+        link_text: newPost.linkText || null,
+        author: newPost.author
+      })
+    } catch {
+      // Local copy already saved
+    }
   }
 
   const getTagStyle = (tag: UpdateTag) => {

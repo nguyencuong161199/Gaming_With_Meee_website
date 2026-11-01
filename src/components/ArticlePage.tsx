@@ -1,6 +1,6 @@
 import React, { useEffect, useState, memo } from 'react'
 import { StoryItem, UpdateItem } from '../types/content'
-import { CommentItem } from '../types/auth'
+import { CommentItem, UserRole } from '../types/auth'
 import { Language } from '../data/translations'
 import {
   ArrowLeft,
@@ -18,6 +18,7 @@ import {
   ShieldCheck
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
+import { supabase } from '../lib/supabase'
 
 interface ArticlePageProps {
   item: StoryItem | UpdateItem
@@ -79,6 +80,38 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
     return () => window.removeEventListener('keydown', handleKeyDown)
   }, [onBack])
 
+  // Fetch comments from Supabase
+  useEffect(() => {
+    const fetchCloudComments = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('comments')
+          .select('*')
+          .eq('article_id', item.id)
+          .order('created_at', { ascending: false })
+
+        if (!error && data && data.length > 0) {
+          const mapped: CommentItem[] = data.map((c: any) => ({
+            id: c.id,
+            articleId: c.article_id,
+            userId: c.user_id,
+            userName: c.user_name,
+            userAvatar: c.user_avatar || '/assets/nmc-gwm-logo.jpeg',
+            userRole: (c.user_role as UserRole) || 'user',
+            content: c.content,
+            createdAt: new Date(c.created_at).toLocaleDateString()
+          }))
+          setComments(mapped)
+          localStorage.setItem(`gwm_comments_${item.id}`, JSON.stringify(mapped))
+        }
+      } catch {
+        // Fallback to local storage if offline or tables not initialized
+      }
+    }
+
+    fetchCloudComments()
+  }, [item.id])
+
   useEffect(() => {
     try {
       localStorage.setItem(`gwm_comments_${item.id}`, JSON.stringify(comments))
@@ -110,7 +143,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
     setIsBookmarked((prev) => !prev)
   }
 
-  const handleAddComment = (e: React.FormEvent) => {
+  const handleAddComment = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!commentInput.trim()) return
 
@@ -132,11 +165,31 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
 
     setComments((prev) => [newComment, ...prev])
     setCommentInput('')
+
+    // Save to Supabase
+    try {
+      await supabase.from('comments').insert({
+        id: newComment.id,
+        article_id: item.id,
+        user_id: user.id,
+        user_name: user.name,
+        user_avatar: user.avatar,
+        user_role: user.role,
+        content: newComment.content
+      })
+    } catch {
+      // local copy saved
+    }
   }
 
-  const handleDeleteComment = (commentId: string) => {
+  const handleDeleteComment = async (commentId: string) => {
     if (!isAdmin) return
     setComments((prev) => prev.filter((c) => c.id !== commentId))
+    try {
+      await supabase.from('comments').delete().eq('id', commentId)
+    } catch {
+      // ignore
+    }
   }
 
   // Type guards and properties
