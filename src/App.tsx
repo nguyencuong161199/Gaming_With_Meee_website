@@ -9,6 +9,7 @@ import { AboutSection } from './components/AboutSection'
 import { ConnectSection } from './components/ConnectSection'
 import { ScreenNavigator } from './components/ScreenNavigator'
 import { LoginModal } from './components/LoginModal'
+import { IntroScreen } from './components/IntroScreen'
 import { ActiveArticle } from './types/content'
 import { Language, TRANSLATIONS } from './data/translations'
 import { useScreenSlider } from './hooks/useScreenSlider'
@@ -23,12 +24,32 @@ export const App: React.FC = () => {
   const [lang, setLang] = useLocalStorage<Language>('gwm_lang', 'EN')
   const [activeArticle, setActiveArticle] = useState<ActiveArticle>(null)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const [showIntro, setShowIntro] = useState(() => {
+    try {
+      return !sessionStorage.getItem('gwm_intro_seen')
+    } catch {
+      return true
+    }
+  })
 
   const { currentScreen, goToScreen } = useScreenSlider({
     totalScreens: TOTAL_SCREENS,
-    disabled: activeArticle !== null || isLoginModalOpen,
-    transitionDuration: 650
+    disabled: showIntro || activeArticle !== null || isLoginModalOpen,
+    transitionDuration: 500
   })
+
+  const handleIntroComplete = () => {
+    setShowIntro(false)
+    try {
+      sessionStorage.setItem('gwm_intro_seen', 'true')
+    } catch {
+      // ignore
+    }
+  }
+
+  const handleReplayIntro = () => {
+    setShowIntro(true)
+  }
 
   const t = TRANSLATIONS[lang]
 
@@ -115,15 +136,16 @@ export const App: React.FC = () => {
 
       {/* Full-Page Screen Slider Wrapper */}
       <main
-        className="w-full h-full transform-gpu transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)]"
+        className="w-full h-full transform-gpu transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] overscroll-none select-none touch-none"
         style={{ transform: `translateY(-${currentScreen * 100}%)` }}
       >
-        {/* Screen 0: Hero with Video Background */}
+        {/* Screen 0: Hero with Logo Background */}
         <div className="w-full h-full shrink-0 relative">
           <HeroSection
             lang={lang}
             onExploreClick={() => goToScreen(1)}
             onBoardClick={() => goToScreen(2)}
+            onReplayIntro={handleReplayIntro}
           />
         </div>
 
@@ -167,6 +189,14 @@ export const App: React.FC = () => {
         onClose={() => setIsLoginModalOpen(false)}
         lang={lang}
       />
+
+      {/* Cinematic Fullscreen Intro Video Screen (Plays once on entry, then unmounts completely) */}
+      {showIntro && (
+        <IntroScreen
+          onComplete={handleIntroComplete}
+          lang={lang}
+        />
+      )}
     </div>
   )
 }

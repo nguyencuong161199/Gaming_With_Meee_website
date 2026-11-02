@@ -48,7 +48,7 @@ export const ContentGrid: React.FC<ContentGridProps> = memo(({ lang = 'EN', onSe
   }, [stories, selectedCategoryId])
 
   return (
-    <section id="stories" className="h-screen w-full flex flex-col justify-center relative overflow-hidden pt-16 pb-8">
+    <section id="stories" className="h-full w-full flex flex-col justify-center relative overflow-hidden pt-16 pb-8">
       <div className="max-w-content mx-auto px-5 sm:px-8 w-full my-auto">
         {/* Section Heading & Category Filter */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">

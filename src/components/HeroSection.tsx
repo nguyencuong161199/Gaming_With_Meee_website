@@ -1,81 +1,59 @@
-import React, { useRef, useState, useEffect, memo } from 'react'
-import { Volume2, VolumeX, ArrowDownRight, Compass, Sparkles, Terminal } from 'lucide-react'
+import React, { memo } from 'react'
+import { Play, ArrowDownRight, Compass, Sparkles, Terminal } from 'lucide-react'
 import { Language, TRANSLATIONS } from '../data/translations'
 
 interface HeroSectionProps {
   lang?: Language
   onExploreClick?: () => void
   onBoardClick?: () => void
+  onReplayIntro?: () => void
 }
 
 export const HeroSection: React.FC<HeroSectionProps> = memo(({
   lang = 'EN',
   onExploreClick,
-  onBoardClick
+  onBoardClick,
+  onReplayIntro
 }) => {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const [isMuted, setIsMuted] = useState(true)
   const t = TRANSLATIONS[lang].hero
 
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
-    if (mediaQuery.matches && videoRef.current) {
-      videoRef.current.pause()
-    }
-  }, [])
-
-  const toggleSound = () => {
-    if (!videoRef.current) return
-    const nextMuted = !isMuted
-    videoRef.current.muted = nextMuted
-    setIsMuted(nextMuted)
-  }
-
   return (
-    <section id="home" className="h-screen w-full flex items-center justify-center relative overflow-hidden select-none">
-      {/* 1. Background Video Layer */}
-      <div className="absolute inset-0 overflow-hidden bg-black pointer-events-none z-0">
-        <video
-          ref={videoRef}
-          src="/assets/intro-gwm.mp4"
-          poster="/assets/nmc-gwm-logo.jpeg"
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="metadata"
-          className="w-full h-full object-cover scale-105 opacity-40 sm:opacity-50 transition-opacity duration-1000 filter brightness-90 contrast-110"
-        />
+    <section id="home" className="h-full w-full flex items-center justify-center relative overflow-hidden select-none">
+      {/* 1. Background Logo Layer (100% Lightweight, GPU & CPU Free) */}
+      <div className="absolute inset-0 overflow-hidden bg-brand-bg pointer-events-none z-0 flex items-center justify-center">
+        {/* Ambient radial glow */}
+        <div className="absolute w-[600px] h-[600px] rounded-full bg-brand-accent/10 blur-[140px] pointer-events-none" />
+
+        {/* Ambient logo graphic */}
+        <div className="relative w-72 h-72 sm:w-88 sm:h-88 md:w-[460px] md:h-[460px] rounded-3xl overflow-hidden opacity-25 filter contrast-125 brightness-95 pointer-events-none border border-brand-accent/20 shadow-2xl shadow-brand-accent/10">
+          <img
+            src="/assets/nmc-gwm-logo.jpeg"
+            alt="NMC GWM Background Logo"
+            className="w-full h-full object-cover scale-105"
+          />
+        </div>
 
         {/* Cinematic Scrim & Editorial Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-bg via-brand-bg/50 to-brand-bg/80" />
+        <div className="absolute inset-0 bg-gradient-to-t from-brand-bg via-brand-bg/60 to-brand-bg/90" />
+        <div className="absolute inset-0 bg-gradient-to-r from-brand-bg via-transparent to-brand-bg" />
         <div className="absolute inset-0 grid-backdrop opacity-25" />
       </div>
 
-      {/* 2. Single Floating Sound Toggle Button */}
-      <div className="absolute bottom-8 right-5 sm:right-8 z-30">
-        <button
-          onClick={toggleSound}
-          aria-label={isMuted ? 'Unmute' : 'Mute'}
-          className="group inline-flex items-center gap-2.5 px-4 py-2.5 rounded-full bg-brand-secondary/85 hover:bg-brand-elevated border border-brand-border hover:border-brand-accent backdrop-blur-xl text-xs font-mono tracking-wider transition-all shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
-        >
-          {isMuted ? (
-            <>
-              <VolumeX className="w-4 h-4 text-brand-muted group-hover:text-brand-accent transition-colors" />
-              <span className="text-brand-muted group-hover:text-brand-text text-[11px]">{t.audioOff}</span>
-            </>
-          ) : (
-            <>
-              <span className="relative flex h-2 w-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-brand-accent" />
-              </span>
-              <Volume2 className="w-4 h-4 text-brand-accent" />
-              <span className="text-brand-accent font-bold text-[11px]">{t.audioOn}</span>
-            </>
-          )}
-        </button>
-      </div>
+      {/* 2. Floating Replay Intro Button */}
+      {onReplayIntro && (
+        <div className="absolute bottom-8 right-5 sm:right-8 z-30">
+          <button
+            onClick={onReplayIntro}
+            aria-label="Replay Intro Video"
+            className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-brand-secondary/85 hover:bg-brand-elevated border border-brand-border hover:border-brand-accent backdrop-blur-xl text-xs font-mono tracking-wider transition-all shadow-xl hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
+          >
+            <Play className="w-3.5 h-3.5 text-brand-accent group-hover:scale-110 transition-transform fill-brand-accent/20" />
+            <span className="text-brand-subtext group-hover:text-brand-text text-[11px]">
+              {lang === 'VI' ? 'XEM LẠI INTRO' : 'REPLAY INTRO'}
+            </span>
+          </button>
+        </div>
+      )}
 
       {/* 3. Foreground Content */}
       <div className="max-w-content mx-auto px-5 sm:px-8 relative z-20 text-center flex flex-col items-center justify-center my-auto pt-14">
@@ -94,12 +72,17 @@ export const HeroSection: React.FC<HeroSectionProps> = memo(({
           </span>
         </h1>
 
-        {/* Minimalist Subhead */}
-        <p className="text-sm sm:text-base md:text-lg text-brand-subtext font-light tracking-wide max-w-xl mb-7">
-          {t.subheadPrefix} <span className="text-brand-text font-medium">NMC Corp</span> {t.subheadMid}{' '}
-          <span className="text-brand-accent font-medium">Gaming</span>,{' '}
-          <span className="text-brand-accent font-medium">Technology</span> &{' '}
-          <span className="text-brand-accent font-medium">AI</span>.
+        {/* Minimalist Subhead (2 Clean Balanced Lines) */}
+        <p className="text-sm sm:text-base md:text-lg text-brand-subtext font-light tracking-wide max-w-xl mb-7 leading-relaxed">
+          <span className="block">
+            {t.subheadPrefix} <span className="text-brand-text font-semibold">NMC Corp</span>
+          </span>
+          <span className="block mt-1 sm:mt-1.5">
+            {lang === 'VI' ? 'Khám phá ' : 'Exploring '}
+            <span className="text-brand-accent font-medium">Gaming</span>,{' '}
+            <span className="text-brand-accent font-medium">Technology</span> &amp;{' '}
+            <span className="text-brand-accent font-medium">AI</span>.
+          </span>
         </p>
 
         {/* Action CTAs */}

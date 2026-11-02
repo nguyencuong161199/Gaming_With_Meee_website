@@ -300,13 +300,12 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
         <div
           role="status"
           aria-live="polite"
-          className={`fixed bottom-6 right-6 z-[99999] max-w-sm sm:max-w-md p-4 rounded-2xl border shadow-2xl backdrop-blur-xl transition-all duration-300 animate-slide-up flex items-start gap-3 ${
-            authNotification.type === 'error'
+          className={`fixed bottom-6 right-6 z-[99999] max-w-sm sm:max-w-md p-4 rounded-2xl border shadow-2xl backdrop-blur-xl transition-all duration-300 animate-slide-up flex items-start gap-3 ${authNotification.type === 'error'
               ? 'bg-rose-950/95 border-rose-500/60 text-rose-100'
               : authNotification.type === 'success'
-              ? 'bg-emerald-950/95 border-emerald-500/60 text-emerald-100'
-              : 'bg-slate-900/95 border-cyan-500/60 text-cyan-100'
-          }`}
+                ? 'bg-emerald-950/95 border-emerald-500/60 text-emerald-100'
+                : 'bg-slate-900/95 border-cyan-500/60 text-cyan-100'
+            }`}
         >
           <div className="flex-1 text-xs sm:text-sm font-sans leading-relaxed">
             <div className="font-bold uppercase tracking-wider text-[11px] mb-1 opacity-90 flex items-center gap-1.5">
@@ -314,8 +313,8 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
                 {authNotification.type === 'error'
                   ? '⚠️ Lỗi Đăng Nhập'
                   : authNotification.type === 'success'
-                  ? '✅ Thông Báo'
-                  : 'ℹ️ Trạng Thái'}
+                    ? '✅ Thông Báo'
+                    : 'ℹ️ Trạng Thái'}
               </span>
             </div>
             <div>{authNotification.message}</div>

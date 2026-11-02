@@ -202,7 +202,7 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
   }
 
   return (
-    <section id="board" className="h-screen w-full flex flex-col justify-center relative overflow-hidden pt-16 pb-8 bg-brand-secondary/30">
+    <section id="board" className="h-full w-full flex flex-col justify-center relative overflow-hidden pt-16 pb-8 bg-brand-secondary/30">
       <div className="max-w-content mx-auto px-5 sm:px-8 w-full my-auto">
         {/* Header */}
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-6">

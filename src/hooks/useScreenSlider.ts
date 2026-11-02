@@ -9,7 +9,7 @@ interface UseScreenSliderOptions {
 export function useScreenSlider({
   totalScreens,
   disabled = false,
-  transitionDuration = 650
+  transitionDuration = 500
 }: UseScreenSliderOptions) {
   const [currentScreen, setCurrentScreen] = useState<number>(0)
   const currentScreenRef = useRef<number>(0)
@@ -83,6 +83,24 @@ export function useScreenSlider({
       }
     }
 
+    const handleTouchMove = (e: TouchEvent) => {
+      if (isInsideInteractiveElement(e.target)) return
+      if (isLockedRef.current) return
+      if (e.touches.length === 0) return
+
+      const currentY = e.touches[0].clientY
+      const currentX = e.touches[0].clientX
+      const diffY = Math.abs(touchStartY.current - currentY)
+      const diffX = Math.abs(touchStartX.current - currentX)
+
+      // Prevent native mobile rubber-band/bounce when swiping vertically
+      if (diffY > 6 && diffY > diffX) {
+        if (e.cancelable) {
+          e.preventDefault()
+        }
+      }
+    }
+
     const handleTouchEnd = (e: TouchEvent) => {
       if (isInsideInteractiveElement(e.target)) return
       if (isLockedRef.current) return
@@ -93,8 +111,8 @@ export function useScreenSlider({
       const diffY = touchStartY.current - touchEndY
       const diffX = touchStartX.current - touchEndX
 
-      // Ensure vertical swipe is intentional and exceeds horizontal movement
-      if (Math.abs(diffY) > 40 && Math.abs(diffY) > Math.abs(diffX) * 1.5) {
+      // Sensitive threshold (30px) and vertical intent
+      if (Math.abs(diffY) > 30 && Math.abs(diffY) > Math.abs(diffX) * 1.2) {
         if (diffY > 0) {
           nextScreen()
         } else {
@@ -127,12 +145,14 @@ export function useScreenSlider({
 
     window.addEventListener('wheel', handleWheel, { passive: false })
     window.addEventListener('touchstart', handleTouchStart, { passive: true })
+    window.addEventListener('touchmove', handleTouchMove, { passive: false })
     window.addEventListener('touchend', handleTouchEnd, { passive: true })
     window.addEventListener('keydown', handleKeyDown)
 
     return () => {
       window.removeEventListener('wheel', handleWheel)
       window.removeEventListener('touchstart', handleTouchStart)
+      window.removeEventListener('touchmove', handleTouchMove)
       window.removeEventListener('touchend', handleTouchEnd)
       window.removeEventListener('keydown', handleKeyDown)
     }
