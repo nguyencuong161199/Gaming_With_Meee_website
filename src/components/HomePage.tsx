@@ -195,7 +195,7 @@ export const HomePage: React.FC<HomePageProps> = memo(({
                   <Gamepad2 className="w-6 h-6" />
                 </div>
                 <span className="px-3 py-1 rounded-full bg-purple-500/10 text-purple-400 border border-purple-500/30 text-[10px] font-mono font-bold tracking-wider uppercase">
-                  ESPORTS & META
+                  {lang === 'VI' ? '4 TỰA GAME ESPORTS' : '4 CORE ESPORTS'}
                 </span>
               </div>
 
@@ -204,29 +204,29 @@ export const HomePage: React.FC<HomePageProps> = memo(({
               </h3>
               <p className="text-sm text-brand-subtext font-light leading-relaxed mb-6">
                 {lang === 'VI'
-                  ? 'Tâm điểm chiến thuật & cẩm nang leo rank cho 4 tựa game cốt lõi: Đấu Trường Chân Lý (TFT), LMHT, FC Online và PUBG Mobile. Bảng ngọc, đội hình S-Tier và độ nhạy Gyro.'
-                  : 'Ranked meta compendium for 4 major games: Teamfight Tactics (TFT), League of Legends, FC Online, and PUBG Mobile. S-Tier comps and pro sensitivity curves.'}
+                  ? 'Cổng chuyên mục dành cho 4 tựa game cốt lõi: Đấu Trường Chân Lý (TFT), LMHT, FC Online và PUBG Mobile. Chọn từng game để xem cẩm nang, đội hình S-Tier và thông số thi đấu.'
+                  : 'Dedicated portals for 4 core titles: Teamfight Tactics, League of Legends, FC Online, and PUBG Mobile with S-Tier comps and pro configs.'}
               </p>
 
               {/* Badges Matrix */}
               <div className="flex flex-wrap gap-2 mb-6">
                 <span className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border text-[11px] font-mono text-brand-subtext">
-                  🎮 TFT Meta Comps
+                  🎮 TFT
                 </span>
                 <span className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border text-[11px] font-mono text-brand-subtext">
-                  ⚔️ LOL Macro
+                  ⚔️ LOL
                 </span>
                 <span className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border text-[11px] font-mono text-brand-subtext">
-                  ⚽ FC Online 4-2-3-1
+                  ⚽ FC Online
                 </span>
                 <span className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border text-[11px] font-mono text-brand-subtext">
-                  🎯 PUBG Gyro
+                  🎯 PUBG Mobile
                 </span>
               </div>
             </div>
 
             <div className="pt-4 border-t border-brand-border/60 flex items-center justify-between font-mono text-xs text-purple-400 font-bold tracking-wider uppercase">
-              <span>{lang === 'VI' ? 'XEM CẨM NANG CHI TIẾT' : 'EXPLORE PLAYBOOK'}</span>
+              <span>{lang === 'VI' ? 'KHÁM PHÁ CÁC TỰA GAME' : 'EXPLORE GAME HUBS'}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
           </div>
