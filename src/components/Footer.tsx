@@ -47,7 +47,7 @@ export const Footer: React.FC<FooterProps> = memo(({ lang = 'EN', onBackToTop, o
                   GAMING WITH MEEE
                 </button>
                 <span className="font-mono text-[9px] text-brand-muted tracking-widest uppercase block">
-                  A CREATIVE BRAND BY NMC CORP
+                  {lang === 'VI' ? 'THƯƠNG HIỆU SÁNG TẠO BỞI NMC CORP' : 'A CREATIVE BRAND BY NMC CORP'}
                 </span>
               </div>
             </div>

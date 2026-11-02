@@ -1,28 +1,21 @@
-import React, { useState, useMemo, lazy, Suspense } from 'react'
-import { Navbar } from './components/Navbar'
-import { HeroSection } from './components/HeroSection'
-import { ContentGrid } from './components/ContentGrid'
-import { UpdateBoard } from './components/UpdateBoard'
-import { ExploreSection } from './components/ExploreSection'
-import { PlaygroundSection } from './components/PlaygroundSection'
-import { AboutSection } from './components/AboutSection'
-import { ConnectSection } from './components/ConnectSection'
-import { ScreenNavigator } from './components/ScreenNavigator'
+import React, { useState, lazy, Suspense } from 'react'
+import { Navbar, AppView } from './components/Navbar'
 import { LoginModal } from './components/LoginModal'
 import { IntroScreen } from './components/IntroScreen'
-import { ActiveArticle } from './types/content'
-import { Language, TRANSLATIONS } from './data/translations'
-import { useScreenSlider } from './hooks/useScreenSlider'
+import { MeeeAIAssistant } from './components/MeeeAIAssistant'
+import { Language } from './data/translations'
 import { useLocalStorage } from './hooks/useLocalStorage'
 
-// Lazy load ArticlePage to optimize initial bundle size
-const ArticlePage = lazy(() => import('./components/ArticlePage'))
-
-const TOTAL_SCREENS = 7
+// Lazy load portal views for maximum performance & instant code splitting
+const HomePage = lazy(() => import('./components/HomePage'))
+const AboutPage = lazy(() => import('./components/AboutPage'))
+const AcademyPage = lazy(() => import('./components/AcademyPage'))
+const GamingPage = lazy(() => import('./components/GamingPage'))
+const StorePage = lazy(() => import('./components/StorePage'))
 
 export const App: React.FC = () => {
   const [lang, setLang] = useLocalStorage<Language>('gwm_lang', 'EN')
-  const [activeArticle, setActiveArticle] = useState<ActiveArticle>(null)
+  const [currentView, setCurrentView] = useState<AppView>('home')
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [showIntro, setShowIntro] = useState(() => {
     try {
@@ -32,11 +25,22 @@ export const App: React.FC = () => {
     }
   })
 
-  const { currentScreen, goToScreen } = useScreenSlider({
-    totalScreens: TOTAL_SCREENS,
-    disabled: showIntro || activeArticle !== null || isLoginModalOpen,
-    transitionDuration: 500
-  })
+  // Auto scroll to top on page view switch
+  const handleNavigateView = (view: AppView) => {
+    if (view === 'connect') {
+      setCurrentView('home')
+      setTimeout(() => {
+        const el = document.getElementById('connect')
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 80)
+      return
+    }
+
+    setCurrentView(view)
+    window.scrollTo({ top: 0, behavior: 'auto' })
+  }
 
   const handleIntroComplete = () => {
     setShowIntro(false)
@@ -51,137 +55,80 @@ export const App: React.FC = () => {
     setShowIntro(true)
   }
 
-  const t = TRANSLATIONS[lang]
-
-  const screenNames = useMemo(
-    () => [
-      t.dots.home,
-      t.dots.stories,
-      t.dots.board,
-      t.dots.explore,
-      t.dots.playground,
-      t.dots.about,
-      t.dots.connect
-    ],
-    [t]
-  )
-
   const handleToggleLang = (newLang: Language) => {
     setLang(newLang)
   }
 
-  // Dedicated Article Page View (Lazy-loaded)
-  if (activeArticle) {
-    return (
-      <Suspense
-        fallback={
-          <div className="min-h-screen bg-brand-bg flex items-center justify-center">
-            <div className="w-8 h-8 rounded-full border-2 border-brand-accent border-t-transparent animate-spin" />
-          </div>
-        }
-      >
-        <ArticlePage
-          item={activeArticle.item}
-          type={activeArticle.type}
-          lang={lang}
-          onBack={() => setActiveArticle(null)}
-          onRequireLogin={() => setIsLoginModalOpen(true)}
-        />
-        <LoginModal
-          isOpen={isLoginModalOpen}
-          onClose={() => setIsLoginModalOpen(false)}
-          lang={lang}
-        />
-      </Suspense>
-    )
-  }
-
   return (
-    <div className="fixed inset-0 w-screen h-screen h-[100dvh] overflow-hidden bg-brand-bg text-brand-text font-sans select-none">
+    <div className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-accent selection:text-white relative">
       {/* Top Navbar */}
       <Navbar
-        currentScreen={currentScreen}
-        onNavigateScreen={goToScreen}
+        currentView={currentView}
+        onNavigateView={handleNavigateView}
         lang={lang}
         onToggleLang={handleToggleLang}
         onOpenLogin={() => setIsLoginModalOpen(true)}
       />
 
-      {/* Atmospheric Logo Watermark Background (Fades in from Screen 1 onwards) */}
-      <div
-        aria-hidden="true"
-        className={`fixed inset-0 pointer-events-none z-0 transition-opacity duration-700 ${
-          currentScreen >= 1 ? 'opacity-100' : 'opacity-0'
-        }`}
-      >
-        <div
-          className="absolute inset-0 bg-contain bg-center bg-no-repeat opacity-[0.14] sm:opacity-[0.18] filter contrast-125 brightness-90"
-          style={{
-            backgroundImage: `url('/assets/nmc-gwm-logo.jpeg')`,
-            backgroundPosition: 'center',
-            backgroundSize: 'min(800px, 80vw)'
-          }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-bg/90 via-transparent to-brand-bg/95" />
-        <div className="absolute inset-0 grid-backdrop opacity-20" />
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand-accent/5 rounded-full blur-[140px]" />
-      </div>
+      {/* Main Content Area - Suspense Lazy Loaded for Instant Performance */}
+      <main className="relative z-10">
+        <Suspense
+          fallback={
+            <div className="min-h-screen bg-brand-bg flex items-center justify-center">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-10 h-10 rounded-full border-2 border-brand-accent border-t-transparent animate-spin" />
+                <span className="font-mono text-xs text-brand-muted tracking-widest uppercase">
+                  NMC CORP // LOADING VIEW...
+                </span>
+              </div>
+            </div>
+          }
+        >
+          {currentView === 'home' && (
+            <HomePage
+              lang={lang}
+              onNavigateView={handleNavigateView}
+              onReplayIntro={handleReplayIntro}
+            />
+          )}
 
-      {/* Right-side Screen Dot Navigator with Multilingual Tooltips */}
-      <ScreenNavigator
-        currentScreen={currentScreen}
-        screenNames={screenNames}
-        onNavigate={goToScreen}
-      />
+          {currentView === 'about' && (
+            <AboutPage
+              lang={lang}
+              onBack={() => handleNavigateView('home')}
+            />
+          )}
 
-      {/* Full-Page Screen Slider Wrapper */}
-      <main
-        className="w-full h-full transform-gpu transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] overscroll-none select-none touch-none"
-        style={{ transform: `translateY(-${currentScreen * 100}%)` }}
-      >
-        {/* Screen 0: Hero with Logo Background */}
-        <div className="w-full h-full shrink-0 relative">
-          <HeroSection
-            lang={lang}
-            onExploreClick={() => goToScreen(1)}
-            onBoardClick={() => goToScreen(2)}
-            onReplayIntro={handleReplayIntro}
-          />
-        </div>
+          {currentView === 'academy' && (
+            <AcademyPage
+              lang={lang}
+              onBack={() => handleNavigateView('home')}
+              onRequireLogin={() => setIsLoginModalOpen(true)}
+            />
+          )}
 
-        {/* Screen 1: Featured Stories */}
-        <div className="w-full h-full shrink-0 relative">
-          <ContentGrid
-            lang={lang}
-            onSelectStory={(story) => setActiveArticle({ item: story, type: 'story' })}
-          />
-        </div>
+          {currentView === 'gaming' && (
+            <GamingPage
+              lang={lang}
+              onBack={() => handleNavigateView('home')}
+            />
+          )}
 
-        {/* Screen 2: Live Bulletin / Update Board */}
-        <div className="w-full h-full shrink-0 relative">
-          <UpdateBoard
-            lang={lang}
-            onSelectUpdate={(update) => setActiveArticle({ item: update, type: 'update' })}
-            onRequireLogin={() => setIsLoginModalOpen(true)}
-          />
-        </div>
-
-        {/* Screen 3: Explore Categories */}
-        <ExploreSection lang={lang} />
-
-        {/* Screen 4: Creative Playground */}
-        <PlaygroundSection lang={lang} />
-
-        {/* Screen 5: Minimalist About */}
-        <AboutSection lang={lang} />
-
-        {/* Screen 6: Connect & Footer */}
-        <ConnectSection
-          lang={lang}
-          onBackToTop={() => goToScreen(0)}
-          onNavigateScreen={goToScreen}
-        />
+          {currentView === 'store' && (
+            <StorePage
+              lang={lang}
+              onBack={() => handleNavigateView('home')}
+            />
+          )}
+        </Suspense>
       </main>
+
+      {/* Global Cyberpunk AI Multi-Agent Assistant */}
+      <MeeeAIAssistant
+        lang={lang}
+        onOpenAcademy={() => handleNavigateView('academy')}
+        onOpenStore={() => handleNavigateView('store')}
+      />
 
       {/* Login & Authentication Modal */}
       <LoginModal
@@ -190,7 +137,7 @@ export const App: React.FC = () => {
         lang={lang}
       />
 
-      {/* Cinematic Fullscreen Intro Video Screen (Plays once on entry, then unmounts completely) */}
+      {/* Cinematic Fullscreen Intro Video Screen */}
       {showIntro && (
         <IntroScreen
           onComplete={handleIntroComplete}
@@ -200,3 +147,5 @@ export const App: React.FC = () => {
     </div>
   )
 }
+
+export default App

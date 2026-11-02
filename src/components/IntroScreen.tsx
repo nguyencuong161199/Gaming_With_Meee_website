@@ -67,7 +67,7 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({ onComplete, lang = 'EN
   return (
     <div
       onClick={handleContainerClick}
-      className={`fixed inset-0 z-[100] bg-[#050505] flex items-center justify-center overflow-hidden transition-opacity duration-700 select-none cursor-pointer ${
+      className={`fixed inset-0 z-[100] bg-[#050505] flex items-center justify-center overflow-hidden transition-opacity duration-700 select-none ${
         isFadingOut ? 'opacity-0 pointer-events-none' : 'opacity-100'
       }`}
     >
@@ -94,16 +94,6 @@ export const IntroScreen: React.FC<IntroScreenProps> = ({ onComplete, lang = 'EN
 
       {/* Full-screen Cinema Vignette */}
       <div className="absolute inset-0 pointer-events-none shadow-[inset_0_0_140px_rgba(5,5,5,0.95)]" />
-
-      {/* Sound Hint Pill (Only shown if browser blocked sound before user click) */}
-      {isMuted && (
-        <div className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 z-30 pointer-events-none animate-bounce">
-          <div className="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full bg-brand-accent/90 backdrop-blur-md border border-white/30 text-white font-mono text-xs font-bold uppercase tracking-wider shadow-2xl shadow-brand-accent/50">
-            <Volume2 className="w-4 h-4 animate-pulse" />
-            <span>{lang === 'VI' ? 'CHẠM VÀO MÀN HÌNH ĐỂ MỞ TIẾNG' : 'TAP SCREEN TO ENABLE SOUND'}</span>
-          </div>
-        </div>
-      )}
 
       {/* Top Branding Pill */}
       <div className="absolute top-5 left-5 sm:top-6 sm:left-6 z-20 flex items-center gap-3">

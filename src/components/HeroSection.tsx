@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { Play, ArrowDownRight, Compass, Sparkles, Terminal } from 'lucide-react'
+import { Play, ArrowDownRight, Gamepad2, Sparkles, GraduationCap } from 'lucide-react'
 import { Language, TRANSLATIONS } from '../data/translations'
 
 interface HeroSectionProps {
@@ -91,7 +91,7 @@ export const HeroSection: React.FC<HeroSectionProps> = memo(({
             onClick={onExploreClick}
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg shadow-brand-accent/30 hover:shadow-brand-accent/50 hover:-translate-y-0.5 transition-all group focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
           >
-            <Compass className="w-4 h-4 group-hover:rotate-45 transition-transform" />
+            <Gamepad2 className="w-4 h-4 group-hover:scale-110 transition-transform" />
             <span>{t.btnExplore}</span>
             <ArrowDownRight className="w-4 h-4" />
           </button>
@@ -100,7 +100,7 @@ export const HeroSection: React.FC<HeroSectionProps> = memo(({
             onClick={onBoardClick}
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-secondary/80 hover:bg-brand-elevated border border-brand-border hover:border-brand-accent backdrop-blur-md text-brand-text font-mono text-xs font-medium uppercase tracking-wider transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
           >
-            <Terminal className="w-4 h-4 text-brand-accent" />
+            <GraduationCap className="w-4 h-4 text-brand-accent" />
             <span>{t.btnBoard}</span>
           </button>
         </div>

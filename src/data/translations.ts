@@ -3,13 +3,11 @@ export type Language = 'VI' | 'EN'
 export const TRANSLATIONS = {
   VI: {
     nav: {
-      stories: 'BÀI VIẾT',
-      board: 'BẢNG TIN',
-      explore: 'CHUYÊN MỤC',
-      playground: 'PLAYGROUND',
+      gaming: 'GAMING HUB',
       about: 'GIỚI THIỆU',
       connect: 'LIÊN HỆ',
-      labs: 'LABS',
+      academy: 'ACADEMY',
+      store: 'STORE',
       parentBrand: 'THƯƠNG HIỆU SÁNG TẠO BỞI NMC CORP'
     },
     hero: {
@@ -20,8 +18,8 @@ export const TRANSLATIONS = {
       subheadPrefix: 'Thương hiệu sáng tạo bởi',
       subheadMid: 'khám phá',
       subheadSuffix: 'Gaming, Công nghệ & Trí tuệ nhân tạo (AI).',
-      btnExplore: 'KHÁM PHÁ',
-      btnBoard: 'BẢNG TIN CẬP NHẬT',
+      btnExplore: 'GAMING HUB',
+      btnBoard: 'THI THỬ ACADEMY',
       audioOn: 'ÂM THANH: BẬT',
       audioOff: 'ÂM THANH: TẮT'
     },
@@ -63,23 +61,15 @@ export const TRANSLATIONS = {
       submit: 'XÁC NHẬN ĐĂNG'
     },
     explore: {
-      number: '04',
+      number: '00',
       tag: 'CHUYÊN MỤC',
       title: 'KHÁM PHÁ NỘI DUNG',
       subtitle: 'Ba trục nội dung sáng tạo dẫn dắt hành trình của chúng tôi.',
       dispatches: 'BÀI VIẾT',
       exploreDomain: 'KHÁM PHÁ CHUYÊN MỤC'
     },
-    playground: {
-      number: '05',
-      tag: 'THỬ NGHIỆM',
-      title: 'CREATIVE PLAYGROUND',
-      subtitle: 'Các nguyên mẫu AI tương tác, video shader và dự án phần cứng cá nhân.',
-      launch: 'Khởi chạy thử nghiệm',
-      running: 'ĐANG XỬ LÝ DỮ LIỆU... 100% HOÀN TẤT'
-    },
     about: {
-      number: '06',
+      number: '02',
       tag: 'THƯƠNG HIỆU',
       title: 'VỀ GAMING WITH MEEE',
       subtitle: 'Thương hiệu giải trí sáng tạo cá nhân tiên phong khám phá thế giới số.',
@@ -91,8 +81,34 @@ export const TRANSLATIONS = {
       pillarCreate: 'SÁNG TẠO',
       pillarCreateDesc: 'Video điện ảnh, công cụ và nguyên mẫu mã nguồn mở.'
     },
+    academy: {
+      number: '03',
+      tag: 'HỌC TẬP // CHỨNG CHỈ',
+      title: 'NMC ACADEMY // THI THỬ',
+      subtitle: 'Nền tảng đề thi thử chứng chỉ chuyên nghiệp Scrum Master (PSM I) & Federal Reserve (CCAR-F).',
+      startBtn: 'VÀO THI NGAY',
+      reviewBtn: 'XEM KẾT QUẢ',
+      historyTitle: 'LỊCH SỬ THI'
+    },
+    playground: {
+      number: '04',
+      tag: 'GAMING & ESPORTS',
+      title: 'GAMING HUB // PLAYGROUND',
+      subtitle: 'Tâm điểm chiến thuật & cẩm nang leo rank: Đấu Trường Chân Lý, LMHT, FC Online & PUBG Mobile.',
+      launch: 'Mở Cẩm Nang',
+      running: 'ĐANG NẠP DỮ LIỆU META... 100% HOÀN TẤT'
+    },
+    store: {
+      number: '05',
+      tag: 'CỬA HÀNG // SẢN PHẨM',
+      title: 'NMC STORE // CYBER SHOP',
+      subtitle: 'Phụ kiện gaming cao cấp, tài liệu ôn thi độc quyền và sản phẩm số tuyển chọn từ NMC Corp.',
+      buyNow: 'XEM CHI TIẾT',
+      inStock: 'CÒN HÀNG',
+      outOfStock: 'HẾT HÀNG'
+    },
     connect: {
-      number: '07',
+      number: '06',
       tag: 'KẾT NỐI',
       title: 'KÊNH LIÊN HỆ & MẠNG XÃ HỘI',
       subtitle: 'Theo dõi dispatches trên mạng xã hội hoặc liên hệ trực tiếp cho dự án hợp tác.',
@@ -111,23 +127,20 @@ export const TRANSLATIONS = {
     },
     dots: {
       home: '01. HOME',
-      stories: '02. BÀI VIẾT',
-      board: '03. BẢNG TIN',
-      explore: '04. CHUYÊN MỤC',
-      playground: '05. PLAYGROUND',
-      about: '06. GIỚI THIỆU',
-      connect: '07. LIÊN HỆ'
+      about: '02. GIỚI THIỆU',
+      academy: '03. ACADEMY',
+      gaming: '04. GAMING HUB',
+      store: '05. STORE',
+      connect: '06. LIÊN HỆ'
     }
   },
   EN: {
     nav: {
-      stories: 'STORIES',
-      board: 'DISPATCH',
-      explore: 'EXPLORE',
-      playground: 'PLAYGROUND',
+      gaming: 'GAMING HUB',
       about: 'ABOUT',
       connect: 'CONNECT',
-      labs: 'LABS',
+      academy: 'ACADEMY',
+      store: 'STORE',
       parentBrand: 'A CREATIVE BRAND BY NMC CORP'
     },
     hero: {
@@ -138,8 +151,8 @@ export const TRANSLATIONS = {
       subheadPrefix: 'A creative brand by',
       subheadMid: 'exploring',
       subheadSuffix: 'Gaming, Technology & AI.',
-      btnExplore: 'EXPLORE',
-      btnBoard: 'LIVE BULLETIN',
+      btnExplore: 'GAMING HUB',
+      btnBoard: 'ACADEMY EXAMS',
       audioOn: 'AUDIO: ON',
       audioOff: 'AUDIO: OFF'
     },
@@ -181,23 +194,15 @@ export const TRANSLATIONS = {
       submit: 'CONFIRM POST'
     },
     explore: {
-      number: '04',
+      number: '00',
       tag: 'DOMAINS',
       title: 'EXPLORE DOMAINS',
       subtitle: 'Three primary creative axes guiding our videos, breakdowns, and experiments.',
       dispatches: 'DISPATCHES',
       exploreDomain: 'EXPLORE DOMAIN'
     },
-    playground: {
-      number: '05',
-      tag: 'LABS',
-      title: 'CREATIVE PLAYGROUND',
-      subtitle: 'Interactive AI rigs, procedural video shader experiments, and hardware tools.',
-      launch: 'Launch Experiment',
-      running: 'RUNNING INFERENCE BUFFER... 100% OK'
-    },
     about: {
-      number: '06',
+      number: '02',
       tag: 'BRAND',
       title: 'ABOUT GAMING WITH MEEE',
       subtitle: 'A personal creative entertainment brand exploring the digital frontier.',
@@ -209,8 +214,34 @@ export const TRANSLATIONS = {
       pillarCreate: 'CREATE',
       pillarCreateDesc: 'Cinematic reels, custom tools, and open prototypes.'
     },
+    academy: {
+      number: '03',
+      tag: 'LEARNING // EXAMS',
+      title: 'NMC ACADEMY // MOCK EXAMS',
+      subtitle: 'Official-standard certification simulators: Professional Scrum Master (PSM I) & Federal Reserve CCAR.',
+      startBtn: 'START EXAM',
+      reviewBtn: 'VIEW RESULTS',
+      historyTitle: 'ATTEMPT HISTORY'
+    },
+    playground: {
+      number: '04',
+      tag: 'GAMING & ESPORTS',
+      title: 'GAMING HUB // PLAYGROUND',
+      subtitle: 'Tactical compendium & ranked meta: Teamfight Tactics, League of Legends, FC Online & PUBG Mobile.',
+      launch: 'Launch Guide',
+      running: 'LOADING META INTEL... 100% COMPLETE'
+    },
+    store: {
+      number: '05',
+      tag: 'STORE // PRODUCTS',
+      title: 'NMC STORE // CYBER SHOP',
+      subtitle: 'Curated mechanical keyboard keycaps, comprehensive exam kits, and precision gaming accessories.',
+      buyNow: 'VIEW DETAILS',
+      inStock: 'IN STOCK',
+      outOfStock: 'OUT OF STOCK'
+    },
     connect: {
-      number: '07',
+      number: '06',
       tag: 'CONTACT',
       title: 'CONNECT & CHANNELS',
       subtitle: 'Follow our dispatches across social platforms or reach out directly for collaborations.',
@@ -229,12 +260,11 @@ export const TRANSLATIONS = {
     },
     dots: {
       home: '01. HOME',
-      stories: '02. STORIES',
-      board: '03. DISPATCH',
-      explore: '04. EXPLORE',
-      playground: '05. PLAYGROUND',
-      about: '06. ABOUT',
-      connect: '07. CONNECT'
+      about: '02. ABOUT',
+      academy: '03. ACADEMY',
+      gaming: '04. GAMING HUB',
+      store: '05. STORE',
+      connect: '06. CONNECT'
     }
   }
 }
@@ -320,44 +350,44 @@ export const BILINGUAL_CONTENT = {
     ],
     playground: [
       {
-        id: "play-1",
-        title: "MUSE-01: Engine Đối thoại NPC Tự sinh",
-        category: "Thử nghiệm AI",
-        tag: "Đối thoại AI",
-        description: "Hệ thống tạo nhánh hội thoại theo ngữ cảnh cho nhân vật trong game.",
-        status: "Live Demo",
+        id: "play-tft",
+        title: "TFT // Đấu Trường Chân Lý: Meta Tier List & Lõi Công Nghệ",
+        category: "Game Chiến Thuật",
+        tag: "TFT Meta",
+        description: "Xếp hạng đội hình S-Tier, cách giữ chuỗi win/loss eco vàng và phân tích tối ưu nâng cấp Lõi Hextech.",
+        status: "Live Meta",
         accentColor: "#398BFF",
-        linkText: "Chạy Demo"
+        linkText: "Xem Đội Hình"
       },
       {
-        id: "play-2",
-        title: "HyperGlitch: Bộ Shader Chuyển động Động năng",
-        category: "Thử nghiệm Video",
-        tag: "GLSL Shader",
-        description: "Hiệu ứng quang sai sắc tố và scanline tạo phong cách cyberpunk.",
-        status: "Nguyên mẫu",
+        id: "play-lol",
+        title: "LOL // Liên Minh Huyền Thoại: Macro & Cẩm Nang Tướng",
+        category: "MOBA Esports",
+        tag: "LOL Macro",
+        description: "Phân tích meta đường đơn, thời điểm roam, cắm mắt kiểm soát và chiến thuật giao tranh rồng/Baron.",
+        status: "Sách Lược",
         accentColor: "#60A5FA",
-        linkText: "Mở Shader"
+        linkText: "Xem Cẩm Nang"
       },
       {
-        id: "play-3",
-        title: "OmniPad: Bảng Điều khiển Thông số Stream",
-        category: "Dự án cá nhân",
-        tag: "Công cụ Phần cứng",
-        description: "Dashboard đo thông số GPU, trạng thái OBS và sự kiện phòng stream.",
-        status: "Đang phát triển",
+        id: "play-fco",
+        title: "FC Online // Sơ Đồ Chiến Thuật 4-2-3-1 & Đội Hình Quốc Dân",
+        category: "Bóng Đá Thể Thao",
+        tag: "FC Online",
+        description: "Thiết lập sơ đồ leo rank GLXH/1vs1, tối ưu ngân sách quỹ lương và bảng xếp hạng cầu thủ hiệu quả nhất.",
+        status: "Chiến Thuật",
         accentColor: "#38BDF8",
-        linkText: "Xem Bản vẽ"
+        linkText: "Xem Sơ Đồ"
       },
       {
-        id: "play-4",
-        title: "Spatial Vibe: Vòng lặp Âm thanh Synth Tự sinh",
-        category: "Ý tưởng & Thử nghiệm",
-        tag: "Dark Synth",
-        description: "Âm thanh ambient vô tận dành cho phiên chơi game và tập trung sáng tạo.",
-        status: "Nghiên cứu",
+        id: "play-pubgm",
+        title: "PUBG Mobile // Bảng Độ Nhạy Gyroscope & Kỹ Năng Sấy Bo",
+        category: "Bắn Súng Sinh Tồn",
+        tag: "PUBG Mobile",
+        description: "Bộ thông số cảm biến con quay con lắc tối ưu cho từng scope (3x, 4x, 6x), kỹ thuật ghìm tâm và chọn vị trí bo cuối.",
+        status: "Pro Config",
         accentColor: "#93C5FD",
-        linkText: "Nghe Thử"
+        linkText: "Xem Cài Đặt"
       }
     ]
   },
@@ -441,44 +471,44 @@ export const BILINGUAL_CONTENT = {
     ],
     playground: [
       {
-        id: "play-1",
-        title: "MUSE-01: Reactive NPC Engine",
-        category: "AI experiments",
-        tag: "AI Dialogue",
-        description: "Dynamic dialogue runtime generating context-aware NPC responses.",
-        status: "Live Demo",
+        id: "play-tft",
+        title: "TFT // Teamfight Tactics: Meta Tier List & Augment Guide",
+        category: "Auto Battler",
+        tag: "TFT Meta",
+        description: "S-Tier team compositions, economic streak management, and hextech augment synergies.",
+        status: "Live Meta",
         accentColor: "#398BFF",
-        linkText: "Run Demo"
+        linkText: "View Comps"
       },
       {
-        id: "play-2",
-        title: "HyperGlitch: Kinetic Motion Shader",
-        category: "Creative video experiments",
-        tag: "GLSL Shader",
-        description: "Procedural chromatic displacement and scanline effects.",
-        status: "Prototype",
+        id: "play-lol",
+        title: "LOL // League of Legends: Macro & Champion Mastery",
+        category: "MOBA Esports",
+        tag: "LOL Macro",
+        description: "Lane priority, jungle tracking, wave control mechanics, and late-game teamfight execution.",
+        status: "Playbook",
         accentColor: "#60A5FA",
-        linkText: "Open Shader"
+        linkText: "View Playbook"
       },
       {
-        id: "play-3",
-        title: "OmniPad: Stream HUD Console",
-        category: "Personal projects",
-        tag: "Hardware Tool",
-        description: "Telemetry dashboard linking OBS, GPU metrics, and stream events.",
-        status: "In Progress",
+        id: "play-fco",
+        title: "FC Online // Tactical Formations & Meta Squad Builder",
+        category: "Sports Sim",
+        tag: "FC Online",
+        description: "Ranked 4-2-3-1 / 4-2-2-2 custom tactics, wage cap optimization, and meta player tier breakdown.",
+        status: "Tactics",
         accentColor: "#38BDF8",
-        linkText: "View Specs"
+        linkText: "View Tactics"
       },
       {
-        id: "play-4",
-        title: "Spatial Vibe: Generative Synth Loops",
-        category: "Ideas and prototypes",
-        tag: "Dark Synth",
-        description: "Algorithmic ambient loops for focus and gaming sessions.",
-        status: "Research",
+        id: "play-pubgm",
+        title: "PUBG Mobile // Gyroscope Calibration & Recoil Control",
+        category: "Battle Royale",
+        tag: "PUBG Mobile",
+        description: "Calibrated gyroscope sensitivity curves per scope magnification (3x, 4x, 6x) and zone rotations.",
+        status: "Pro Config",
         accentColor: "#93C5FD",
-        linkText: "Play Audio"
+        linkText: "View Config"
       }
     ]
   }
