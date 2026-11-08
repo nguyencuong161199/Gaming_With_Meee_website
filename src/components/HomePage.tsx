@@ -32,6 +32,8 @@ interface HomePageProps {
   onOpenLegal?: (tab?: LegalTab) => void
   onSelectUpdate?: (update: UpdateItem) => void
   onRequireLogin?: () => void
+  editTargetUpdate?: UpdateItem | null
+  onClearEditTarget?: () => void
 }
 
 export const HomePage: React.FC<HomePageProps> = memo(({
@@ -40,7 +42,9 @@ export const HomePage: React.FC<HomePageProps> = memo(({
   onReplayIntro,
   onOpenLegal,
   onSelectUpdate,
-  onRequireLogin
+  onRequireLogin,
+  editTargetUpdate,
+  onClearEditTarget
 }) => {
   const t = TRANSLATIONS[lang]
   const riotData = useRiotDataDragon()
@@ -567,6 +571,8 @@ export const HomePage: React.FC<HomePageProps> = memo(({
           lang={lang}
           onSelectUpdate={onSelectUpdate}
           onRequireLogin={onRequireLogin}
+          initialEditItem={editTargetUpdate}
+          onClearInitialEditItem={onClearEditTarget}
         />
       </div>
 

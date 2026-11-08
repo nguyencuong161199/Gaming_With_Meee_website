@@ -18,6 +18,107 @@ interface MeeeAIAssistantProps {
   onOpenStore?: () => void
 }
 
+const formatInlineStyles = (text: string) => {
+  const tokens: (string | React.ReactNode)[] = []
+  const regex = /(\*\*.*?\*\*|`.*?`|\*.*?\*)/g
+  const parts = text.split(regex)
+
+  parts.forEach((part, i) => {
+    if (part.startsWith('**') && part.endsWith('**') && part.length >= 4) {
+      tokens.push(
+        <strong key={i} className="font-bold text-white">
+          {part.slice(2, -2)}
+        </strong>
+      )
+    } else if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
+      tokens.push(
+        <code key={i} className="px-1.5 py-0.5 rounded bg-brand-elevated text-cyan-300 font-mono text-[11px] border border-white/10">
+          {part.slice(1, -1)}
+        </code>
+      )
+    } else if (part.startsWith('*') && part.endsWith('*') && part.length >= 2) {
+      tokens.push(
+        <em key={i} className="italic text-brand-subtext">
+          {part.slice(1, -1)}
+        </em>
+      )
+    } else if (part) {
+      tokens.push(part)
+    }
+  })
+
+  return tokens
+}
+
+const renderFormattedAiText = (rawText: string) => {
+  const blocks = rawText.split(/\n\n+/)
+  return blocks.map((block, bIdx) => {
+    const trimmed = block.trim()
+    if (!trimmed) return null
+
+    if (trimmed.startsWith('### ')) {
+      return (
+        <h4 key={bIdx} className="font-display font-bold text-cyan-300 text-xs sm:text-sm mt-2 mb-1 tracking-tight">
+          {formatInlineStyles(trimmed.replace(/^###\s+/, ''))}
+        </h4>
+      )
+    }
+
+    if (trimmed.startsWith('## ')) {
+      return (
+        <h3 key={bIdx} className="font-display font-bold text-amber-300 text-sm sm:text-base mt-2.5 mb-1 tracking-tight">
+          {formatInlineStyles(trimmed.replace(/^##\s+/, ''))}
+        </h3>
+      )
+    }
+
+    const lines = trimmed.split('\n')
+    const isBulletList = lines.length > 0 && lines.some(l => /^\s*[-*•]\s+/.test(l))
+    const isNumberedList = lines.length > 0 && lines.some(l => /^\s*\d+\.\s+/.test(l))
+
+    if (isBulletList) {
+      return (
+        <ul key={bIdx} className="space-y-1.5 my-2 pl-3 border-l-2 border-brand-accent/40 text-xs sm:text-sm">
+          {lines.map((l, lIdx) => {
+            const clean = l.replace(/^\s*[-*•]\s+/, '')
+            return (
+              <li key={lIdx} className="leading-relaxed text-brand-text">
+                {formatInlineStyles(clean)}
+              </li>
+            )
+          })}
+        </ul>
+      )
+    }
+
+    if (isNumberedList) {
+      return (
+        <ol key={bIdx} className="space-y-1.5 my-2 pl-4 list-decimal text-xs sm:text-sm">
+          {lines.map((l, lIdx) => {
+            const clean = l.replace(/^\s*\d+\.\s+/, '')
+            return (
+              <li key={lIdx} className="leading-relaxed text-brand-text">
+                {formatInlineStyles(clean)}
+              </li>
+            )
+          })}
+        </ol>
+      )
+    }
+
+    return (
+      <p key={bIdx} className="my-1 text-xs sm:text-sm leading-relaxed">
+        {lines.map((line, lIdx) => (
+          <React.Fragment key={lIdx}>
+            {lIdx > 0 && <br />}
+            {formatInlineStyles(line)}
+          </React.Fragment>
+        ))}
+      </p>
+    )
+  })
+}
+
 export const MeeeAIAssistant: React.FC<MeeeAIAssistantProps> = ({
   lang,
   onOpenAcademy,
@@ -278,7 +379,13 @@ export const MeeeAIAssistant: React.FC<MeeeAIAssistantProps> = ({
                         : 'bg-brand-accent text-white font-medium rounded-tr-sm shadow-md shadow-brand-accent/20'
                     }`}
                   >
-                    <div className="whitespace-pre-wrap">{msg.text}</div>
+                    {isAi ? (
+                      <div className="text-xs sm:text-sm text-brand-text leading-relaxed">
+                        {renderFormattedAiText(msg.text)}
+                      </div>
+                    ) : (
+                      <div className="whitespace-pre-wrap">{msg.text}</div>
+                    )}
                     <div
                       className={`text-[9px] font-mono mt-1 ${
                         isAi ? 'text-brand-muted' : 'text-white/70 text-right'

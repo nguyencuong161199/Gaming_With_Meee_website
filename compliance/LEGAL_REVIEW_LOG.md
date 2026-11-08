@@ -158,5 +158,7 @@
   - *Action:* Published fair-use disclaimers for Riot Games (LoL, TFT), EA/Nexon (FC Online), KRAFTON (PUBG Mobile), and independent educational status for Scrum.org (PSM I™).
 - **Realtime Board & Riot Data Dragon Integration (2026-11-08):**
   - *Action:* Integrated live Riot Data Dragon public CORS endpoint for patch version & champion metadata display with fair-use attribution. Integrated Supabase Realtime WebSocket subscription for announcements with posting restricted strictly to authenticated admin. No personal data collected or processed.
+- **Admin Dispatches Management & UI Polish (2026-11-09):**
+  - *Action:* Hardened post deletion with explicit inline 2-step confirmation pill (removing unhandled window.confirm suppression). Added admin edit mode for published announcements. Dynamic article body rendering, per-post local likes, formatted AI markdown, expanded exam history, and enriched admin management hub. All legal notices and unselected consent checkboxes fully preserved.
 
 **Final Release Gate Status:** **CLEARED FOR ENGINEERING / STAGING DEPLOYMENT**. All BLOCKED items resolved.

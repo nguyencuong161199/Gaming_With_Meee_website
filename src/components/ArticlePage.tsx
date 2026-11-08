@@ -14,7 +14,8 @@ import {
   Bookmark,
   MessageSquare,
   Trash2,
-  ShieldCheck
+  ShieldCheck,
+  Pencil
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -25,6 +26,8 @@ interface ArticlePageProps {
   lang: Language
   onBack: () => void
   onRequireLogin?: () => void
+  onEdit?: (item: UpdateItem) => void
+  onDelete?: (id: string) => void
 }
 
 export const ArticlePage: React.FC<ArticlePageProps> = memo(({
@@ -32,12 +35,33 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
   type,
   lang,
   onBack,
-  onRequireLogin
+  onRequireLogin,
+  onEdit,
+  onDelete
 }) => {
   const { isAdmin, isAuthenticated } = useAuth()
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
   const [copied, setCopied] = useState(false)
-  const [isLiked, setIsLiked] = useState(false)
-  const [likeCount, setLikeCount] = useState(42)
+  const [isLiked, setIsLiked] = useState(() => {
+    try {
+      return localStorage.getItem(`gwm_liked_${item.id}`) === 'true'
+    } catch {
+      return false
+    }
+  })
+  const [likeCount, setLikeCount] = useState(() => {
+    try {
+      const saved = localStorage.getItem(`gwm_like_count_${item.id}`)
+      if (saved) return parseInt(saved, 10)
+    } catch {
+      // fallback
+    }
+    let seed = 14
+    for (let i = 0; i < item.id.length; i++) {
+      seed = (seed * 31 + item.id.charCodeAt(i)) % 60
+    }
+    return Math.max(9, seed + 12)
+  })
   const [isBookmarked, setIsBookmarked] = useState(false)
 
   // Comments state
@@ -129,8 +153,16 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
       onRequireLogin?.()
       return
     }
-    setIsLiked((prev) => !prev)
-    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1))
+    const nextLiked = !isLiked
+    const nextCount = nextLiked ? likeCount + 1 : Math.max(0, likeCount - 1)
+    setIsLiked(nextLiked)
+    setLikeCount(nextCount)
+    try {
+      localStorage.setItem(`gwm_liked_${item.id}`, String(nextLiked))
+      localStorage.setItem(`gwm_like_count_${item.id}`, String(nextCount))
+    } catch {
+      // ignore
+    }
   }
 
   const handleToggleBookmark = () => {
@@ -161,6 +193,8 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
   const date = item.date || '2026'
   const summary = story ? story.summary : update ? update.summary : ''
   const readTime = story ? story.readTime : '3 min'
+  const authorName = update?.author || (lang === 'VI' ? 'Nguyễn Mạnh Cường (Edward)' : 'Mr. Cuong (Edward)')
+  const bodyContent = update?.content || ''
 
   return (
     <article className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-accent selection:text-white relative overflow-x-hidden">
@@ -178,8 +212,8 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
         <div className="absolute inset-0 grid-backdrop opacity-20" />
       </div>
 
-      {/* Sticky Header with Back Button */}
-      <header className="sticky top-0 left-0 right-0 z-40 bg-brand-bg/90 backdrop-blur-xl border-b border-brand-border/80 py-3.5 px-5 sm:px-8">
+      {/* Sticky Header with Back Button (Positioned below fixed Navbar) */}
+      <header className="sticky top-[57px] left-0 right-0 z-40 bg-brand-bg/95 backdrop-blur-xl border-b border-brand-border/80 py-3 px-5 sm:px-8 shadow-sm">
         <div className="max-w-4xl mx-auto flex items-center justify-between">
           <button
             onClick={onBack}
@@ -250,9 +284,68 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
           <span>•</span>
           <span className="flex items-center gap-1.5 text-brand-subtext">
             <UserIcon className="w-3.5 h-3.5" />
-            <span>Mr. Cuong (Edward) // NMC Corp</span>
+            <span>{authorName}</span>
           </span>
         </div>
+
+        {/* Admin Action Bar (Only for Admins viewing Updates) */}
+        {isAdmin && update && (
+          <div className="mb-8 p-3.5 sm:p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex flex-wrap items-center justify-between gap-3 shadow-md">
+            <div className="flex items-center gap-2">
+              <ShieldCheck className="w-4 h-4 text-amber-400" />
+              <span className="font-mono text-xs font-bold text-amber-300 uppercase tracking-wider">
+                {lang === 'VI' ? 'QUẢN TRỊ BÀI VIẾT NÀY' : 'ADMIN ARTICLE CONTROLS'}
+              </span>
+            </div>
+            <div className="flex items-center gap-2">
+              {onEdit && (
+                <button
+                  type="button"
+                  onClick={() => onEdit(update)}
+                  className="px-3.5 py-1.5 rounded-xl bg-brand-elevated hover:bg-brand-secondary border border-brand-border hover:border-brand-accent text-brand-text hover:text-cyan-400 text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-sm"
+                >
+                  <Pencil className="w-3.5 h-3.5 text-cyan-400" />
+                  <span>{lang === 'VI' ? 'Sửa bài' : 'Edit Post'}</span>
+                </button>
+              )}
+              {onDelete && (
+                showDeleteConfirm ? (
+                  <div className="flex items-center gap-1.5 bg-rose-950/80 p-1 rounded-xl border border-rose-500/50">
+                    <span className="text-[11px] font-mono text-rose-300 px-1.5">
+                      {lang === 'VI' ? 'Chắc chắn xóa?' : 'Confirm delete?'}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onDelete(update.id)
+                        onBack()
+                      }}
+                      className="px-2.5 py-1 rounded-lg bg-rose-600 hover:bg-rose-500 text-white text-[11px] font-mono font-bold transition-all shadow-sm"
+                    >
+                      {lang === 'VI' ? 'Xóa ngay' : 'Yes, Delete'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setShowDeleteConfirm(false)}
+                      className="px-2 py-1 rounded-lg bg-brand-elevated hover:bg-brand-secondary text-brand-subtext text-[11px] font-mono transition-all"
+                    >
+                      {lang === 'VI' ? 'Hủy' : 'Cancel'}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="px-3.5 py-1.5 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 border border-rose-500/40 text-rose-300 text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-sm"
+                  >
+                    <Trash2 className="w-3.5 h-3.5 text-rose-400" />
+                    <span>{lang === 'VI' ? 'Xóa bài' : 'Delete Post'}</span>
+                  </button>
+                )
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Oversized Headline */}
         <h1 className="font-display font-black text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-brand-text leading-[1.05] tracking-tight uppercase mb-6">
@@ -278,34 +371,77 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
 
         {/* Essay Body Content */}
         <div className="space-y-6 text-brand-subtext text-base sm:text-lg font-light leading-relaxed pt-4">
-          <p>
-            {lang === 'VI'
-              ? 'Trong thập kỷ chuyển dịch kỹ thuật số mạnh mẽ này, công nghệ tương tác đang tái cấu trúc cách chúng ta trải nghiệm các thế giới ảo. Trò chơi điện tử không còn đơn thuần là một sản phẩm giải trí thụ động, mà đã phát triển thành những không gian tính toán sống động, nơi trí tuệ nhân tạo (AI) và kiến trúc engine thế hệ mới cộng hưởng nhịp nhàng.'
-              : 'In this transformative digital decade, interactive technology is fundamentally reconstructing how we experience virtual environments. Gaming is no longer a passive entertainment medium; it has matured into a living computational canvas where synthetic intelligence and next-generation engine pipelines resonate synchronously.'}
-          </p>
+          {bodyContent && bodyContent.trim().length > 10 ? (
+            bodyContent.split(/\n\n+/).map((block: string, idx: number) => {
+              const trimmed = block.trim()
+              if (!trimmed) return null
+              if (trimmed.startsWith('### ')) {
+                return (
+                  <h3 key={idx} className="font-display font-bold text-xl sm:text-2xl text-cyan-300 mt-8 mb-3 tracking-tight">
+                    {trimmed.replace(/^###\s+/, '')}
+                  </h3>
+                )
+              }
+              if (trimmed.startsWith('#### ')) {
+                return (
+                  <h4 key={idx} className="font-mono text-sm sm:text-base font-bold text-amber-400 uppercase tracking-wider mt-6 mb-2">
+                    {trimmed.replace(/^####\s+/, '')}
+                  </h4>
+                )
+              }
+              if (trimmed.startsWith('---')) {
+                return <hr key={idx} className="border-brand-border/60 my-6" />
+              }
+              const lines = trimmed.split('\n')
+              if (lines.length > 1 && lines.some((l: string) => l.trim().startsWith('- ') || l.trim().startsWith('* '))) {
+                return (
+                  <ul key={idx} className="space-y-2 my-4 pl-4 border-l-2 border-brand-accent/40">
+                    {lines.map((l: string, lIdx: number) => (
+                      <li key={lIdx} className="text-brand-text text-sm sm:text-base leading-relaxed">
+                        {l.replace(/^[-*]\s+/, '')}
+                      </li>
+                    ))}
+                  </ul>
+                )
+              }
+              return (
+                <p key={idx} className="text-brand-subtext text-base sm:text-lg font-light leading-relaxed whitespace-pre-line">
+                  {trimmed}
+                </p>
+              )
+            })
+          ) : (
+            <>
+              <p>
+                {lang === 'VI'
+                  ? 'Trong thập kỷ chuyển dịch kỹ thuật số mạnh mẽ này, công nghệ tương tác đang tái cấu trúc cách chúng ta trải nghiệm các thế giới ảo. Trò chơi điện tử không còn đơn thuần là một sản phẩm giải trí thụ động, mà đã phát triển thành những không gian tính toán sống động, nơi trí tuệ nhân tạo (AI) và kiến trúc engine thế hệ mới cộng hưởng nhịp nhàng.'
+                  : 'In this transformative digital decade, interactive technology is fundamentally reconstructing how we experience virtual environments. Gaming is no longer a passive entertainment medium; it has matured into a living computational canvas where synthetic intelligence and next-generation engine pipelines resonate synchronously.'}
+              </p>
 
-          <p>
-            {lang === 'VI'
-              ? 'Từ việc phân tích luồng xử lý đồ họa cho đến các bài kiểm tra thực tế trên phần cứng, sự kết hợp giữa các mô hình tạo sinh (generative models) và pipeline kết xuất theo thời gian thực mang lại độ chân thực đáng kinh ngạc. Mọi khung hình, mọi xung lực điều khiển đều được tính toán với độ chính xác đến từng mili-giây.'
-              : 'From analyzing GPU rendering passes to empirical hardware benchmarking, combining generative models with real-time rendering pipelines yields unprecedented fidelity. Every single frame and input impulse is measured down to the millisecond.'}
-          </p>
+              <p>
+                {lang === 'VI'
+                  ? 'Từ việc phân tích luồng xử lý đồ họa cho đến các bài kiểm tra thực tế trên phần cứng, sự kết hợp giữa các mô hình tạo sinh (generative models) và pipeline kết xuất theo thời gian thực mang lại độ chân thực đáng kinh ngạc. Mọi khung hình, mọi xung lực điều khiển đều được tính toán với độ chính xác đến từng mili-giây.'
+                  : 'From analyzing GPU rendering passes to empirical hardware benchmarking, combining generative models with real-time rendering pipelines yields unprecedented fidelity. Every single frame and input impulse is measured down to the millisecond.'}
+              </p>
 
-          <div className="p-6 rounded-xl bg-brand-elevated border border-brand-border my-8">
-            <h4 className="font-mono text-xs text-brand-accent uppercase tracking-widest mb-2 font-bold">
-              // GAMING WITH MEEE PHILOSOPHY
-            </h4>
-            <blockquote className="text-base sm:text-lg text-brand-text italic leading-relaxed m-0">
-              {lang === 'VI'
-                ? '"Chúng tôi không chỉ trải nghiệm văn hóa số — chúng tôi mổ xẻ cơ chế và tái tạo những điều thú vị."'
-                : '"We don\'t just consume digital culture — we disassemble the machinery and rebuild something unforgettable."'}
-            </blockquote>
-          </div>
+              <div className="p-6 rounded-xl bg-brand-elevated border border-brand-border my-8">
+                <h4 className="font-mono text-xs text-brand-accent uppercase tracking-widest mb-2 font-bold">
+                  // GAMING WITH MEEE PHILOSOPHY
+                </h4>
+                <blockquote className="text-base sm:text-lg text-brand-text italic leading-relaxed m-0">
+                  {lang === 'VI'
+                    ? '"Chúng tôi không chỉ trải nghiệm văn hóa số — chúng tôi mổ xẻ cơ chế và tái tạo những điều thú vị."'
+                    : '"We don\'t just consume digital culture — we disassemble the machinery and rebuild something unforgettable."'}
+                </blockquote>
+              </div>
 
-          <p>
-            {lang === 'VI'
-              ? 'Mục tiêu của chúng tôi tại Gaming with meee không chỉ là quan sát, mà là mổ xẻ và cung cấp những tài liệu phân tích thực tế nhất cho cộng đồng những người đam mê công nghệ, lập trình viên và game thủ sáng tạo.'
-              : 'Our objective at Gaming with meee is not simply to observe, but to deconstruct and deliver practical, deeply researched dispatches for technology enthusiasts, software creators, and forward-thinking gamers.'}
-          </p>
+              <p>
+                {lang === 'VI'
+                  ? 'Mục tiêu của chúng tôi tại Gaming with meee không chỉ là quan sát, mà là mổ xẻ và cung cấp những tài liệu phân tích thực tế nhất cho cộng đồng những người đam mê công nghệ, lập trình viên và game thủ sáng tạo.'
+                  : 'Our objective at Gaming with meee is not simply to observe, but to deconstruct and deliver practical, deeply researched dispatches for technology enthusiasts, software creators, and forward-thinking gamers.'}
+              </p>
+            </>
+          )}
 
           {/* External Link if Available */}
           {update?.link && (

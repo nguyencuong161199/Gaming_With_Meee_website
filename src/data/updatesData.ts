@@ -37,5 +37,18 @@ export const INITIAL_UPDATES: UpdateItem[] = [
     content: "Mô hình xử lý cục bộ với độ trễ dưới 80ms, mở ra tiềm năng tạo các nhiệm vụ tương tác không giới hạn kịch bản cố định.",
     pinned: false,
     author: "NMC Lab"
+  },
+  {
+    id: "up-4",
+    date: "05.11.2026",
+    time: "10:00",
+    tag: "ANNOUNCEMENT",
+    title: "Mở kho đề luyện thi Professional Scrum Master I (PSM I) chuẩn quốc tế",
+    summary: "Hệ thống thi thử PSM I với 100+ câu hỏi song ngữ Anh-Việt, chế độ mô phỏng áp lực thời gian thực 60 phút và giải thích chi tiết theo Scrum Guide.",
+    content: "Gaming with meee Academy chính thức ra mắt bộ công cụ luyện thi Professional Scrum Master I (PSM I). Bộ đề được thiết kế chuẩn Scrum Guide mới nhất, gồm các câu hỏi tình huống thực tế về Scrum Framework, Vai trò Scrum Master, Product Owner, Sprint Planning và Daily Scrum. Đạt tỷ lệ đúng trên 85% để nhận chứng chỉ số GWM Academy.",
+    pinned: false,
+    link: "#academy",
+    linkText: "Luyện thi PSM I ngay",
+    author: "GWM Academy"
   }
 ]

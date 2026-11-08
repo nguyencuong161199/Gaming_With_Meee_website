@@ -21,6 +21,7 @@ export const AcademyCatalog: React.FC<AcademyCatalogProps> = ({
   onBackToHome
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<ExamCategory>('all')
+  const [showAllAttempts, setShowAllAttempts] = useState(false)
 
   const filteredExams = exams.filter((exam) => {
     if (selectedCategory === 'all') return true
@@ -161,7 +162,7 @@ export const AcademyCatalog: React.FC<AcademyCatalogProps> = ({
           </div>
 
           <div className="space-y-3">
-            {recentAttempts.slice(0, 4).map((attempt) => (
+            {(showAllAttempts ? recentAttempts : recentAttempts.slice(0, 5)).map((attempt) => (
               <div
                 key={attempt.id}
                 className="flex items-center justify-between p-3.5 rounded-xl bg-brand-elevated border border-brand-border text-xs font-mono"
@@ -191,6 +192,24 @@ export const AcademyCatalog: React.FC<AcademyCatalogProps> = ({
               </div>
             ))}
           </div>
+
+          {recentAttempts.length > 5 && (
+            <div className="mt-4 pt-3 border-t border-brand-border/60 text-center">
+              <button
+                type="button"
+                onClick={() => setShowAllAttempts((prev) => !prev)}
+                className="px-4 py-2 rounded-xl bg-brand-elevated hover:bg-brand-secondary border border-brand-border hover:border-brand-accent text-brand-text text-xs font-mono transition-all inline-flex items-center gap-1.5 shadow-sm"
+              >
+                <span>
+                  {showAllAttempts
+                    ? (lang === 'VI' ? '▲ Thu gọn lịch sử thi' : '▲ Show fewer attempts')
+                    : (lang === 'VI'
+                      ? `▼ Xem tất cả ${recentAttempts.length} bài thi đã làm`
+                      : `▼ View all ${recentAttempts.length} completed attempts`)}
+                </span>
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

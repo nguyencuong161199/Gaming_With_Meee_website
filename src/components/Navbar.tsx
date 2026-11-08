@@ -124,7 +124,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({
 
           {/* User Auth Section */}
           {isAuthenticated && user ? (
-            <UserMenu lang={lang} />
+            <UserMenu lang={lang} onNavigateView={onNavigateView} />
           ) : (
             <button
               onClick={onOpenLogin}
@@ -139,7 +139,7 @@ export const Navbar: React.FC<NavbarProps> = memo(({
         {/* Mobile menu button and quick lang */}
         <div className="flex md:hidden items-center gap-2">
           {isAuthenticated && user ? (
-            <UserMenu lang={lang} />
+            <UserMenu lang={lang} onNavigateView={onNavigateView} />
           ) : (
             <button
               onClick={onOpenLogin}

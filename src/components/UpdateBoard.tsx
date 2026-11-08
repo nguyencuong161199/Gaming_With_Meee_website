@@ -4,7 +4,7 @@ import { UpdateItem, UpdateTag } from '../types/content'
 import { INITIAL_UPDATES } from '../data/updatesData'
 import { Language, TRANSLATIONS } from '../data/translations'
 import { SectionHeading } from './SectionHeading'
-import { Pin, ArrowUpRight, Plus, X, Search, Calendar, ShieldCheck, Trash2, Sparkles, Wand2 } from 'lucide-react'
+import { Pin, ArrowUpRight, Plus, X, Search, Calendar, ShieldCheck, Trash2, Sparkles, Wand2, Pencil } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import { useRiotDataDragon } from '../hooks/useRiotDataDragon'
@@ -13,6 +13,8 @@ interface UpdateBoardProps {
   lang?: Language
   onSelectUpdate?: (update: UpdateItem) => void
   onRequireLogin?: () => void
+  initialEditItem?: UpdateItem | null
+  onClearInitialEditItem?: () => void
 }
 
 const TAG_STYLES: Record<UpdateTag, string> = {
@@ -26,7 +28,9 @@ const TAG_STYLES: Record<UpdateTag, string> = {
 export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
   lang = 'EN',
   onSelectUpdate,
-  onRequireLogin
+  onRequireLogin,
+  initialEditItem,
+  onClearInitialEditItem
 }) => {
   const { user, isAdmin } = useAuth()
 
@@ -43,7 +47,24 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
   const [activeTag, setActiveTag] = useState<string>('ALL')
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false)
+  const [editingPostId, setEditingPostId] = useState<string | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
   const [isRealtimeConnected, setIsRealtimeConnected] = useState<boolean>(false)
+
+  useEffect(() => {
+    if (initialEditItem) {
+      setEditingPostId(initialEditItem.id)
+      setNewTitle(initialEditItem.title)
+      setNewTag(initialEditItem.tag)
+      setNewSummary(initialEditItem.summary)
+      setNewContent(initialEditItem.content || '')
+      setNewLink(initialEditItem.link || '')
+      setNewLinkText(initialEditItem.linkText || '')
+      setIsPinned(Boolean(initialEditItem.pinned))
+      setIsAddModalOpen(true)
+      onClearInitialEditItem?.()
+    }
+  }, [initialEditItem, onClearInitialEditItem])
 
   const t = TRANSLATIONS[lang].board
   const riotData = useRiotDataDragon()
@@ -297,7 +318,9 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
           !query ||
           item.title.toLowerCase().includes(query) ||
           item.summary.toLowerCase().includes(query) ||
-          (item.content && item.content.toLowerCase().includes(query))
+          (item.content && item.content.toLowerCase().includes(query)) ||
+          item.tag.toLowerCase().includes(query) ||
+          (item.author && item.author.toLowerCase().includes(query))
         return matchesTag && matchesSearch
       })
       .sort((a, b) => {
@@ -307,23 +330,65 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
       })
   }, [updates, activeTag, searchQuery])
 
+  const otherTagMatchCount = useMemo(() => {
+    if (!searchQuery.trim() || activeTag === 'ALL') return 0
+    const q = searchQuery.trim().toLowerCase()
+    return updates.filter(u => u.tag !== activeTag && (
+      u.title.toLowerCase().includes(q) ||
+      u.summary.toLowerCase().includes(q) ||
+      (u.content && u.content.toLowerCase().includes(q)) ||
+      u.tag.toLowerCase().includes(q)
+    )).length
+  }, [updates, activeTag, searchQuery])
+
   const handleOpenAddModal = () => {
+    setEditingPostId(null)
+    setNewTitle('')
+    setNewSummary('')
+    setNewContent('')
+    setNewLink('')
+    setNewLinkText('')
+    setIsPinned(false)
     setIsAddModalOpen(true)
   }
 
-  const handleDeletePost = async (e: React.MouseEvent, id: string) => {
+  const handleCloseModal = () => {
+    setIsAddModalOpen(false)
+    setEditingPostId(null)
+    setNewTitle('')
+    setNewSummary('')
+    setNewContent('')
+    setNewLink('')
+    setNewLinkText('')
+    setIsPinned(false)
+  }
+
+  const handleStartEdit = (e: React.MouseEvent, item: UpdateItem) => {
     e.stopPropagation()
-    if (!isAdmin) return
-    const confirmed = window.confirm(
-      lang === 'VI' ? 'Bạn có chắc chắn muốn xóa tin này?' : 'Delete this update post?'
-    )
-    if (confirmed) {
-      setUpdates((prev) => prev.filter((item) => item.id !== id))
-      try {
-        await supabase.from('updates').delete().eq('id', id)
-      } catch {
-        // ignore
+    setEditingPostId(item.id)
+    setNewTitle(item.title)
+    setNewTag(item.tag)
+    setNewSummary(item.summary)
+    setNewContent(item.content || '')
+    setNewLink(item.link || '')
+    setNewLinkText(item.linkText || '')
+    setIsPinned(Boolean(item.pinned))
+    setIsAddModalOpen(true)
+  }
+
+  const handleConfirmDelete = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation()
+    setConfirmDeleteId(null)
+    setUpdates((prev) => prev.filter((item) => item.id !== id))
+    try {
+      await supabase.from('updates').delete().eq('id', id)
+      const saved = localStorage.getItem('gwm_board_updates')
+      if (saved) {
+        const list = JSON.parse(saved)
+        localStorage.setItem('gwm_board_updates', JSON.stringify(list.filter((u: any) => u.id !== id)))
       }
+    } catch {
+      // ignore
     }
   }
 
@@ -342,6 +407,42 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
       }
     }
 
+    if (editingPostId) {
+      const existing = updates.find((u) => u.id === editingPostId)
+      const updatedPost: UpdateItem = {
+        id: editingPostId,
+        date: existing?.date || formattedDate,
+        time: existing?.time || formattedTime,
+        tag: newTag,
+        title: newTitle.trim(),
+        summary: newSummary.trim(),
+        content: newContent.trim() || newSummary.trim(),
+        pinned: isPinned,
+        link: processedLink || undefined,
+        linkText: newLinkText.trim() || (processedLink ? (lang === 'VI' ? 'Xem chi tiết' : 'View Link') : undefined),
+        author: existing?.author || (user?.name ? `${user.name}` : (lang === 'VI' ? 'Nguyễn Mạnh Cường (Admin)' : 'Mr. Cuong (Edward)'))
+      }
+
+      setUpdates((prev) => prev.map((p) => (p.id === editingPostId ? updatedPost : p)))
+      handleCloseModal()
+
+      try {
+        await supabase.from('updates').update({
+          tag: updatedPost.tag,
+          title: updatedPost.title,
+          summary: updatedPost.summary,
+          content: updatedPost.content,
+          pinned: updatedPost.pinned,
+          link: updatedPost.link || null,
+          link_text: updatedPost.linkText || null,
+          author: updatedPost.author
+        }).eq('id', editingPostId)
+      } catch (err) {
+        console.error('Update Supabase error:', err)
+      }
+      return
+    }
+
     const newPost: UpdateItem = {
       id: `up-${Date.now()}`,
       date: formattedDate,
@@ -353,17 +454,11 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
       pinned: isPinned,
       link: processedLink || undefined,
       linkText: newLinkText.trim() || (processedLink ? (lang === 'VI' ? 'Xem chi tiết' : 'View Link') : undefined),
-      author: user?.name || 'Mr. Cuong (Edward)'
+      author: user?.name || (lang === 'VI' ? 'Nguyễn Mạnh Cường (Admin)' : 'Mr. Cuong (Edward)')
     }
 
     setUpdates((prev) => [newPost, ...prev])
-    setNewTitle('')
-    setNewSummary('')
-    setNewContent('')
-    setNewLink('')
-    setNewLinkText('')
-    setIsPinned(false)
-    setIsAddModalOpen(false)
+    handleCloseModal()
 
     // Save to Supabase Cloud Database
     try {
@@ -472,6 +567,24 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
           </div>
         </div>
 
+        {/* Helper prompt if search matches other tags */}
+        {otherTagMatchCount > 0 && (
+          <div className="mb-4 p-2.5 rounded-xl bg-brand-elevated border border-brand-accent/40 flex items-center justify-between gap-3 text-xs font-mono animate-fade-in">
+            <span className="text-brand-subtext text-[11px]">
+              {lang === 'VI'
+                ? `🔍 Tìm thấy ${otherTagMatchCount} kết quả phù hợp ở các danh mục khác.`
+                : `🔍 Found ${otherTagMatchCount} matching dispatches in other categories.`}
+            </span>
+            <button
+              type="button"
+              onClick={() => setActiveTag('ALL')}
+              className="px-2.5 py-1 rounded-lg bg-brand-accent/20 hover:bg-brand-accent text-brand-accent hover:text-white border border-brand-accent/40 text-[11px] font-bold transition-all"
+            >
+              {lang === 'VI' ? 'Xem trong Tất Cả →' : 'View in All →'}
+            </button>
+          </div>
+        )}
+
         {/* Board Items Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {sortedUpdates.map((item) => (
@@ -512,15 +625,56 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
                       <span>{item.date}</span>
                     </span>
 
-                    {/* Admin Delete Action */}
+                    {/* Admin Actions */}
                     {isAdmin && (
-                      <button
-                        onClick={(e) => handleDeletePost(e, item.id)}
-                        title={lang === 'VI' ? 'Xóa bài đăng này' : 'Delete update'}
-                        className="p-1 rounded hover:bg-rose-500/20 text-brand-muted hover:text-rose-400 transition-colors"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
+                        {confirmDeleteId === item.id ? (
+                          <div className="flex items-center gap-1 bg-rose-950/95 p-1 rounded-lg border border-rose-500/60 z-20 shadow-lg">
+                            <span className="text-[10px] font-mono text-rose-300 px-1 font-bold">
+                              {lang === 'VI' ? 'Xác nhận?' : 'Confirm?'}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={(e) => handleConfirmDelete(e, item.id)}
+                              className="px-2 py-0.5 rounded bg-rose-600 hover:bg-rose-500 text-white text-[10px] font-mono font-bold transition-all shadow"
+                            >
+                              {lang === 'VI' ? 'Xóa' : 'Yes'}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setConfirmDeleteId(null)
+                              }}
+                              className="px-1.5 py-0.5 rounded bg-brand-elevated hover:bg-brand-secondary text-brand-subtext text-[10px] font-mono transition-all"
+                            >
+                              {lang === 'VI' ? 'Hủy' : 'No'}
+                            </button>
+                          </div>
+                        ) : (
+                          <>
+                            <button
+                              type="button"
+                              onClick={(e) => handleStartEdit(e, item)}
+                              title={lang === 'VI' ? 'Sửa bài đăng này' : 'Edit update'}
+                              className="p-1 rounded hover:bg-cyan-500/20 text-brand-muted hover:text-cyan-400 transition-colors"
+                            >
+                              <Pencil className="w-3.5 h-3.5" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation()
+                                setConfirmDeleteId(item.id)
+                              }}
+                              title={lang === 'VI' ? 'Xóa bài đăng này' : 'Delete update'}
+                              className="p-1 rounded hover:bg-rose-500/20 text-brand-muted hover:text-rose-400 transition-colors"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                          </>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -565,7 +719,7 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
             className="relative w-full max-w-lg bg-brand-secondary border border-brand-border rounded-2xl p-6 sm:p-7 shadow-2xl max-h-[90vh] overflow-y-auto"
           >
             <button
-              onClick={() => setIsAddModalOpen(false)}
+              onClick={handleCloseModal}
               aria-label="Close modal"
               className="absolute top-5 right-5 p-2 rounded-xl bg-brand-elevated border border-brand-border text-brand-subtext hover:text-white transition-colors"
             >
@@ -575,9 +729,11 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
             <div className="flex items-center gap-2 mb-2 text-amber-400">
               <ShieldCheck className="w-4 h-4" />
               <span className="font-mono text-xs uppercase tracking-wider font-semibold">
-                {isAdmin
-                  ? (lang === 'VI' ? 'BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN' : 'ADMIN DISPATCH CONTROL')
-                  : (lang === 'VI' ? 'ĐĂNG THÔNG BÁO MỚI' : 'POST NEW UPDATE')}
+                {editingPostId
+                  ? (lang === 'VI' ? 'CHẾ ĐỘ SỬA BÀI VIẾT (ADMIN)' : 'EDIT POST MODE (ADMIN)')
+                  : (isAdmin
+                    ? (lang === 'VI' ? 'BẢNG ĐIỀU KHIỂN QUẢN TRỊ VIÊN' : 'ADMIN DISPATCH CONTROL')
+                    : (lang === 'VI' ? 'ĐĂNG THÔNG BÁO MỚI' : 'POST NEW UPDATE'))}
               </span>
             </div>
 
@@ -589,7 +745,7 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
                 <button
                   type="button"
                   onClick={() => {
-                    setIsAddModalOpen(false)
+                    handleCloseModal()
                     onRequireLogin()
                   }}
                   className="text-brand-accent hover:underline text-[11px] font-bold"
@@ -601,7 +757,9 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
 
             <div className="flex items-center justify-between gap-3 mb-4">
               <h3 className="font-display font-bold text-xl sm:text-2xl text-brand-text">
-                {t.modalTitle}
+                {editingPostId
+                  ? (lang === 'VI' ? 'Chỉnh Sửa Bài Viết' : 'Edit Update Post')
+                  : t.modalTitle}
               </h3>
             </div>
 
@@ -752,7 +910,7 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
               <div className="pt-3 flex items-center justify-end gap-3">
                 <button
                   type="button"
-                  onClick={() => setIsAddModalOpen(false)}
+                  onClick={handleCloseModal}
                   className="px-4 py-2 rounded-xl bg-brand-elevated border border-brand-border text-brand-subtext hover:text-white transition-colors"
                 >
                   {t.cancel}
@@ -761,7 +919,9 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
                   type="submit"
                   className="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold transition-colors shadow-md"
                 >
-                  {t.submit}
+                  {editingPostId
+                    ? (lang === 'VI' ? 'LƯU THAY ĐỔI' : 'SAVE CHANGES')
+                    : t.submit}
                 </button>
               </div>
             </form>

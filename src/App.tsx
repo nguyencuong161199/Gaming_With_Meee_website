@@ -7,6 +7,7 @@ import { LegalModal, LegalTab } from './components/LegalModal'
 import { Language } from './data/translations'
 import { useLocalStorage } from './hooks/useLocalStorage'
 import { UpdateItem } from './types/content'
+import { supabase } from './lib/supabase'
 
 // Lazy load portal views for maximum performance & instant code splitting
 const HomePage = lazy(() => import('./components/HomePage'))
@@ -20,6 +21,7 @@ export const App: React.FC = () => {
   const [lang, setLang] = useLocalStorage<Language>('gwm_lang', 'EN')
   const [currentView, setCurrentView] = useState<AppView>('home')
   const [selectedUpdate, setSelectedUpdate] = useState<UpdateItem | null>(null)
+  const [editTargetUpdate, setEditTargetUpdate] = useState<UpdateItem | null>(null)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false)
   const [legalTab, setLegalTab] = useState<LegalTab>('privacy')
@@ -106,6 +108,28 @@ export const App: React.FC = () => {
                 window.scrollTo({ top: 0, behavior: 'smooth' })
               }}
               onRequireLogin={() => setIsLoginModalOpen(true)}
+              onEdit={(item) => {
+                setSelectedUpdate(null)
+                setEditTargetUpdate(item)
+                setCurrentView('home')
+                setTimeout(() => {
+                  const el = document.getElementById('board')
+                  if (el) el.scrollIntoView({ behavior: 'smooth' })
+                }, 100)
+              }}
+              onDelete={async (id) => {
+                setSelectedUpdate(null)
+                try {
+                  await supabase.from('updates').delete().eq('id', id)
+                  const saved = localStorage.getItem('gwm_board_updates')
+                  if (saved) {
+                    const list = JSON.parse(saved)
+                    localStorage.setItem('gwm_board_updates', JSON.stringify(list.filter((u: any) => u.id !== id)))
+                  }
+                } catch (e) {
+                  console.error(e)
+                }
+              }}
             />
           ) : (
             <>
@@ -115,6 +139,8 @@ export const App: React.FC = () => {
                   onNavigateView={handleNavigateView}
                   onReplayIntro={handleReplayIntro}
                   onOpenLegal={handleOpenLegal}
+                  editTargetUpdate={editTargetUpdate}
+                  onClearEditTarget={() => setEditTargetUpdate(null)}
                   onSelectUpdate={(item) => {
                     setSelectedUpdate(item)
                     window.scrollTo({ top: 0, behavior: 'smooth' })
