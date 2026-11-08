@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { X, ShieldCheck, FileText, ShoppingBag, Award, Lock } from 'lucide-react'
 import { Language } from '../data/translations'
 import { BRAND } from '../data/contentData'
@@ -19,6 +19,12 @@ export const LegalModal: React.FC<LegalModalProps> = ({
   lang
 }) => {
   const [activeTab, setActiveTab] = useState<LegalTab>(initialTab)
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveTab(initialTab)
+    }
+  }, [initialTab, isOpen])
 
   if (!isOpen) return null
 

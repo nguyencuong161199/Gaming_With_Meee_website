@@ -332,14 +332,10 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
                 {lang === 'VI' ? `BÌNH LUẬN (${comments.length})` : `COMMENTS (${comments.length})`}
               </h3>
             </div>
-            {!isAuthenticated && (
-              <button
-                onClick={onRequireLogin}
-                className="text-xs font-mono text-brand-accent hover:underline"
-              >
-                {lang === 'VI' ? 'Đăng nhập để bình luận →' : 'Sign in to comment →'}
-              </button>
-            )}
+            <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-brand-elevated border border-brand-border text-[11px] font-mono text-brand-muted">
+              <span>🔒</span>
+              <span>{lang === 'VI' ? 'Lưu trữ chỉ đọc' : 'Read-only Archive'}</span>
+            </div>
           </div>
 
           {/* Comment Form Paused for Decree 147/2024/ND-CP Compliance */}
