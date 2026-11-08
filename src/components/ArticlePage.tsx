@@ -13,7 +13,6 @@ import {
   Heart,
   Bookmark,
   MessageSquare,
-  Send,
   Trash2,
   ShieldCheck
 } from 'lucide-react'
@@ -35,7 +34,7 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
   onBack,
   onRequireLogin
 }) => {
-  const { user, isAdmin, isAuthenticated } = useAuth()
+  const { isAdmin, isAuthenticated } = useAuth()
   const [copied, setCopied] = useState(false)
   const [isLiked, setIsLiked] = useState(false)
   const [likeCount, setLikeCount] = useState(42)
@@ -64,7 +63,6 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
       }
     ]
   })
-  const [commentInput, setCommentInput] = useState('')
 
   useEffect(() => {
     // Scroll to top when opening an article
@@ -141,45 +139,6 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
       return
     }
     setIsBookmarked((prev) => !prev)
-  }
-
-  const handleAddComment = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!commentInput.trim()) return
-
-    if (!isAuthenticated || !user) {
-      onRequireLogin?.()
-      return
-    }
-
-    const newComment: CommentItem = {
-      id: `comm-${Date.now()}`,
-      articleId: item.id,
-      userId: user.id,
-      userName: user.name,
-      userAvatar: user.avatar,
-      userRole: user.role,
-      content: commentInput.trim(),
-      createdAt: lang === 'VI' ? 'Vừa xong' : 'Just now'
-    }
-
-    setComments((prev) => [newComment, ...prev])
-    setCommentInput('')
-
-    // Save to Supabase
-    try {
-      await supabase.from('comments').insert({
-        id: newComment.id,
-        article_id: item.id,
-        user_id: user.id,
-        user_name: user.name,
-        user_avatar: user.avatar,
-        user_role: user.role,
-        content: newComment.content
-      })
-    } catch {
-      // local copy saved
-    }
   }
 
   const handleDeleteComment = async (commentId: string) => {
@@ -383,45 +342,15 @@ export const ArticlePage: React.FC<ArticlePageProps> = memo(({
             )}
           </div>
 
-          {/* Comment Form */}
-          <form onSubmit={handleAddComment} className="mb-8">
-            <div className="flex gap-3">
-              <div className="w-9 h-9 rounded-full overflow-hidden bg-brand-elevated border border-brand-border shrink-0">
-                <img
-                  src={user?.avatar || '/assets/nmc-gwm-logo.jpeg'}
-                  alt="avatar"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="flex-1 flex gap-2">
-                <input
-                  type="text"
-                  placeholder={
-                    isAuthenticated
-                      ? lang === 'VI'
-                        ? `Bình luận với tên ${user?.name}...`
-                        : `Comment as ${user?.name}...`
-                      : lang === 'VI'
-                      ? 'Đăng nhập để viết bình luận...'
-                      : 'Sign in to leave a comment...'
-                  }
-                  value={commentInput}
-                  onChange={(e) => setCommentInput(e.target.value)}
-                  onFocus={() => {
-                    if (!isAuthenticated) onRequireLogin?.()
-                  }}
-                  className="flex-1 px-4 py-2 rounded-xl bg-brand-elevated border border-brand-border text-sm text-brand-text placeholder:text-brand-muted focus:outline-none focus:border-brand-accent font-sans"
-                />
-                <button
-                  type="submit"
-                  className="px-4 py-2 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white text-xs font-mono font-bold flex items-center gap-1.5 transition-all shadow-md shadow-brand-accent/20"
-                >
-                  <Send className="w-3.5 h-3.5" />
-                  <span>{lang === 'VI' ? 'GỬI' : 'POST'}</span>
-                </button>
-              </div>
-            </div>
-          </form>
+          {/* Comment Form Paused for Decree 147/2024/ND-CP Compliance */}
+          <div className="mb-8 p-4 rounded-xl bg-brand-elevated/70 border border-brand-border flex items-center gap-3 text-xs font-mono text-brand-subtext">
+            <span className="text-amber-400 font-mono text-sm">🔒</span>
+            <p>
+              {lang === 'VI'
+                ? 'Khu vực bình luận công khai tạm chuyển sang chế độ lưu trữ để nâng cấp quy trình kiểm duyệt nội dung và định danh người dùng theo Nghị định 147/2024/NĐ-CP.'
+                : 'Public comments are temporarily in read-only archive mode pending identity verification upgrade per Decree 147/2024/ND-CP.'}
+            </p>
+          </div>
 
           {/* Comment List */}
           <div className="space-y-4">

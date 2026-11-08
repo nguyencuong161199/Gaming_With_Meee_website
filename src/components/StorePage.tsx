@@ -64,6 +64,21 @@ export const StorePage: React.FC<StorePageProps> = ({ lang, onBack }) => {
           </button>
         </div>
 
+        {/* Affiliate Disclosure Notice (Law 122/2025/QH15 & Decree 248/2026/ND-CP) */}
+        <div className="mb-8 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3 text-xs text-amber-200/90 leading-relaxed font-sans">
+          <span className="text-amber-400 font-mono text-base shrink-0 mt-0.5">ℹ️</span>
+          <div>
+            <span className="font-bold text-amber-300 block mb-0.5 uppercase tracking-wide text-[11px] font-mono">
+              {lang === 'VI' ? 'THÔNG BÁO TIẾP THỊ LIÊN KẾT (SHOPEE AFFILIATE DISCLOSURE)' : 'AFFILIATE DISCLOSURE'}
+            </span>
+            <span>
+              {lang === 'VI'
+                ? 'NMC Store là chuyên mục tuyển chọn và giới thiệu sản phẩm tiếp thị liên kết uy tín. Website không trực tiếp thu tiền, bán hàng hay giữ thanh toán. Mọi đơn hàng, thanh toán, bảo hành và vận chuyển đều được thực hiện 100% qua sàn TMĐT Shopee Việt Nam.'
+                : 'NMC Store curates recommended gear via official Shopee affiliate links. Transactions, payments, and order fulfillment are processed securely through Shopee Vietnam.'}
+            </span>
+          </div>
+        </div>
+
         {/* Category Filters */}
         <div className="flex items-center gap-2 overflow-x-auto pb-4 mb-8 scrollbar-none">
           <div className="flex items-center gap-1.5 text-xs text-brand-muted font-mono mr-2">

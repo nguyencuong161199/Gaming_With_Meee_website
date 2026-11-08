@@ -3,6 +3,7 @@ import { Navbar, AppView } from './components/Navbar'
 import { LoginModal } from './components/LoginModal'
 import { IntroScreen } from './components/IntroScreen'
 import { MeeeAIAssistant } from './components/MeeeAIAssistant'
+import { LegalModal, LegalTab } from './components/LegalModal'
 import { Language } from './data/translations'
 import { useLocalStorage } from './hooks/useLocalStorage'
 
@@ -17,6 +18,8 @@ export const App: React.FC = () => {
   const [lang, setLang] = useLocalStorage<Language>('gwm_lang', 'EN')
   const [currentView, setCurrentView] = useState<AppView>('home')
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
+  const [isLegalModalOpen, setIsLegalModalOpen] = useState(false)
+  const [legalTab, setLegalTab] = useState<LegalTab>('privacy')
   const [showIntro, setShowIntro] = useState(() => {
     try {
       return !localStorage.getItem('gwm_intro_seen')
@@ -59,6 +62,11 @@ export const App: React.FC = () => {
     setLang(newLang)
   }
 
+  const handleOpenLegal = (tab: LegalTab = 'privacy') => {
+    setLegalTab(tab)
+    setIsLegalModalOpen(true)
+  }
+
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-accent selection:text-white relative">
       {/* Top Navbar */}
@@ -89,6 +97,7 @@ export const App: React.FC = () => {
               lang={lang}
               onNavigateView={handleNavigateView}
               onReplayIntro={handleReplayIntro}
+              onOpenLegal={handleOpenLegal}
             />
           )}
 
@@ -130,10 +139,19 @@ export const App: React.FC = () => {
         onOpenStore={() => handleNavigateView('store')}
       />
 
-      {/* Login & Authentication Modal */}
+      {/* Login & Authentication Modal with Legal Consent */}
       <LoginModal
         isOpen={isLoginModalOpen}
         onClose={() => setIsLoginModalOpen(false)}
+        lang={lang}
+        onOpenLegal={handleOpenLegal}
+      />
+
+      {/* Legal & Data Privacy Modal */}
+      <LegalModal
+        isOpen={isLegalModalOpen}
+        onClose={() => setIsLegalModalOpen(false)}
+        initialTab={legalTab}
         lang={lang}
       />
 

@@ -4,6 +4,7 @@ import { BRAND, SOCIAL_LINKS } from '../data/contentData'
 import { SectionHeading } from './SectionHeading'
 import { SocialLinks } from './SocialLinks'
 import { Footer } from './Footer'
+import { LegalTab } from './LegalModal'
 import {
   Sparkles,
   Gamepad2,
@@ -25,12 +26,14 @@ interface HomePageProps {
   lang: Language
   onNavigateView: (view: 'about' | 'academy' | 'gaming' | 'store' | 'connect') => void
   onReplayIntro?: () => void
+  onOpenLegal?: (tab?: LegalTab) => void
 }
 
 export const HomePage: React.FC<HomePageProps> = memo(({
   lang,
   onNavigateView,
-  onReplayIntro
+  onReplayIntro,
+  onOpenLegal
 }) => {
   const t = TRANSLATIONS[lang]
 
@@ -602,6 +605,7 @@ export const HomePage: React.FC<HomePageProps> = memo(({
         lang={lang}
         onBackToTop={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
         onNavigateScreen={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+        onOpenLegal={onOpenLegal}
       />
     </div>
   )

@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
-import { X, ArrowRight, Mail } from 'lucide-react'
+import { X, ArrowRight, Mail, ShieldAlert } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { Language } from '../data/translations'
+import { LegalTab } from './LegalModal'
 
 interface LoginModalProps {
   isOpen: boolean
   onClose: () => void
   lang: Language
+  onOpenLegal?: (tab?: LegalTab) => void
 }
 
-export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang }) => {
+export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang, onOpenLegal }) => {
   const { loginWithGoogle, loginWithFacebook, loginWithEmail } = useAuth()
   const [emailInput, setEmailInput] = useState('')
+  const [agreedToTerms, setAgreedToTerms] = useState(false)
+  const [consentError, setConsentError] = useState(false)
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -27,17 +31,29 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang })
   if (!isOpen) return null
 
   const handleGoogleLogin = () => {
+    if (!agreedToTerms) {
+      setConsentError(true)
+      return
+    }
     loginWithGoogle()
     onClose()
   }
 
   const handleFacebookLogin = () => {
+    if (!agreedToTerms) {
+      setConsentError(true)
+      return
+    }
     loginWithFacebook()
     onClose()
   }
 
   const handleEmailSubmit = (e: React.FormEvent) => {
     e.preventDefault()
+    if (!agreedToTerms) {
+      setConsentError(true)
+      return
+    }
     if (!emailInput.trim()) return
     loginWithEmail(emailInput.trim())
     setEmailInput('')
@@ -81,11 +97,90 @@ export const LoginModal: React.FC<LoginModalProps> = ({ isOpen, onClose, lang })
           </div>
         </div>
 
-        <p className="text-xs text-brand-subtext mb-6 font-light leading-relaxed">
+        <p className="text-xs text-brand-subtext mb-4 font-light leading-relaxed">
           {lang === 'VI'
-            ? 'Đăng nhập để tương tác, bình luận, lưu bài viết yêu thích hoặc quản lý nội dung.'
-            : 'Sign in to interact, leave comments, save favorite dispatches or manage content.'}
+            ? 'Đăng nhập để lưu tiến độ ôn thi chứng chỉ cá nhân và đồng bộ dữ liệu an toàn.'
+            : 'Sign in to save personal exam progress and sync data securely.'}
         </p>
+
+        {/* Mandatory Legal & Data Privacy Consent Checkbox (Law 91/2025/QH15) */}
+        <div className="mb-5 p-3 rounded-xl bg-brand-elevated/80 border border-brand-border">
+          <label className="flex items-start gap-2.5 cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={agreedToTerms}
+              onChange={(e) => {
+                setAgreedToTerms(e.target.checked)
+                if (e.target.checked) setConsentError(false)
+              }}
+              className="mt-0.5 w-4 h-4 rounded border-brand-border text-brand-accent focus:ring-brand-accent bg-brand-secondary cursor-pointer shrink-0"
+            />
+            <span className="text-[11px] text-brand-subtext leading-relaxed font-sans">
+              {lang === 'VI' ? (
+                <>
+                  Tôi đã đọc và đồng ý với{' '}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      onOpenLegal?.('terms')
+                    }}
+                    className="text-brand-accent underline hover:text-white"
+                  >
+                    Điều khoản dịch vụ
+                  </button>{' '}
+                  và{' '}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      onOpenLegal?.('privacy')
+                    }}
+                    className="text-brand-accent underline hover:text-white"
+                  >
+                    Chính sách bảo vệ dữ liệu cá nhân
+                  </button>{' '}
+                  của Gaming with meee.
+                </>
+              ) : (
+                <>
+                  I agree to the{' '}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      onOpenLegal?.('terms')
+                    }}
+                    className="text-brand-accent underline hover:text-white"
+                  >
+                    Terms of Service
+                  </button>{' '}
+                  and{' '}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault()
+                      onOpenLegal?.('privacy')
+                    }}
+                    className="text-brand-accent underline hover:text-white"
+                  >
+                    Data Privacy Policy
+                  </button>.
+                </>
+              )}
+            </span>
+          </label>
+          {consentError && (
+            <p className="mt-2 text-[10px] font-mono text-rose-400 flex items-center gap-1">
+              <ShieldAlert className="w-3 h-3 shrink-0" />
+              <span>
+                {lang === 'VI'
+                  ? 'Vui lòng tích chọn đồng ý trước khi đăng nhập theo quy định pháp luật.'
+                  : 'Please check the consent box to proceed per personal data laws.'}
+              </span>
+            </p>
+          )}
+        </div>
 
         {/* Social Login Buttons */}
         <div className="space-y-3 mb-6">
