@@ -138,10 +138,12 @@ export const AcademyCatalog: React.FC<AcademyCatalogProps> = ({
               {/* Action Button */}
               <button
                 onClick={() => onSelectExam(exam)}
-                className="w-full py-3.5 px-5 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg shadow-brand-accent/25 hover:shadow-brand-accent/40 flex items-center justify-center gap-2 transition-all active:scale-[0.99]"
+                className="w-full py-3.5 px-5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-500 hover:from-blue-500 hover:via-sky-400 hover:to-cyan-400 text-white font-mono text-xs font-black uppercase tracking-wider border border-cyan-300/50 shadow-lg shadow-cyan-500/25 hover:shadow-cyan-400/40 flex items-center justify-center gap-2 transition-all active:scale-[0.99] group"
               >
-                <span>{lang === 'VI' ? 'BẮT ĐẦU THI THỬ NGAY' : 'START PRACTICE EXAM'}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">
+                  {lang === 'VI' ? 'BẮT ĐẦU THI THỬ NGAY' : 'START PRACTICE EXAM'}
+                </span>
+                <ArrowRight className="w-4 h-4 text-cyan-100 group-hover:translate-x-1 transition-transform" />
               </button>
             </div>
           )

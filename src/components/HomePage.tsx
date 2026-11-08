@@ -168,26 +168,28 @@ export const HomePage: React.FC<HomePageProps> = memo(({
         <div className="flex flex-wrap items-center justify-center gap-3">
           <button
             onClick={() => onNavigateView('academy')}
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg shadow-brand-accent/30 hover:shadow-brand-accent/50 hover:-translate-y-0.5 transition-all group"
+            className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-gradient-to-r from-blue-600 via-sky-500 to-cyan-400 hover:from-blue-500 hover:via-sky-400 hover:to-cyan-300 text-white font-mono text-xs font-black uppercase tracking-wider border-2 border-cyan-300/60 hover:border-cyan-200 shadow-xl shadow-cyan-500/35 hover:shadow-cyan-400/60 hover:-translate-y-0.5 active:scale-95 transition-all group"
           >
-            <GraduationCap className="w-4 h-4 group-hover:scale-110 transition-transform" />
-            <span>{lang === 'VI' ? 'THI THỬ ACADEMY' : 'ACADEMY EXAMS'}</span>
-            <ArrowDownRight className="w-4 h-4" />
+            <GraduationCap className="w-4.5 h-4.5 text-cyan-100 group-hover:scale-110 transition-transform drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]" />
+            <span className="drop-shadow-[0_1px_2px_rgba(0,0,0,0.6)]">
+              {lang === 'VI' ? 'THI THỬ ACADEMY' : 'ACADEMY EXAMS'}
+            </span>
+            <ArrowDownRight className="w-4 h-4 text-cyan-100 group-hover:translate-x-0.5 group-hover:translate-y-0.5 transition-transform" />
           </button>
 
           <button
             onClick={() => onNavigateView('gaming')}
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-secondary/80 hover:bg-brand-elevated border border-brand-border hover:border-brand-accent backdrop-blur-md text-brand-text font-mono text-xs font-medium uppercase tracking-wider transition-all"
+            className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-brand-secondary/90 hover:bg-brand-elevated border border-purple-500/50 hover:border-purple-400 backdrop-blur-md text-brand-text hover:text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg shadow-purple-950/40 hover:shadow-purple-500/25 hover:-translate-y-0.5 active:scale-95 transition-all group"
           >
-            <Gamepad2 className="w-4 h-4 text-purple-400" />
+            <Gamepad2 className="w-4.5 h-4.5 text-purple-400 group-hover:scale-110 transition-transform" />
             <span>{lang === 'VI' ? 'CẨM NANG GAMING' : 'GAMING HUB'}</span>
           </button>
 
           <button
             onClick={() => onNavigateView('store')}
-            className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-secondary/80 hover:bg-brand-elevated border border-brand-border hover:border-brand-accent backdrop-blur-md text-brand-text font-mono text-xs font-medium uppercase tracking-wider transition-all"
+            className="inline-flex items-center gap-2.5 px-6 py-3.5 rounded-xl bg-brand-secondary/90 hover:bg-brand-elevated border border-amber-500/50 hover:border-amber-400 backdrop-blur-md text-brand-text hover:text-white font-mono text-xs font-bold uppercase tracking-wider shadow-lg shadow-amber-950/40 hover:shadow-amber-500/25 hover:-translate-y-0.5 active:scale-95 transition-all group"
           >
-            <ShoppingBag className="w-4 h-4 text-amber-400" />
+            <ShoppingBag className="w-4.5 h-4.5 text-amber-400 group-hover:scale-110 transition-transform" />
             <span>{lang === 'VI' ? 'CỬA HÀNG STORE' : 'STORE & GEAR'}</span>
           </button>
         </div>
@@ -278,7 +280,7 @@ export const HomePage: React.FC<HomePageProps> = memo(({
               </div>
             </div>
 
-            <div className="pt-4 border-t border-brand-border/60 flex items-center justify-between font-mono text-xs text-blue-400 font-bold tracking-wider uppercase">
+            <div className="pt-4 border-t border-brand-border/60 flex items-center justify-between font-mono text-xs text-cyan-400 group-hover:text-cyan-300 font-bold tracking-wider uppercase">
               <span>{lang === 'VI' ? 'VÀO PHÒNG THI THỬ' : 'ENTER EXAM PORTAL'}</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </div>
