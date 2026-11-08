@@ -4,9 +4,10 @@ import { UpdateItem, UpdateTag } from '../types/content'
 import { INITIAL_UPDATES } from '../data/updatesData'
 import { Language, TRANSLATIONS } from '../data/translations'
 import { SectionHeading } from './SectionHeading'
-import { Pin, ArrowUpRight, Plus, X, Search, Calendar, ShieldCheck, Trash2 } from 'lucide-react'
+import { Pin, ArrowUpRight, Plus, X, Search, Calendar, ShieldCheck, Trash2, Sparkles, Wand2 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
+import { useRiotDataDragon } from '../hooks/useRiotDataDragon'
 
 interface UpdateBoardProps {
   lang?: Language
@@ -45,6 +46,7 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
   const [isRealtimeConnected, setIsRealtimeConnected] = useState<boolean>(false)
 
   const t = TRANSLATIONS[lang].board
+  const riotData = useRiotDataDragon()
 
   // Form states
   const [newTitle, setNewTitle] = useState('')
@@ -54,6 +56,115 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
   const [newLink, setNewLink] = useState('')
   const [newLinkText, setNewLinkText] = useState('')
   const [isPinned, setIsPinned] = useState(false)
+  const [isAiGenerating, setIsAiGenerating] = useState(false)
+
+  const handleAiGenerate = (topic: 'tft' | 'lol' | 'fco' | 'pubgm') => {
+    setIsAiGenerating(true)
+    setTimeout(() => {
+      const patch = riotData.patchLabel || 'Patch 16.22'
+      if (topic === 'tft') {
+        setNewTag('PATCH NOTES')
+        setIsPinned(true)
+        setNewTitle(`Phân Tích Meta ĐTCL ${patch}: Top 3 Đội Hình Fast-8 Leo Thách Đấu`)
+        setNewSummary(`Tổng hợp phân tích chuyên sâu các bài đấu hot nhất bản ${patch}. Lõi công nghệ tối ưu và trang bị chuẩn (BiS) giúp đảm bảo tỷ lệ vào Top 4 trên 65%.`)
+        setNewContent(`### 📊 TỔNG QUAN META ĐTCL (${patch})
+Bản cập nhật ${patch} chứng kiến sự dịch chuyển mạnh mẽ của nhịp độ trận đấu (Lobby Tempo). Chiến thuật Fast-8 đang chiếm ưu thế vượt trội so với lối chơi Slow Roll cấp 6-7.
+
+---
+
+### 🔥 3 ĐỘI HÌNH ĐẠT TỶ LỆ VÀO TOP CAO NHẤT
+
+#### 1. Đội hình Bắn Tỉa Chủ Lực (Tỷ lệ Top 4: 68.2%)
+- **Chủ lực (Carries):** Caitlyn (4 vàng) + Đấu Sĩ / Đỡ đòn tuyến trước (Vi / Loris 2 sao).
+- **Trang bị trấn phái (BiS):**
+  - *Caitlyn:* Vô Cực Kiếm, Cung Xanh, Ngọn Giáo Shojin.
+  - *Dàn Chắn:* Giáp Máu Warmog, Thú Tượng Thạch Giáp, Trái Tim Kiên Định.
+- **Chiến thuật vận hành:** Tích 50 vàng sớm từ Round 2-1, giữ máu bằng form 3 Tướng giữ đồ. Lên cấp 8 ở vòng 4-2, xả tiền roll kiếm chủ lực 2 sao hoàn thiện form.
+
+#### 2. Đội hình Phép Thuật Kiểm Soát & Sát Thương Diện Rộng
+- Tận dụng bùa lợi SMPT cộng dồn từ sớm, kích hoạt hệ Khống chế diện rộng.
+- **Trang bị chuẩn:** Bùa Xanh, Quỷ Thư Morello, Mũ Phù Thủy Rabadon.
+
+---
+
+### 💡 MẸO TỐI ƯU KINH TẾ TỪ CƯỜNG NGUYỄN (EDWARD)
+- Đừng ngần ngại lắp trang bị sớm ngay từ vòng 2-1 nếu có đồ chuẩn để giữ chuỗi thắng.
+- Luôn quan sát sàn đấu đối phương trước 5 giây cuối mỗi vòng đấu để xếp dàn chắn lệch hướng kỹ năng sốc sát thương.`)
+        setNewLink('/gaming')
+        setNewLinkText(lang === 'VI' ? 'Xem cẩm nang ĐTCL' : 'View TFT Playbook')
+      } else if (topic === 'lol') {
+        setNewTag('PATCH NOTES')
+        setIsPinned(true)
+        setNewTitle(`Chi Tiết Cập Nhật LMHT ${patch}: Xạ Thủ & Pháp Sư Kiểm Soát Lên Ngôi`)
+        setNewSummary(`Bản cập nhật LMHT ${patch} mang đến hàng loạt tinh chỉnh sức mạnh quan trọng cho tướng đường dưới và phép bổ trợ giao tranh mục tiêu lớn.`)
+        setNewContent(`### ⚔️ TIÊU ĐIỂM BẢN CẬP NHẬT LMHT (${patch})
+Hệ thống Riot Games Data Dragon đã chính thức cập nhật dữ liệu phiên bản ${patch} (v${riotData.patchVersion}). Đây là bản cập nhật định hình lối chơi giao tranh quanh hang Rồng và Sâu Hư Không.
+
+---
+
+### 🌟 DANH SÁCH TƯỚNG META HOTTEST (TIER S+)
+1. **Xạ Thủ (Bot Lane):** Caitlyn & Jinx tiếp tục dẫn đầu tỷ lệ chọn với khả năng xả sát thương tầm xa cực kỳ an toàn.
+2. **Đường Giữa (Mid Lane):** Ahri & Viktor với khả năng kiểm soát thế lính và dọn đợt lính (Wave Clear) siêu tốc.
+3. **Đường Trên (Top Lane):** Aatrox & Ambessa thống trị các pha combat tổng nhờ lượng hút máu và mở giao tranh đột biến.
+
+---
+
+### 🎯 CHIẾN THUẬT MACRO THEN CHỐT
+- **Kiểm soát thế lính (Wave Management):** Áp dụng thế Slow Push trước thời điểm Sâu Hư Không hoặc Rồng xuất hiện 45 giây để ép đối thủ phải lựa chọn giữa lính và mục tiêu.
+- **Tầm nhìn sâu:** Cắm mắt kiểm soát tại ngã ba sông rừng đối phương để phát hiện sớm các hướng gank của rừng địch.`)
+        setNewLink('/gaming')
+        setNewLinkText(lang === 'VI' ? 'Xem cài đặt Pro LMHT' : 'View LoL Pro Settings')
+      } else if (topic === 'fco') {
+        setNewTag('COMMUNITY')
+        setIsPinned(false)
+        setNewTitle('FC Online: Hướng Dẫn Sơ Đồ 4-2-3-1 & Kỹ Thuật ZD Chuẩn Pro Player')
+        setNewSummary('Phân tích chi tiết cách vận hành sơ đồ 4-2-3-1 cân bằng công thủ toàn diện, mẹo sút xoáy ZD góc hẹp và cách chọn thẻ mùa quốc dân.')
+        setNewContent(`### ⚽ PHÂN TÍCH CHIẾN THUẬT FC ONLINE MÙA GIẢI MỚI
+Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" trong chế độ Xếp Hạng 1vs1 Giả Lập & Bàn Phím.
+
+---
+
+### 📋 THIẾT LẬP CHIẾN THUẬT ĐỘI HÌNH (TACTICS SETUP)
+- **Lối chơi:** Tốc độ 65, Chuyền 45 (Kiểm soát nhịp độ, cự ly đội hình hẹp).
+- **Tấn công:** Chuyền 70, Tạt bóng 45, Sút 75 (Tạo nhiều khoảng trống trước vòng cấm).
+- **Phòng thủ:** Gây áp lực 45, Quyết liệt 50, Biên độ 40 (Bọc lót chắc chắn, chống phản công chọc khe W).
+
+---
+
+### 👟 KỸ THUẬT SÚT XOÁY ZD & PHÒNG NGỰ C
+- Nhả nút chạy nhanh (E) trước khi bấm Z+D để cầu thủ lấy đà chuẩn xác.
+- Khi phòng ngự, giữ C để đối mặt và giữ vị trí, hạn chế lao vào xoạc bóng tạo lỗ hổng cho đối thủ chọc khe.`)
+        setNewLink('/gaming')
+        setNewLinkText(lang === 'VI' ? 'Xem chiến thuật FC Online' : 'View FC Online Tactics')
+      } else if (topic === 'pubgm') {
+        setNewTag('COMMUNITY')
+        setIsPinned(false)
+        setNewTitle('PUBG Mobile: Thông Số Độ Nhạy Con Quay (Gyroscope) Sấy M416 X3 Chuẩn Thi Đấu')
+        setNewSummary('Chia sẻ bảng mã code độ nhạy Gyroscope sấy không giật từ Gaming with meee, mẹo ghìm tâm cự ly 100m+ và cách cài đặt nút 4 ngón linh hoạt.')
+        setNewContent(`### 🎯 HƯỚNG DẪN CÀI ĐẶT ĐỘ NHẠY CON QUAY (GYROSCOPE)
+Độ nhạy con quay chuẩn giúp bạn làm chủ đường đạn khi sấy M416 x3 hoặc x4 ở cự ly trên 100 mét mà tâm không bị rung lắc.
+
+---
+
+### ⚙️ THÔNG SỐ ĐỘ NHẠY ĐỀ XUẤT (GYROSCOPE SENSITIVITY)
+- **Góc nhìn thứ 3 (Không ngắm):** 300% - 350%
+- **Red Dot / Holographic / Thước ngắm phụ:** 320%
+- **Ống ngắm 2x:** 300%
+- **Ống ngắm 3x (Chuẩn M416):** 240% - 260%
+- **Ống ngắm 4x:** 190% - 210%
+- **Ống ngắm 6x (Kéo về 3x):** 160% - 180%
+
+---
+
+### 💡 MẸO SẤY ỔN ĐỊNH CỦA GAMING WITH MEEE
+1. Luôn ngồi xuống (Crouch) trước khi mở sấy để giảm 30% độ giật ban đầu của súng.
+2. Lắp Phụ kiện: Báng súng M416 + Nòng giảm giật (Compensator) + Tay cầm tam giác góc (Angled Grip) để giảm độ giật ngang tối đa.`)
+        setNewLink('/gaming')
+        setNewLinkText(lang === 'VI' ? 'Xem cẩm nang PUBG Mobile' : 'View PUBG Mobile Guide')
+      }
+      setIsAiGenerating(false)
+    }, 350)
+  }
 
   // Fetch live updates & subscribe to Supabase Realtime WebSocket changes
   useEffect(() => {
@@ -481,9 +592,67 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
               </div>
             )}
 
-            <h3 className="font-display font-bold text-xl sm:text-2xl text-brand-text mb-5">
-              {t.modalTitle}
-            </h3>
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <h3 className="font-display font-bold text-xl sm:text-2xl text-brand-text">
+                {t.modalTitle}
+              </h3>
+            </div>
+
+            {/* AI AUTO-GENERATE ASSISTANT BAR */}
+            <div className="p-3.5 mb-5 rounded-2xl bg-gradient-to-r from-purple-950/60 via-brand-elevated to-cyan-950/60 border border-purple-500/30 shadow-lg">
+              <div className="flex items-center justify-between gap-2 mb-2">
+                <span className="text-[11px] font-mono font-bold text-purple-300 flex items-center gap-1.5 uppercase">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>{lang === 'VI' ? 'AI Tự Động Viết Bài Chuyên Sâu (1-Click)' : 'AI Auto-Generate Article (1-Click)'}</span>
+                </span>
+                <span className="text-[9px] font-mono px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30 font-semibold">
+                  LIVE META SYNC
+                </span>
+              </div>
+              <p className="text-[11px] text-brand-subtext font-light mb-3 leading-relaxed">
+                {lang === 'VI'
+                  ? 'Bấm vào 1 chủ đề dưới đây để AI tự động soạn bài phân tích, hướng dẫn trang bị & chiến thuật leo rank:'
+                  : 'Click any game topic below to automatically generate full pro analysis with builds and tactics:'}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  disabled={isAiGenerating}
+                  onClick={() => handleAiGenerate('tft')}
+                  className="px-2.5 py-1.5 rounded-xl bg-amber-500/15 hover:bg-amber-500/30 border border-amber-500/40 text-amber-300 text-[10px] font-mono font-bold transition-all flex items-center gap-1 shadow-sm disabled:opacity-50"
+                >
+                  <Wand2 className="w-3 h-3" />
+                  <span>🎲 ĐTCL Meta ({riotData.patchLabel})</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={isAiGenerating}
+                  onClick={() => handleAiGenerate('lol')}
+                  className="px-2.5 py-1.5 rounded-xl bg-cyan-500/15 hover:bg-cyan-500/30 border border-cyan-500/40 text-cyan-300 text-[10px] font-mono font-bold transition-all flex items-center gap-1 shadow-sm disabled:opacity-50"
+                >
+                  <Wand2 className="w-3 h-3" />
+                  <span>⚔️ LMHT Patch ({riotData.patchLabel})</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={isAiGenerating}
+                  onClick={() => handleAiGenerate('fco')}
+                  className="px-2.5 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/30 border border-emerald-500/40 text-emerald-300 text-[10px] font-mono font-bold transition-all flex items-center gap-1 shadow-sm disabled:opacity-50"
+                >
+                  <Wand2 className="w-3 h-3" />
+                  <span>⚽ FC Online 4-2-3-1</span>
+                </button>
+                <button
+                  type="button"
+                  disabled={isAiGenerating}
+                  onClick={() => handleAiGenerate('pubgm')}
+                  className="px-2.5 py-1.5 rounded-xl bg-pink-500/15 hover:bg-pink-500/30 border border-pink-500/40 text-pink-300 text-[10px] font-mono font-bold transition-all flex items-center gap-1 shadow-sm disabled:opacity-50"
+                >
+                  <Wand2 className="w-3 h-3" />
+                  <span>🎯 PUBG M. Gyro Ghìm Tâm</span>
+                </button>
+              </div>
+            </div>
 
             <form onSubmit={handleCreatePost} className="space-y-3.5 text-xs font-mono">
               <div>

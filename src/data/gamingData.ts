@@ -78,7 +78,7 @@ export const GAMING_DATA: GameItem[] = [
     name: 'Teamfight Tactics',
     nameVi: 'Đấu Trường Chân Lý (TFT)',
     nameEn: 'Teamfight Tactics (TFT)',
-    shortName: 'TFT // ĐTCL MÙA 13',
+    shortName: 'TFT // ĐTCL LIVE META',
     developer: 'Riot Games',
     genreVi: 'Cờ Nhân Phẩm / Auto Battler',
     genreEn: 'Auto Battler / Strategy',
@@ -87,32 +87,32 @@ export const GAMING_DATA: GameItem[] = [
     accentColor: 'text-amber-400',
     accentBorder: 'hover:border-amber-500/80',
     glowColor: 'bg-amber-500/10',
-    taglineVi: 'Meta Mùa 13: Bước Vào Arcane — Tối ưu Lõi Hextech & Chuỗi Thắng Fast 8',
-    taglineEn: 'Set 13: Into the Arcane — Hextech Augments, Fast-8 Tempo & S-Tier Boards',
+    taglineVi: 'Meta Chiến Thuật Mới Nhất — Tối ưu Lõi Nâng Cấp & Chuỗi Thắng Fast 8',
+    taglineEn: 'Live Ranked Meta — Optimal Augments, Fast-8 Tempo Curves & S-Tier Boards',
     descriptionVi:
-      'Đấu Trường Chân Lý Mùa 13 (Into the Arcane) đòi hỏi tư duy quản trị tài chính nhạy bén, khả năng thích ứng linh hoạt với Lõi Dị Thường và xoay bài nhanh quanh các chủ lực 4-5 tiền như Caitlyn, Silco, Sevika, Ambessa.',
+      'Đấu Trường Chân Lý mùa giải hiện tại đòi hỏi tư duy quản trị tài chính nhạy bén, khả năng thích ứng linh hoạt với Lõi Nâng Cấp và xoay bài nhanh quanh các chủ lực 4-5 tiền theo nhịp độ trận đấu.',
     descriptionEn:
-      'Set 13 (Into the Arcane) demands razor-sharp economy milestones, anomaly augment synergy, and fast pivoting around 4-cost and 5-cost carries.',
+      'Teamfight Tactics demands razor-sharp economy milestones, adaptive augment synergy, and fast pivoting around 4-cost and 5-cost carries according to lobby tempo.',
     featureBadges: [
-      { iconType: 'trophy', labelVi: '3 Đội hình Mùa 13 (Arcane)', labelEn: '3 Set 13 Meta Comps' },
+      { iconType: 'trophy', labelVi: 'Đội hình Meta S-Tier', labelEn: 'S-Tier Meta Comps' },
       { iconType: 'sliders', labelVi: 'Phím tắt Roll dưới 15s', labelEn: 'Sub-15s Roll Keybinds' },
       { iconType: 'book', labelVi: 'Quản trị Lợi tức 50 Vàng', labelEn: 'Compound Interest Eco' }
     ],
     tabTitles: {
-      tab1Vi: 'ĐỘI HÌNH META MÙA 13',
-      tab1En: 'SET 13 META COMPS',
+      tab1Vi: 'ĐỘI HÌNH META S-TIER',
+      tab1En: 'S-TIER META COMPS',
       tab2Vi: 'CÀI ĐẶT THAO TÁC ROLL',
       tab2En: 'PRO ROLL SETTINGS',
       tab3Vi: 'CẨM NANG KINH TẾ & LÕI',
       tab3En: 'ECONOMY & AUGMENT PLAYBOOK'
     },
-    patchVersion: 'Patch 14.24 // Mùa 13 (Into the Arcane)',
-    unitLabelVi: 'Tướng Arcane & Tộc Hệ cốt lõi:',
-    unitLabelEn: 'Core Champions & Arcane Synergies:',
+    patchVersion: 'Patch Mới Nhất // Live Meta',
+    unitLabelVi: 'Tướng & Tộc Hệ cốt lõi:',
+    unitLabelEn: 'Core Champions & Synergies:',
     itemsLabelVi: 'Trang bị chuẩn (BiS) & Lõi Nâng Cấp:',
     itemsLabelEn: 'BiS Items & Hextech Augments:',
-    compSectionTitleVi: '// CÁC ĐỘI HÌNH META MÙA 13 ĐẠT TỶ LỆ THẮNG CAO NHẤT',
-    compSectionTitleEn: '// HIGHEST WIN-RATE SET 13 ARCANE TEAM COMPS',
+    compSectionTitleVi: '// CÁC ĐỘI HÌNH META HIỆN TẠI ĐẠT TỶ LỆ THẮNG CAO NHẤT',
+    compSectionTitleEn: '// HIGHEST WIN-RATE LIVE META TEAM COMPS',
     metaComps: [
       {
         id: 'tft-comp-1',
@@ -230,7 +230,7 @@ export const GAMING_DATA: GameItem[] = [
       tab3Vi: 'CẨM NANG KIỂM SOÁT MACRO',
       tab3En: 'MACRO & WAVE PLAYBOOK'
     },
-    patchVersion: 'Mùa Giải 2026 // Patch 14.24',
+    patchVersion: 'Mùa Giải 2026 // Live Patch',
     unitLabelVi: 'Tướng chủ chốt theo vai trò đường:',
     unitLabelEn: 'Core Champions by Lane Role:',
     itemsLabelVi: 'Trang bị trấn phái & Phép bổ trợ:',
