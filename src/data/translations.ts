@@ -55,8 +55,8 @@ export const TRANSLATIONS = {
       formPin: 'Ghim lên đầu bảng tin',
       formSummary: 'Tóm tắt ngắn (1-2 câu) *',
       formContent: 'Nội dung chi tiết (Tùy chọn)',
-      formLink: 'Liên kết đính kèm (URL)',
-      formLinkText: 'Chữ trên nút liên kết',
+      formLink: 'Liên kết đính kèm (Tùy chọn)',
+      formLinkText: 'Chữ trên nút liên kết (Tùy chọn)',
       cancel: 'HỦY',
       submit: 'XÁC NHẬN ĐĂNG'
     },
@@ -188,8 +188,8 @@ export const TRANSLATIONS = {
       formPin: 'Pin to top of board',
       formSummary: 'Short Summary (1-2 sentences) *',
       formContent: 'Detailed Content (Optional)',
-      formLink: 'Attached Link (URL)',
-      formLinkText: 'Button Text',
+      formLink: 'Attached Link (Optional)',
+      formLinkText: 'Button Text (Optional)',
       cancel: 'CANCEL',
       submit: 'CONFIRM POST'
     },

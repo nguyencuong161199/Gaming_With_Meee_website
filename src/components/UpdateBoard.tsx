@@ -335,6 +335,13 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
     const formattedDate = `${String(now.getDate()).padStart(2, '0')}.${String(now.getMonth() + 1).padStart(2, '0')}.${now.getFullYear()}`
     const formattedTime = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
 
+    let processedLink = newLink.trim()
+    if (processedLink) {
+      if (!processedLink.startsWith('/') && !processedLink.startsWith('http://') && !processedLink.startsWith('https://')) {
+        processedLink = `https://${processedLink}`
+      }
+    }
+
     const newPost: UpdateItem = {
       id: `up-${Date.now()}`,
       date: formattedDate,
@@ -344,8 +351,8 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
       summary: newSummary.trim(),
       content: newContent.trim() || newSummary.trim(),
       pinned: isPinned,
-      link: newLink.trim() || undefined,
-      linkText: newLinkText.trim() || (newLink ? (lang === 'VI' ? 'Xem chi tiết' : 'View Link') : undefined),
+      link: processedLink || undefined,
+      linkText: newLinkText.trim() || (processedLink ? (lang === 'VI' ? 'Xem chi tiết' : 'View Link') : undefined),
       author: user?.name || 'Mr. Cuong (Edward)'
     }
 
@@ -723,21 +730,21 @@ Sơ đồ 4-2-3-1 tiếp tục chứng minh vị thế "vua chiến thuật" tro
                 <div>
                   <label className="block text-brand-subtext mb-1 uppercase">{t.formLink}</label>
                   <input
-                    type="url"
-                    placeholder="https://..."
+                    type="text"
+                    placeholder={lang === 'VI' ? 'Tùy chọn (để trống nếu không có)' : 'Optional (leave blank if none)'}
                     value={newLink}
                     onChange={(e) => setNewLink(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-xl bg-brand-elevated border border-brand-border text-brand-text"
+                    className="w-full px-3 py-1.5 rounded-xl bg-brand-elevated border border-brand-border text-brand-text text-xs focus:outline-none focus:border-brand-accent font-sans"
                   />
                 </div>
                 <div>
                   <label className="block text-brand-subtext mb-1 uppercase">{t.formLinkText}</label>
                   <input
                     type="text"
-                    placeholder={lang === 'VI' ? 'Chữ trên nút...' : 'Button label...'}
+                    placeholder={lang === 'VI' ? 'Tùy chọn (Chữ trên nút...)' : 'Optional (Button label...)'}
                     value={newLinkText}
                     onChange={(e) => setNewLinkText(e.target.value)}
-                    className="w-full px-3 py-1.5 rounded-xl bg-brand-elevated border border-brand-border text-brand-text"
+                    className="w-full px-3 py-1.5 rounded-xl bg-brand-elevated border border-brand-border text-brand-text text-xs focus:outline-none focus:border-brand-accent font-sans"
                   />
                 </div>
               </div>
