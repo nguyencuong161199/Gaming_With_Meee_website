@@ -178,7 +178,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ lang, onBack }) => {
                   e.currentTarget.src = '/assets/nmc-gwm-logo.jpeg'
                 }}
                 alt="Nguyễn Mạnh Cường (Edward) - Founder & Creator NMC Corp"
-                className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-500"
+                className="w-full h-full object-cover object-top scale-100 group-hover:scale-105 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-3">
                 <span className="text-[10px] font-mono text-brand-accent font-bold tracking-widest uppercase">
