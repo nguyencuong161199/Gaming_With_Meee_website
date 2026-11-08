@@ -1,7 +1,7 @@
 import React, { memo } from 'react'
 import { SocialLinkItem } from '../types/content'
 import { Language, TRANSLATIONS } from '../data/translations'
-import { Mail, ArrowUpRight, MessageSquare, Video, Instagram, Phone } from 'lucide-react'
+import { Mail, ArrowUpRight, MessageSquare, Video, Instagram, Phone, Youtube } from 'lucide-react'
 
 interface SocialLinksProps {
   links: SocialLinkItem[]
@@ -13,6 +13,8 @@ export const SocialLinks: React.FC<SocialLinksProps> = memo(({ links, lang = 'EN
 
   const getSocialIcon = (platform: SocialLinkItem['platform']) => {
     switch (platform) {
+      case 'YouTube':
+        return <Youtube className="w-5 h-5 text-red-500" />
       case 'TikTok':
         return <Video className="w-5 h-5 text-sky-400" />
       case 'Instagram':
@@ -65,7 +67,13 @@ export const SocialLinks: React.FC<SocialLinksProps> = memo(({ links, lang = 'EN
 
             <div className="mt-4 pt-2.5 border-t border-brand-border/40 flex items-center justify-between text-[11px] font-mono text-brand-accent font-semibold">
               <span>
-                {item.platform === 'Phone' ? t.callNow : item.platform === 'Email' ? t.sendMail : t.visit}
+                {item.platform === 'Phone'
+                  ? t.callNow
+                  : item.platform === 'Email'
+                  ? t.sendMail
+                  : item.platform === 'YouTube'
+                  ? (lang === 'VI' ? 'XEM KÊNH' : 'SUBSCRIBE')
+                  : t.visit}
               </span>
               <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </div>

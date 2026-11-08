@@ -25,13 +25,13 @@ export const SOCIAL_LINKS: SocialLinkItem[] = [
     descriptionEn: "Official Facebook community page"
   },
   {
-    platform: "Instagram",
-    label: "Instagram",
-    handle: "@_gamingwithmeee",
-    url: "https://www.instagram.com/_gamingwithmeee/",
-    description: "Hình ảnh hậu trường & video ngắn",
-    descriptionVi: "Hình ảnh hậu trường & video ngắn",
-    descriptionEn: "Visual stories & behind-the-scenes"
+    platform: "YouTube",
+    label: "YouTube",
+    handle: "@gamingwithmeee16",
+    url: "https://www.youtube.com/@gamingwithmeee16",
+    description: "Video phân tích meta & hướng dẫn chuyên sâu",
+    descriptionVi: "Video phân tích meta & hướng dẫn chuyên sâu",
+    descriptionEn: "In-depth meta breakdowns & gaming guides"
   },
   {
     platform: "TikTok",
@@ -43,6 +43,15 @@ export const SOCIAL_LINKS: SocialLinkItem[] = [
     descriptionEn: "Short gaming clips & highlights"
   },
   {
+    platform: "Instagram",
+    label: "Instagram",
+    handle: "@_gamingwithmeee",
+    url: "https://www.instagram.com/_gamingwithmeee/",
+    description: "Hình ảnh hậu trường & video ngắn",
+    descriptionVi: "Hình ảnh hậu trường & video ngắn",
+    descriptionEn: "Visual stories & behind-the-scenes"
+  },
+  {
     platform: "Email",
     label: "Email",
     handle: "nmc.corp16@gmail.com",
@@ -50,14 +59,5 @@ export const SOCIAL_LINKS: SocialLinkItem[] = [
     description: "Hợp tác kinh doanh & truyền thông",
     descriptionVi: "Hợp tác kinh doanh & truyền thông",
     descriptionEn: "Direct email inquiry & partnership"
-  },
-  {
-    platform: "Phone",
-    label: "Hotline",
-    handle: "0337 468 883",
-    url: "tel:0337468883",
-    description: "Mr. Cường (Hỗ trợ 24/7)",
-    descriptionVi: "Mr. Cường (Hỗ trợ 24/7)",
-    descriptionEn: "Mr. Cuong (24/7 Direct line)"
   }
 ]
