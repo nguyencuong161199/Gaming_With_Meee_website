@@ -16,7 +16,9 @@ import {
   Mail,
   Flame,
   Award,
-  Video
+  Video,
+  Activity,
+  ShieldCheck
 } from 'lucide-react'
 
 interface HomePageProps {
@@ -41,8 +43,22 @@ export const HomePage: React.FC<HomePageProps> = memo(({
         <div className="absolute inset-0 grid-backdrop opacity-20" />
       </div>
 
-      {/* 1. HERO SECTION (COMPACT & HIGH CONTRAST, ABOVE THE FOLD) */}
-      <section className="min-h-[75vh] md:min-h-[82vh] flex flex-col justify-center items-center text-center px-4 sm:px-8 relative z-10 py-6 sm:py-10">
+      {/* 1. HERO SECTION (DYNAMIC KEY VISUAL WITH AMBIENT MOTION & COMMAND DECK) */}
+      <section className="min-h-[75vh] md:min-h-[82vh] flex flex-col justify-center items-center text-center px-4 sm:px-8 relative z-10 py-6 sm:py-10 overflow-hidden">
+        {/* Ambient Video Motion Key Visual (Muted, Feathered, Non-blocking) */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden z-0">
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover opacity-[0.16] mix-blend-screen filter saturate-150 scale-105"
+            src="/assets/intro-gwm.mp4"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#020617]/90 via-[#020617]/60 to-[#020617]" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_20%,#020617_80%)]" />
+        </div>
+
         {/* Floating Replay Intro Button */}
         {onReplayIntro && (
           <div className="absolute top-2 right-4 sm:right-8 z-20">
@@ -59,15 +75,64 @@ export const HomePage: React.FC<HomePageProps> = memo(({
           </div>
         )}
 
-        {/* High-Contrast Hero Brand Emblem */}
-        <div className="relative mb-4 group">
-          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-brand-accent via-cyan-400 to-amber-400 opacity-70 blur-md group-hover:opacity-100 transition-opacity" />
-          <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-2xl overflow-hidden border-2 border-brand-accent/80 bg-slate-950 shadow-2xl flex items-center justify-center">
-            <img
-              src="/assets/nmc-gwm-logo.jpeg"
-              alt="Gaming With Meee & NMC Corp Logo"
-              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-            />
+        {/* High-Contrast Hero Key Visual Command Deck */}
+        <div className="relative mb-5 z-10 flex items-center justify-center gap-4 sm:gap-6">
+          {/* Left Satellite Badge: Esports Meta Radar (Visible on lg+) */}
+          <div className="hidden lg:flex flex-col items-end gap-1 p-3 rounded-2xl bg-brand-secondary/80 border border-brand-border/70 backdrop-blur-md shadow-xl text-right hover:border-purple-500/50 transition-colors">
+            <div className="flex items-center gap-2 text-[10px] font-mono text-purple-400 font-bold tracking-wider uppercase">
+              <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+              <Activity className="w-3.5 h-3.5 text-purple-400" />
+              <span>LIVE ESPORTS META</span>
+            </div>
+            <div className="text-[11px] font-mono text-brand-text font-semibold">
+              TFT S13 • LOL S14 • FCO
+            </div>
+            <div className="text-[9px] font-mono text-brand-muted">
+              S-TIER COMPS &amp; MACRO
+            </div>
+          </div>
+
+          {/* Central Cybernetic Emblem Frame */}
+          <div className="relative group">
+            {/* Outer Animated Glow Ring */}
+            <div className="absolute -inset-2 rounded-3xl bg-gradient-to-r from-brand-accent via-cyan-400 to-amber-400 opacity-60 blur-xl group-hover:opacity-100 transition-opacity duration-700" />
+            
+            {/* Tech Corner HUD Brackets */}
+            <div className="absolute -top-2 -left-2 w-4 h-4 border-t-2 border-l-2 border-cyan-400 z-20 pointer-events-none" />
+            <div className="absolute -top-2 -right-2 w-4 h-4 border-t-2 border-r-2 border-amber-400 z-20 pointer-events-none" />
+            <div className="absolute -bottom-2 -left-2 w-4 h-4 border-b-2 border-l-2 border-cyan-400 z-20 pointer-events-none" />
+            <div className="absolute -bottom-2 -right-2 w-4 h-4 border-b-2 border-r-2 border-amber-400 z-20 pointer-events-none" />
+
+            <div className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 rounded-2xl overflow-hidden border-2 border-brand-accent/90 bg-slate-950 shadow-2xl flex items-center justify-center">
+              <img
+                src="/assets/nmc-gwm-logo.jpeg"
+                alt="Gaming With Meee & NMC Corp Logo"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-slate-950/20 to-transparent flex flex-col justify-end p-2.5">
+                <span className="text-[10px] font-mono text-cyan-300 font-bold tracking-widest uppercase">
+                  GAMING WITH MEEE
+                </span>
+                <span className="text-[8px] font-mono text-brand-muted">
+                  NMC CORP &bull; EST. 2024
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Satellite Badge: Academy & AI Telemetry (Visible on lg+) */}
+          <div className="hidden lg:flex flex-col items-start gap-1 p-3 rounded-2xl bg-brand-secondary/80 border border-brand-border/70 backdrop-blur-md shadow-xl text-left hover:border-emerald-500/50 transition-colors">
+            <div className="flex items-center gap-2 text-[10px] font-mono text-emerald-400 font-bold tracking-wider uppercase">
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>ACADEMY &amp; AI</span>
+            </div>
+            <div className="text-[11px] font-mono text-brand-text font-semibold">
+              PSM I 97.5% • CCAR-F
+            </div>
+            <div className="text-[9px] font-mono text-brand-muted">
+              {lang === 'VI' ? '1.450+ LƯỢT THI XÁC MINH' : '1,450+ VERIFIED EXAMS'}
+            </div>
           </div>
         </div>
 
@@ -336,14 +401,14 @@ export const HomePage: React.FC<HomePageProps> = memo(({
               </h3>
               <p className="text-sm text-brand-subtext font-light leading-relaxed mb-6">
                 {lang === 'VI'
-                  ? 'Tìm hiểu về tác giả Nguyễn Cường, thương hiệu mẹ NMC Corp và triết lý: "Play. Explore. Create." Kết hợp giữa sáng tạo nội dung gaming, công nghệ AI và phân tích tài chính.'
-                  : 'Learn about creator Nguyen Cuong, parent brand NMC Corp, and the philosophy: "Play. Explore. Create." Merging gaming culture with synthetic intelligence.'}
+                  ? 'Tìm hiểu về tác giả Nguyễn Mạnh Cường, thương hiệu mẹ NMC Corp và triết lý: "Play. Explore. Create." Kết hợp giữa sáng tạo nội dung gaming, công nghệ AI và phân tích tài chính.'
+                  : 'Learn about creator Nguyen Manh Cuong, parent brand NMC Corp, and the philosophy: "Play. Explore. Create." Merging gaming culture with synthetic intelligence.'}
               </p>
 
               {/* Badges Matrix */}
               <div className="flex flex-wrap gap-2 mb-6">
                 <span className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border text-[11px] font-mono text-brand-subtext">
-                  {lang === 'VI' ? '👤 Tác giả: Nguyễn Cường' : '👤 Creator: Nguyen Cuong'}
+                  {lang === 'VI' ? '👤 Tác giả: Nguyễn Mạnh Cường' : '👤 Creator: Nguyen Manh Cuong'}
                 </span>
                 <span className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border text-[11px] font-mono text-brand-subtext">
                   🏢 NMC Corp

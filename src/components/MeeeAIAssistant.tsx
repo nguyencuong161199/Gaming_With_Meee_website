@@ -46,7 +46,7 @@ export const MeeeAIAssistant: React.FC<MeeeAIAssistantProps> = ({
 
   const quickPrompts: Record<AgentMode, string[]> = {
     general: [
-      lang === 'VI' ? 'NMC Corp & Nguyễn Cường là ai?' : 'Who is NMC Corp & Nguyen Cuong?',
+      lang === 'VI' ? 'NMC Corp & Nguyễn Mạnh Cường là ai?' : 'Who is NMC Corp & Nguyen Manh Cuong?',
       lang === 'VI' ? 'Website này có những tính năng gì?' : 'What features does this site offer?',
       lang === 'VI' ? 'Cách liên hệ hợp tác với tác giả?' : 'How to contact the creator?'
     ],
@@ -122,8 +122,8 @@ export const MeeeAIAssistant: React.FC<MeeeAIAssistantProps> = ({
       } else {
         if (lower.includes('cường') || lower.includes('nmc') || lower.includes('who')) {
           aiResponseText = lang === 'VI'
-            ? '🏢 **NMC Corp & Nguyễn Mạnh Cường (Edward)**: Nguyễn Mạnh Cường (thường gọi là Nguyễn Cường) là nhà sáng tạo nội dung, lập trình viên và người sáng lập thương hiệu NMC Corp & Gaming with meee. Với nền tảng từ phân tích tài chính, kinh doanh số đến phát triển ứng dụng đo sức khỏe, anh xây dựng website này như một không gian chia sẻ tri thức công nghệ và giải trí số.'
-            : '🏢 **About NMC Corp & Nguyen Manh Cuong (Edward)**: Nguyen Manh Cuong (also known as Nguyen Cuong) is the creator, product builder, and founder of NMC Corp & Gaming with meee. Combining backgrounds in financial analysis, tech app development, and creative media, this platform is his personal digital venture studio.'
+            ? '🏢 **NMC Corp & Nguyễn Mạnh Cường (Edward)**: Nguyễn Mạnh Cường (Edward) là nhà sáng tạo nội dung, lập trình viên và người sáng lập thương hiệu NMC Corp & Gaming with meee. Với nền tảng từ phân tích tài chính, kinh doanh số đến phát triển ứng dụng đo sức khỏe, anh xây dựng website này như một không gian chia sẻ tri thức công nghệ và giải trí số.'
+            : '🏢 **About NMC Corp & Nguyen Manh Cuong (Edward)**: Nguyen Manh Cuong (Edward) is the creator, product builder, and founder of NMC Corp & Gaming with meee. Combining backgrounds in financial analysis, tech app development, and creative media, this platform is his personal digital venture studio.'
         } else {
           aiResponseText = lang === 'VI'
             ? '💡 Cảm ơn bạn đã trò chuyện! Tôi có thể giúp bạn: 1. Ôn thi thử chứng chỉ (PSM I / CCAR-F), 2. Tư vấn mẹo chơi game (TFT / LOL / PUBG), hoặc 3. Xem danh sách sản phẩm tại NMC Store. Bạn có thể chọn chế độ ở các nút phía trên nhé!'

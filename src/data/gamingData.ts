@@ -287,6 +287,27 @@ export const GAMING_DATA: GameItem[] = [
         value: 'Gán phím ` (Tilde) hoặc nút cạnh chuột',
         noteVi: 'Ngăn việc đánh nhầm vào trụ hoặc lính trong các pha băng trụ quyết định.',
         noteEn: 'Prevents misclicking minions or turrets during tower dives.'
+      },
+      {
+        nameVi: 'Tấn Công Di Chuyển (Player Attack Move Click)',
+        nameEn: 'Player Attack Move Click (A-Click Kiting)',
+        value: 'Gán phím A hoặc Shift + Chuột phải',
+        noteVi: 'Bắt buộc cho Xạ thủ (ADC) để thả diều tối đa tầm bắn mà không bao giờ vô tình bước hụt về phía đối thủ.',
+        noteEn: 'Essential for marksmen to kite at max range without accidental misclicks toward enemies.'
+      },
+      {
+        nameVi: 'Tỷ lệ Bản đồ nhỏ & Giao diện (Minimap & HUD Scale)',
+        nameEn: 'Competitive Minimap & HUD Scaling',
+        value: 'Minimap: 100% / HUD: 30% - 35%',
+        noteVi: 'Mở rộng tối đa kích thước radar bản đồ nhỏ để đọc hướng di chuyển đối phương, đồng thời thu gọn HUD giải phóng góc nhìn.',
+        noteEn: 'Max out minimap to spot enemy rotations early while reducing HUD size to declutter fight vision.'
+      },
+      {
+        nameVi: 'Điều khiển Camera Linh Hoạt (Unlocked Camera & Spacebar)',
+        nameEn: 'Unlocked Camera & Spacebar Centering',
+        value: 'Tắt Camera Lock (Phím Y), dùng Space để kéo tâm',
+        noteVi: 'Góc nhìn tự do giúp quan sát góc khuất sương mù, thế lính và kỹ năng định hướng tầm xa trước khi giao tranh.',
+        noteEn: 'Unlocked camera allows scouting fog-of-war and long-range skillshots before committing.'
       }
     ],
     guides: [
@@ -298,14 +319,50 @@ export const GAMING_DATA: GameItem[] = [
         summaryVi: 'Kiểm soát thế lính là chìa khóa định đoạt lượng vàng, kinh nghiệm và thời điểm biến về hoàn hảo.',
         summaryEn: 'Controlling minion wave states dictates lane economy, XP advantages, and perfect recall timers.',
         keyPointsVi: [
-          'Freeze: Giữ 3-4 lính đánh xa đối phương ngoài tầm trụ mình để giữ thế lính an toàn',
+          'Freeze: Giữ 3-4 lính đánh xa đối phương ngoài tầm trụ mình để giữ thế lính an toàn và cô lập đối thủ',
           'Slow Push: Chỉ last-hit lính đánh xa, để đợt lính của bạn dồn thành 2-3 đợt lính lớn trước khi ập vào trụ',
-          'Hard Push: Xả toàn bộ kỹ năng dọn lính thật nhanh để roam hỗ trợ rừng hoặc biến về mua đồ'
+          'Hard Push: Xả toàn bộ kỹ năng dọn lính thật nhanh để roam hỗ trợ rừng hoặc biến về mua đồ tự do'
         ],
         keyPointsEn: [
-          'Freeze: Hold 3-4 enemy ranged minions outside your turret range to starve opponent',
+          'Freeze: Hold 3-4 enemy ranged minions outside your turret range to starve opponent and deny XP',
           'Slow Push: Only last-hit casters to accumulate a massive 2-3 wave crash into enemy tower',
           'Hard Shove: Clear wave with abilities instantly to roam or execute free base timings'
+        ]
+      },
+      {
+        id: 'lol-g2',
+        titleVi: 'Chiến thuật Cắm Mắt Sâu & Kiểm Soát Tầm Nhìn Hang Rồng / Baron',
+        titleEn: 'Deep Vision Control & Neutral Objective Setups (Dragon & Baron)',
+        tag: 'TẦM NHÌN & MACRO',
+        summaryVi: 'Thiết lập mạng lưới tầm nhìn trước thời điểm mục tiêu xuất hiện 45 giây để chặn hoàn toàn góc dịch chuyển và mai phục.',
+        summaryEn: 'Establish vision grids 45 seconds prior to objective spawn to neutralize flanks and secure setup positions.',
+        keyPointsVi: [
+          'Chu kỳ 45s: Biến về mua Mắt Kiểm Soát (Pink Ward) và đổi Máy Quét 1 phút trước khi Rồng/Baron xuất hiện',
+          'Tam giác Mắt Sâu: Cắm mắt tại ngã ba bùa xanh/đỏ đối thủ để phát hiện sớm hướng di chuyển của Rừng và Mid',
+          'Kiểm soát Hạt Thông Nổ & Cua Kỳ Cục: Phá hạt thông nổ để chặn các pha mở combat bất ngờ từ vách tường'
+        ],
+        keyPointsEn: [
+          '45s Objective Timer: Recall for Control Wards and Oracle Lens 60 seconds before Dragon/Baron spawns',
+          'Deep Ward Triangle: Plant vision in enemy jungle choke points to track jungle and mid rotations',
+          'Clear Blast Cones & Scuttle: Pop blast cones to deny surprise flank engages over pit walls'
+        ]
+      },
+      {
+        id: 'lol-g3',
+        titleVi: 'Lộ Trình Rừng Hiện Đại & Nguyên Tắc Can Thiệp Đường (Gank Timing Windows)',
+        titleEn: 'Modern Jungle Pathing & Gank Timing Windows',
+        tag: 'CHIẾN THUẬT RỪNG',
+        summaryVi: 'Tối ưu hóa vòng rừng full clear 3:15 phút tranh chấp Cua Kỳ Cục và nhận diện điều kiện thắng (win condition) trước khi gank.',
+        summaryEn: 'Master 3:15 full clear into Scuttle Crab contention and identify lane priority win conditions before committing.',
+        keyPointsVi: [
+          'Full Clear 3:15: Duy trì bãi quái hồi liên tục để đảm bảo lượng vàng và chạm mốc cấp 6 sớm nhất bản đồ',
+          'Ưu tiên Đường Thắng: Hỗ trợ đường có khống chế cứng và thế lính thuận lợi thay vì cố cứu đường thua sâu',
+          'Phản Gank (Counter-Gank): Đọc hướng đi của Rừng đối phương dựa trên bùa khởi đầu để đón đầu pha can thiệp'
+        ],
+        keyPointsEn: [
+          '3:15 Full Clear: Keep camps on respawn timer to maximize XP/gold and rush key level 6 power spikes',
+          'Play to Winning Lanes: Dive and dive-protect lanes with CC rather than salvaging heavily lost lanes',
+          'Counter-Ganking: Anticipate enemy jungler quadrant based on starting buff to turn 2v2/3v3 skirmishes'
         ]
       }
     ]

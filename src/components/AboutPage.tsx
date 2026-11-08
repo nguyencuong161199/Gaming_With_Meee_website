@@ -172,8 +172,12 @@ export const AboutPage: React.FC<AboutPageProps> = ({ lang, onBack }) => {
           <div className="relative group shrink-0">
             <div className="w-40 h-40 sm:w-48 sm:h-48 rounded-2xl overflow-hidden border-2 border-brand-accent/50 bg-slate-950 shadow-2xl shadow-cyan-950/40 relative">
               <img
-                src="/assets/nmc-gwm-logo.jpeg"
-                alt="Gaming with meee & NMC Corp Brand Crest"
+                src="/assets/founder-portrait.jpg"
+                onError={(e) => {
+                  e.currentTarget.onerror = null
+                  e.currentTarget.src = '/assets/nmc-gwm-logo.jpeg'
+                }}
+                alt="Nguyễn Mạnh Cường (Edward) - Founder & Creator NMC Corp"
                 className="w-full h-full object-cover scale-105 group-hover:scale-110 transition-transform duration-500"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent flex flex-col justify-end p-3">
@@ -184,7 +188,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ lang, onBack }) => {
                   NGUYỄN MẠNH CƯỜNG
                 </span>
                 <span className="text-[9px] font-mono text-emerald-400">
-                  ● VERIFIED NMC CORP
+                  {lang === 'VI' ? '● ĐÃ XÁC MINH // NMC CORP' : '● VERIFIED NMC CORP'}
                 </span>
               </div>
             </div>
@@ -202,7 +206,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ lang, onBack }) => {
               {BRAND.name}
             </h2>
             <p className="font-mono text-xs text-brand-muted uppercase tracking-wider mb-4">
-              {BRAND.attribution} &bull; {lang === 'VI' ? 'Tác giả & Chiến lược gia: Nguyễn Cường' : 'Creator & Lead Strategist: Nguyen Cuong'}
+              {BRAND.attribution} &bull; {lang === 'VI' ? 'Tác giả & Chiến lược gia: Nguyễn Mạnh Cường' : 'Creator & Lead Strategist: Nguyen Manh Cuong'}
             </p>
             <blockquote className="text-sm sm:text-base text-brand-subtext italic leading-relaxed border-l-2 border-brand-accent/60 pl-4 my-3 text-left">
               {t.quote}
@@ -240,7 +244,7 @@ export const AboutPage: React.FC<AboutPageProps> = ({ lang, onBack }) => {
                     <Icon className={`w-4 h-4 ${s.accent}`} />
                   </div>
                   <span className="text-[10px] font-mono text-emerald-400 font-bold uppercase tracking-wider">
-                    VERIFIED
+                    {lang === 'VI' ? 'ĐÃ XÁC MINH' : 'VERIFIED'}
                   </span>
                 </div>
                 <div>

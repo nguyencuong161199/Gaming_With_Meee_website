@@ -4,7 +4,7 @@ export const BRAND = {
   name: "Gaming with meee",
   parentBrand: "NMC Corp",
   founder: "Nguyễn Mạnh Cường (Edward)",
-  founderShort: "Nguyễn Cường",
+  founderShort: "Nguyễn Mạnh Cường",
   attribution: "A creative brand by NMC Corp",
   tagline: "PLAY. EXPLORE. CREATE.",
   headline: "WELCOME TO MY WORLD.",
