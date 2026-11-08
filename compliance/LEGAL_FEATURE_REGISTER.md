@@ -25,14 +25,15 @@ Operator legal identity: **Cá nhân - Nguyễn Mạnh Cường (Edward)** (Đã
 | 8 | **Operator Identity & "NMC Corp" Representation** | `src/components/Footer.tsx`, `src/components/AboutPage.tsx`, `src/components/LegalModal.tsx` | Representation of creator brand vs registered enterprise. | `DOMAIN_AND_OPERATOR_DISCLOSURE` | **CLEARED_FOR_ENGINEERING** | ✅ **Remediated**: Owner confirmed personal creator brand. Footer & About updated to: *"Thương hiệu sáng tạo cá nhân bởi Nguyễn Mạnh Cường (Edward)"* with direct contact info (Phone, Email). No false corporate entity claims. |
 | 9 | **Storage & Client State Keys** | `src/hooks/useLocalStorage.ts`, `src/components/LegalModal.tsx` | `gwm_lang`, `gwm_intro_seen`, `gwm_auth_user`, `nmc_academy_attempts`. | `COOKIES_TRACKING` | **CLEARED_FOR_ENGINEERING** | ✅ **Remediated**: All functional storage tokens documented in Privacy Policy Tab 1. |
 | 10 | **MEEE AI Assistant** | `src/components/MeeeAIAssistant.tsx`, `src/components/LegalModal.tsx` | Simulated conversational chatbot. | `CONTENT_PUBLISHING`, `SECURITY` | **CLEARED_FOR_ENGINEERING** | ✅ **Remediated**: Educational advisory disclaimer published in Terms of Service Tab 2. |
+| 11 | **Realtime Update Board & Riot Data Dragon Integration** | `src/components/UpdateBoard.tsx`, `src/hooks/useRiotDataDragon.ts`, `src/components/GamingPage.tsx` | Admin-published patch & community announcements; public game metadata from Riot CDN (`ddragon.leagueoflegends.com`). No personal user data collected. | `CONTENT_PUBLISHING`, `COPYRIGHT_IP` | **CLEARED_FOR_ENGINEERING** | ✅ **Verified**: Read-only public API; authoring restricted strictly to authenticated admin; Riot Games trademark disclaimer already present in Tab 3 of `LegalModal.tsx`. |
 
 ---
 
 ## Release Gate Summary
 
-- **Total features audited:** 10
+- **Total features audited:** 11
 - **Status BLOCKED:** 0 (All 2 P0 blockers successfully remediated)
-- **Status CLEARED_FOR_ENGINEERING:** 9
+- **Status CLEARED_FOR_ENGINEERING:** 10
 - **Status REVIEW_REQUIRED:** 1 (Intro video audio licensing check by owner)
 
 **RELEASE DECISION: CLEARED FOR STAGING / DEMO DEPLOYMENT**

@@ -96,8 +96,24 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
       // ignore
     }
 
-    // Only show toast notification if explicitly requested (e.g. fresh OAuth login)
-    if (showToast) {
+    // Only show toast notification once per login session (prevent recurring toast on tab switch/refocus)
+    const TOAST_SESSION_KEY = 'gwm_login_toast_shown'
+    let alreadyShown = false
+    try {
+      alreadyShown =
+        sessionStorage.getItem(TOAST_SESSION_KEY) === userObj.id ||
+        localStorage.getItem(TOAST_SESSION_KEY) === userObj.id
+    } catch {
+      // ignore
+    }
+
+    if (showToast && !alreadyShown) {
+      try {
+        sessionStorage.setItem(TOAST_SESSION_KEY, userObj.id)
+        localStorage.setItem(TOAST_SESSION_KEY, userObj.id)
+      } catch {
+        // ignore
+      }
       setAuthNotification({
         type: 'success',
         message: `Đăng nhập thành công! Chào mừng ${displayName} (${role === 'admin' ? 'QUẢN TRỊ VIÊN' : 'THÀNH VIÊN'}).`
@@ -284,6 +300,8 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
     setUser(null)
     try {
       localStorage.removeItem(STORAGE_KEY)
+      sessionStorage.removeItem('gwm_login_toast_shown')
+      localStorage.removeItem('gwm_login_toast_shown')
     } catch {
       // ignore
     }

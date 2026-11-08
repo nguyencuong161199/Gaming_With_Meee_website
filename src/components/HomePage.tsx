@@ -5,6 +5,9 @@ import { SectionHeading } from './SectionHeading'
 import { SocialLinks } from './SocialLinks'
 import { Footer } from './Footer'
 import { LegalTab } from './LegalModal'
+import { UpdateBoard } from './UpdateBoard'
+import { UpdateItem } from '../types/content'
+import { useRiotDataDragon } from '../hooks/useRiotDataDragon'
 import {
   Sparkles,
   Gamepad2,
@@ -27,15 +30,20 @@ interface HomePageProps {
   onNavigateView: (view: 'about' | 'academy' | 'gaming' | 'store' | 'connect') => void
   onReplayIntro?: () => void
   onOpenLegal?: (tab?: LegalTab) => void
+  onSelectUpdate?: (update: UpdateItem) => void
+  onRequireLogin?: () => void
 }
 
 export const HomePage: React.FC<HomePageProps> = memo(({
   lang,
   onNavigateView,
   onReplayIntro,
-  onOpenLegal
+  onOpenLegal,
+  onSelectUpdate,
+  onRequireLogin
 }) => {
   const t = TRANSLATIONS[lang]
+  const riotData = useRiotDataDragon()
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-accent selection:text-white relative overflow-x-hidden pt-16">
@@ -446,7 +454,7 @@ export const HomePage: React.FC<HomePageProps> = memo(({
         />
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-          {/* Card 1: Meta Hotfix */}
+          {/* Card 1: Meta Hotfix Live Riot Sync */}
           <div
             onClick={() => onNavigateView('gaming')}
             className="group rounded-3xl bg-brand-secondary border border-brand-border hover:border-amber-500/80 p-6 transition-all duration-300 cursor-pointer shadow-xl hover:-translate-y-1 flex flex-col justify-between"
@@ -455,7 +463,8 @@ export const HomePage: React.FC<HomePageProps> = memo(({
               <div className="flex items-center justify-between gap-2 mb-3">
                 <span className="px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
                   <Flame className="w-3.5 h-3.5" />
-                  <span>HOTFIX TFT MÙA 13</span>
+                  <span>RIOT LIVE // {riotData.patchLabel}</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 </span>
                 <span className="text-[10px] font-mono text-brand-muted">
                   {lang === 'VI' ? 'HÔM NAY' : 'TODAY'}
@@ -464,13 +473,13 @@ export const HomePage: React.FC<HomePageProps> = memo(({
 
               <h4 className="font-display font-bold text-lg text-brand-text group-hover:text-amber-400 transition-colors mb-2 leading-snug">
                 {lang === 'VI'
-                  ? '6 Cảnh Binh & Caitlyn Siêu Gánh Kèo Thống Trị Meta'
-                  : '6 Enforcer Caitlyn Dominates Set 13 Ranked Meta'}
+                  ? `Meta ${riotData.patchLabel}: Caitlyn & Cảnh Binh Siêu Gánh Kèo`
+                  : `Meta ${riotData.patchLabel}: Caitlyn & Enforcer S-Tier Setup`}
               </h4>
               <p className="text-xs text-brand-subtext font-light leading-relaxed mb-4">
                 {lang === 'VI'
-                  ? 'Bản cập nhật 14.24 tăng cường mốc 6 Cảnh Binh, giúp tỷ lệ vào Top 4 của Caitlyn đạt 68.2% ở bậc Thách Đấu. Đã cập nhật cẩm nang Fast 8.'
-                  : 'Patch 14.24 buffs Enforcer thresholds pushing Caitlyn top-4 rate to 68.2% in Challenger lobbies. Fast-8 tempo guide updated.'}
+                  ? `Hệ thống Data Dragon tự động đồng bộ bản cập nhật ${riotData.patchLabel} (v${riotData.patchVersion}). Tỷ lệ thắng Caitlyn đạt 68.2% ở bậc Thách Đấu. Đã cập nhật cẩm nang Fast 8.`
+                  : `Riot Data Dragon auto-syncs live patch ${riotData.patchLabel} (v${riotData.patchVersion}). Caitlyn top-4 rate at 68.2% in Challenger lobbies. Fast-8 tempo playbook refreshed.`}
               </p>
             </div>
 
@@ -552,10 +561,19 @@ export const HomePage: React.FC<HomePageProps> = memo(({
         </div>
       </section>
 
+      {/* 3. REALTIME UPDATE BOARD SECTION (SUPABASE CLOUD & WEBSOCKET) */}
+      <div className="border-t border-brand-border/50">
+        <UpdateBoard
+          lang={lang}
+          onSelectUpdate={onSelectUpdate}
+          onRequireLogin={onRequireLogin}
+        />
+      </div>
+
       {/* 4. SECTION: KẾT NỐI & LIÊN HỆ */}
       <section id="connect" className="max-w-6xl mx-auto px-5 sm:px-8 py-16 relative z-10 border-t border-brand-border/50">
         <SectionHeading
-          number="03"
+          number="04"
           tag={t.connect.tag}
           title={t.connect.title}
           subtitle={t.connect.subtitle}

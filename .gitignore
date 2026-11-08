@@ -24,3 +24,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# antigravity rules
+.agent/rules/vietnam-legal-compliance.md

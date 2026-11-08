@@ -156,5 +156,7 @@
   - *Action:* Documented user rights to access, export, or request deletion of account and exam scores via `nmc.corp16@gmail.com`.
 - **IP & Trademark Disclaimers (Law 07/2022/QH15):**
   - *Action:* Published fair-use disclaimers for Riot Games (LoL, TFT), EA/Nexon (FC Online), KRAFTON (PUBG Mobile), and independent educational status for Scrum.org (PSM I™).
+- **Realtime Board & Riot Data Dragon Integration (2026-11-08):**
+  - *Action:* Integrated live Riot Data Dragon public CORS endpoint for patch version & champion metadata display with fair-use attribution. Integrated Supabase Realtime WebSocket subscription for announcements with posting restricted strictly to authenticated admin. No personal data collected or processed.
 
 **Final Release Gate Status:** **CLEARED FOR ENGINEERING / STAGING DEPLOYMENT**. All BLOCKED items resolved.

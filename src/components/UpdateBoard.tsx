@@ -42,6 +42,7 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
   const [activeTag, setActiveTag] = useState<string>('ALL')
   const [searchQuery, setSearchQuery] = useState<string>('')
   const [isAddModalOpen, setIsAddModalOpen] = useState<boolean>(false)
+  const [isRealtimeConnected, setIsRealtimeConnected] = useState<boolean>(false)
 
   const t = TRANSLATIONS[lang].board
 
@@ -54,8 +55,10 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
   const [newLinkText, setNewLinkText] = useState('')
   const [isPinned, setIsPinned] = useState(false)
 
-  // Fetch live updates from Supabase Cloud Database
+  // Fetch live updates & subscribe to Supabase Realtime WebSocket changes
   useEffect(() => {
+    let isSubscribed = true
+
     const fetchCloudUpdates = async () => {
       try {
         const { data, error } = await supabase
@@ -64,7 +67,7 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
           .order('pinned', { ascending: false })
           .order('created_at', { ascending: false })
 
-        if (!error && data && data.length > 0) {
+        if (!error && data && data.length > 0 && isSubscribed) {
           const cloudUpdates: UpdateItem[] = data.map((d: any) => ({
             id: d.id,
             date: d.date,
@@ -81,12 +84,79 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
           setUpdates(cloudUpdates)
           localStorage.setItem('gwm_board_updates', JSON.stringify(cloudUpdates))
         }
-      } catch {
-        // Fallback to local storage if offline or tables not initialized yet
+      } catch (err) {
+        console.warn('[UPDATE BOARD] Cloud fetch fallback:', err)
       }
     }
 
     fetchCloudUpdates()
+
+    // Realtime Postgres Changes Subscription
+    const channel = supabase
+      .channel('realtime:updates')
+      .on(
+        'postgres_changes',
+        { event: '*', schema: 'public', table: 'updates' },
+        (payload: any) => {
+          console.log('[SUPABASE REALTIME] Updates event received:', payload.eventType, payload)
+          if (payload.eventType === 'INSERT') {
+            const d = payload.new
+            const newPost: UpdateItem = {
+              id: d.id,
+              date: d.date,
+              time: d.time,
+              tag: d.tag,
+              title: d.title,
+              summary: d.summary,
+              content: d.content,
+              pinned: Boolean(d.pinned),
+              link: d.link || undefined,
+              linkText: d.link_text || undefined,
+              author: d.author || 'Gaming with meee'
+            }
+            setUpdates((prev) => {
+              if (prev.some((p) => p.id === newPost.id)) return prev
+              return [newPost, ...prev]
+            })
+          } else if (payload.eventType === 'DELETE') {
+            const deletedId = payload.old?.id
+            if (deletedId) {
+              setUpdates((prev) => prev.filter((p) => p.id !== deletedId))
+            }
+          } else if (payload.eventType === 'UPDATE') {
+            const d = payload.new
+            setUpdates((prev) =>
+              prev.map((p) =>
+                p.id === d.id
+                  ? {
+                      ...p,
+                      date: d.date,
+                      time: d.time,
+                      tag: d.tag,
+                      title: d.title,
+                      summary: d.summary,
+                      content: d.content,
+                      pinned: Boolean(d.pinned),
+                      link: d.link || undefined,
+                      linkText: d.link_text || undefined,
+                      author: d.author || p.author
+                    }
+                  : p
+              )
+            )
+          }
+        }
+      )
+      .subscribe((status) => {
+        if (isSubscribed) {
+          setIsRealtimeConnected(status === 'SUBSCRIBED')
+        }
+      })
+
+    return () => {
+      isSubscribed = false
+      supabase.removeChannel(channel)
+    }
   }, [])
 
   useEffect(() => {
@@ -213,7 +283,27 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
             subtitle={t.subtitle}
           />
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            {/* Realtime Live Status Indicator */}
+            <div
+              className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-xl border text-[11px] font-mono font-semibold transition-all shadow-sm ${
+                isRealtimeConnected
+                  ? 'bg-emerald-950/50 border-emerald-500/40 text-emerald-400 shadow-emerald-950/30'
+                  : 'bg-brand-elevated border-brand-border text-brand-muted'
+              }`}
+            >
+              <span
+                className={`w-2 h-2 rounded-full ${
+                  isRealtimeConnected ? 'bg-emerald-400 animate-pulse' : 'bg-brand-muted'
+                }`}
+              />
+              <span>
+                {isRealtimeConnected
+                  ? (lang === 'VI' ? 'REALTIME // ĐÃ KẾT NỐI' : 'REALTIME // CONNECTED')
+                  : (lang === 'VI' ? 'REALTIME // ĐANG ĐỒNG BỘ' : 'REALTIME // SYNCING')}
+              </span>
+            </div>
+
             <button
               onClick={handleOpenAddModal}
               className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-mono text-xs font-bold uppercase tracking-wider transition-all shadow-md focus:outline-none focus-visible:ring-2 ${
@@ -223,7 +313,7 @@ export const UpdateBoard: React.FC<UpdateBoardProps> = memo(({
               }`}
             >
               {isAdmin ? <ShieldCheck className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
-              <span>{t.addBtn}</span>
+              <span>{isAdmin ? (lang === 'VI' ? 'SOẠN BÀI (ADMIN)' : 'NEW POST (ADMIN)') : t.addBtn}</span>
             </button>
           </div>
         </div>

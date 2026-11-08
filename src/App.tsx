@@ -6,6 +6,7 @@ import { MeeeAIAssistant } from './components/MeeeAIAssistant'
 import { LegalModal, LegalTab } from './components/LegalModal'
 import { Language } from './data/translations'
 import { useLocalStorage } from './hooks/useLocalStorage'
+import { UpdateItem } from './types/content'
 
 // Lazy load portal views for maximum performance & instant code splitting
 const HomePage = lazy(() => import('./components/HomePage'))
@@ -13,10 +14,12 @@ const AboutPage = lazy(() => import('./components/AboutPage'))
 const AcademyPage = lazy(() => import('./components/AcademyPage'))
 const GamingPage = lazy(() => import('./components/GamingPage'))
 const StorePage = lazy(() => import('./components/StorePage'))
+const ArticlePage = lazy(() => import('./components/ArticlePage').then((m) => ({ default: m.ArticlePage })))
 
 export const App: React.FC = () => {
   const [lang, setLang] = useLocalStorage<Language>('gwm_lang', 'EN')
   const [currentView, setCurrentView] = useState<AppView>('home')
+  const [selectedUpdate, setSelectedUpdate] = useState<UpdateItem | null>(null)
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [isLegalModalOpen, setIsLegalModalOpen] = useState(false)
   const [legalTab, setLegalTab] = useState<LegalTab>('privacy')
@@ -30,6 +33,7 @@ export const App: React.FC = () => {
 
   // Auto scroll to top on page view switch
   const handleNavigateView = (view: AppView) => {
+    setSelectedUpdate(null)
     if (view === 'connect') {
       setCurrentView('home')
       setTimeout(() => {
@@ -92,42 +96,62 @@ export const App: React.FC = () => {
             </div>
           }
         >
-          {currentView === 'home' && (
-            <HomePage
+          {selectedUpdate ? (
+            <ArticlePage
+              item={selectedUpdate}
+              type="update"
               lang={lang}
-              onNavigateView={handleNavigateView}
-              onReplayIntro={handleReplayIntro}
-              onOpenLegal={handleOpenLegal}
-            />
-          )}
-
-          {currentView === 'about' && (
-            <AboutPage
-              lang={lang}
-              onBack={() => handleNavigateView('home')}
-            />
-          )}
-
-          {currentView === 'academy' && (
-            <AcademyPage
-              lang={lang}
-              onBack={() => handleNavigateView('home')}
+              onBack={() => {
+                setSelectedUpdate(null)
+                window.scrollTo({ top: 0, behavior: 'smooth' })
+              }}
               onRequireLogin={() => setIsLoginModalOpen(true)}
             />
-          )}
+          ) : (
+            <>
+              {currentView === 'home' && (
+                <HomePage
+                  lang={lang}
+                  onNavigateView={handleNavigateView}
+                  onReplayIntro={handleReplayIntro}
+                  onOpenLegal={handleOpenLegal}
+                  onSelectUpdate={(item) => {
+                    setSelectedUpdate(item)
+                    window.scrollTo({ top: 0, behavior: 'smooth' })
+                  }}
+                  onRequireLogin={() => setIsLoginModalOpen(true)}
+                />
+              )}
 
-          {currentView === 'gaming' && (
-            <GamingPage
-              lang={lang}
-              onBack={() => handleNavigateView('home')}
-            />
-          )}
+              {currentView === 'about' && (
+                <AboutPage
+                  lang={lang}
+                  onBack={() => handleNavigateView('home')}
+                />
+              )}
 
-          {currentView === 'store' && (
-            <StorePage
-              lang={lang}
-              onBack={() => handleNavigateView('home')}
-            />
+              {currentView === 'academy' && (
+                <AcademyPage
+                  lang={lang}
+                  onBack={() => handleNavigateView('home')}
+                  onRequireLogin={() => setIsLoginModalOpen(true)}
+                />
+              )}
+
+              {currentView === 'gaming' && (
+                <GamingPage
+                  lang={lang}
+                  onBack={() => handleNavigateView('home')}
+                />
+              )}
+
+              {currentView === 'store' && (
+                <StorePage
+                  lang={lang}
+                  onBack={() => handleNavigateView('home')}
+                />
+              )}
+            </>
           )}
         </Suspense>
       </main>

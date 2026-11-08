@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Language } from '../data/translations'
 import { GAMING_DATA, GameItem } from '../data/gamingData'
+import { useRiotDataDragon } from '../hooks/useRiotDataDragon'
 import {
   Gamepad2,
   ArrowLeft,
@@ -11,7 +12,8 @@ import {
   Sparkles,
   CheckCircle2,
   Lightbulb,
-  ExternalLink
+  ExternalLink,
+  Flame
 } from 'lucide-react'
 
 interface GamingPageProps {
@@ -24,6 +26,7 @@ type DetailTab = 'comps' | 'settings' | 'guides'
 export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
   const [selectedGameId, setSelectedGameId] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<DetailTab>('comps')
+  const riotData = useRiotDataDragon()
 
   const activeGame: GameItem | undefined = GAMING_DATA.find((g) => g.id === selectedGameId)
 
@@ -114,8 +117,15 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
                           &bull; {lang === 'VI' ? game.genreVi : game.genreEn}
                         </span>
                         {game.patchVersion && (
-                          <span className="px-2 py-0.5 rounded-md bg-purple-500/15 border border-purple-500/30 text-[10px] text-purple-300 font-bold">
-                            ⚡ {game.patchVersion}
+                          <span className="px-2 py-0.5 rounded-md bg-purple-500/15 border border-purple-500/30 text-[10px] text-purple-300 font-bold inline-flex items-center gap-1.5">
+                            {game.id === 'lol' || game.id === 'tft' ? (
+                              <>
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                                <span>⚡ {riotData.patchLabel} • LIVE SYNC</span>
+                              </>
+                            ) : (
+                              <span>⚡ {game.patchVersion}</span>
+                            )}
                           </span>
                         )}
                       </div>
@@ -224,8 +234,15 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
                     &bull; {lang === 'VI' ? activeGame.genreVi : activeGame.genreEn}
                   </span>
                   {activeGame.patchVersion && (
-                    <span className="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/40 text-[11px] font-mono font-bold text-purple-300">
-                      ⚡ {activeGame.patchVersion}
+                    <span className="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/40 text-[11px] font-mono font-bold text-purple-300 inline-flex items-center gap-1.5 shadow-sm shadow-purple-500/20">
+                      {activeGame.id === 'lol' || activeGame.id === 'tft' ? (
+                        <>
+                          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                          <span>⚡ {riotData.patchLabel} ({riotData.patchVersion}) • RIOT LIVE SYNC</span>
+                        </>
+                      ) : (
+                        <span>⚡ {activeGame.patchVersion}</span>
+                      )}
                     </span>
                   )}
                 </div>
@@ -237,6 +254,71 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
                 </p>
               </div>
             </div>
+
+            {/* RIOT DATA DRAGON LIVE META CHAMPIONS BAR (For LoL & TFT) */}
+            {(activeGame.id === 'lol' || activeGame.id === 'tft') && riotData.hotChampions.length > 0 && (
+              <div className="rounded-2xl bg-gradient-to-r from-purple-950/40 via-brand-secondary to-cyan-950/40 border border-purple-500/30 p-5 mb-8 shadow-xl backdrop-blur-md">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-purple-500/20 border border-purple-500/40 text-purple-400 flex items-center justify-center shrink-0">
+                      <Flame className="w-4 h-4 text-amber-400" />
+                    </div>
+                    <div>
+                      <h4 className="font-mono text-xs font-bold uppercase tracking-wider text-white flex items-center gap-2">
+                        <span>{lang === 'VI' ? 'TƯỚNG HOT META THEO BẢN CẬP NHẬT' : 'HOT META CHAMPIONS ROSTER'}</span>
+                        <span className="px-2 py-0.5 rounded bg-emerald-500/20 border border-emerald-500/40 text-[10px] text-emerald-400 font-mono font-bold">
+                          {riotData.patchLabel} LIVE
+                        </span>
+                      </h4>
+                      <p className="text-[11px] text-brand-subtext font-light">
+                        {lang === 'VI'
+                          ? 'Dữ liệu thời gian thực được đồng bộ tự động từ Riot Games Data Dragon API'
+                          : 'Real-time champion data automatically synchronized from Riot Games Data Dragon API'}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 text-[10px] font-mono text-purple-300 bg-purple-500/10 border border-purple-500/30 px-3 py-1 rounded-full shrink-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>v{riotData.patchVersion} AUTO-FETCH</span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-8 gap-3">
+                  {riotData.hotChampions.map((champ) => (
+                    <div
+                      key={champ.id}
+                      className="group/champ relative p-2.5 rounded-xl bg-black/50 border border-white/10 hover:border-purple-400/60 transition-all duration-300 flex flex-col items-center text-center shadow-md hover:-translate-y-0.5"
+                    >
+                      <div className="relative w-12 h-12 rounded-lg overflow-hidden border border-purple-500/40 mb-2 group-hover/champ:border-cyan-400 transition-colors">
+                        <img
+                          src={champ.iconUrl}
+                          alt={champ.name}
+                          className="w-full h-full object-cover group-hover/champ:scale-110 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                      </div>
+                      <div className="font-display font-bold text-xs text-white group-hover/champ:text-cyan-300 transition-colors truncate max-w-full">
+                        {champ.name}
+                      </div>
+                      <div className="text-[9px] font-mono text-brand-muted truncate max-w-full">
+                        {champ.title}
+                      </div>
+                      <div className="mt-1 flex flex-wrap gap-1 justify-center">
+                        {champ.tags.slice(0, 1).map((tag, tIdx) => (
+                          <span
+                            key={tIdx}
+                            className="px-1.5 py-0.5 rounded text-[8px] font-mono bg-purple-500/20 text-purple-300 border border-purple-500/30 font-semibold"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* In-Depth Interactive Tabs */}
             <div className="flex items-center gap-2 border-b border-brand-border/80 mb-8 overflow-x-auto pb-2 scrollbar-none">
