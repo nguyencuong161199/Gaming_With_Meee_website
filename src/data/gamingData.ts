@@ -47,6 +47,19 @@ export interface GameItem {
   taglineEn: string
   descriptionVi: string
   descriptionEn: string
+  featureBadges: {
+    iconType: 'trophy' | 'sliders' | 'book'
+    labelVi: string
+    labelEn: string
+  }[]
+  tabTitles: {
+    tab1Vi: string
+    tab1En: string
+    tab2Vi: string
+    tab2En: string
+    tab3Vi: string
+    tab3En: string
+  }
   metaComps: GameMetaComp[]
   settings: GameSettingItem[]
   guides: GameGuideItem[]
@@ -58,7 +71,7 @@ export const GAMING_DATA: GameItem[] = [
     name: 'Teamfight Tactics',
     nameVi: 'Đấu Trường Chân Lý (TFT)',
     nameEn: 'Teamfight Tactics (TFT)',
-    shortName: 'TFT // ĐTCL',
+    shortName: 'TFT // ĐTCL MÙA 13',
     developer: 'Riot Games',
     genreVi: 'Cờ Nhân Phẩm / Auto Battler',
     genreEn: 'Auto Battler / Strategy',
@@ -67,50 +80,86 @@ export const GAMING_DATA: GameItem[] = [
     accentColor: 'text-amber-400',
     accentBorder: 'hover:border-amber-500/80',
     glowColor: 'bg-amber-500/10',
-    taglineVi: 'Chiến thuật giữ chuỗi vàng, tối ưu Lõi Hextech & Đội hình S-Tier',
-    taglineEn: 'Economic streak management, Hextech Augments & S-Tier Comps',
+    taglineVi: 'Meta Mùa 13: Bước Vào Arcane — Tối ưu Lõi Hextech & Chuỗi Thắng Fast 8',
+    taglineEn: 'Set 13: Into the Arcane — Hextech Augments, Fast-8 Tempo & S-Tier Boards',
     descriptionVi:
-      'Đấu Trường Chân Lý đòi hỏi tư duy quản trị tài chính nhạy bén, khả năng thích ứng linh hoạt với từng Lõi Công Nghệ và xoay bài nhanh theo cửa hàng.',
+      'Đấu Trường Chân Lý Mùa 13 (Into the Arcane) đòi hỏi tư duy quản trị tài chính nhạy bén, khả năng thích ứng linh hoạt với Lõi Dị Thường và xoay bài nhanh quanh các chủ lực 4-5 tiền như Caitlyn, Silco, Sevika, Ambessa.',
     descriptionEn:
-      'Master economic thresholds, augment synergies, and flexible carry pivots to consistently finish in the top 4.',
+      'Set 13 (Into the Arcane) demands razor-sharp economy milestones, anomaly augment synergy, and fast pivoting around 4-cost and 5-cost carries.',
+    featureBadges: [
+      { iconType: 'trophy', labelVi: '3 Đội hình Mùa 13 (Arcane)', labelEn: '3 Set 13 Meta Comps' },
+      { iconType: 'sliders', labelVi: 'Phím tắt Roll dưới 15s', labelEn: 'Sub-15s Roll Keybinds' },
+      { iconType: 'book', labelVi: 'Quản trị Lợi tức 50 Vàng', labelEn: 'Compound Interest Eco' }
+    ],
+    tabTitles: {
+      tab1Vi: 'ĐỘI HÌNH META MÙA 13',
+      tab1En: 'SET 13 META COMPS',
+      tab2Vi: 'CÀI ĐẶT THAO TÁC ROLL',
+      tab2En: 'PRO ROLL SETTINGS',
+      tab3Vi: 'CẨM NANG KINH TẾ & LÕI',
+      tab3En: 'ECONOMY & AUGMENT PLAYBOOK'
+    },
     metaComps: [
       {
         id: 'tft-comp-1',
-        name: 'Fast 8: Chủ Lực 4 Vàng & Đỡ Đòn Đa Năng',
+        name: '6 Cảnh Binh Bắn Tỉa // Caitlyn & Vi Siêu Gánh Kèo',
         tier: 'S-TIER',
-        playstyleVi: 'Tích 50 vàng sớm, lên cấp 8 ở vòng 4-2 và roll tìm tướng 4 tiền 2 sao',
-        playstyleEn: 'Fast-8 econ curve, rolling down on Stage 4-2 for 2-star 4-cost carries',
-        coreUnits: ['Carry 4 Tiền', 'Tanker 4 Tiền', 'Hỗ trợ khống chế', 'Kích hệ phụ trợ'],
-        coreItemsOrTactics: ['Vô Cực Kiếm / Găng Bảo Thạch', 'Cuồng Đao Guinsoo', 'Giáp Máu / Thú Tượng'],
-        tipsVi: 'Đừng ngại lắp trang bị sớm (slam item) từ round 2 để giữ máu và duy trì chuỗi thắng.',
-        tipsEn: 'Slam flexible tempo items early in Stage 2 to conserve HP and build win streaks.'
+        playstyleVi: 'Tích 50 vàng chuẩn chỉ, lên cấp 8 ở vòng 4-2 và roll tìm Caitlyn & Vi 2 sao hoàn thiện form 6 Cảnh Binh',
+        playstyleEn: 'Fast-8 economy curve, rolling on Stage 4-2 to hit 2-star Caitlyn and Vi frontline',
+        coreUnits: ['Caitlyn (4 tiền - Carry)', 'Vi (4 tiền - Đỡ đòn)', 'Loris', 'Maddie', 'Steb', 'Twisted Fate'],
+        coreItemsOrTactics: [
+          'Caitlyn: Vô Cực Kiếm + Ngọn Giáo Shojin + Cung Xanh',
+          'Vi: Giáp Máu Warmog + Thú Tượng Thạch Giáp + Trái Tim Kiên Định',
+          'Maddie giữ đồ hộ ở giai đoạn đầu trận'
+        ],
+        tipsVi: 'Lắp trang bị sớm từ round 2-1 cho Maddie để giữ máu. Khi lên cấp 8 đổi đồ sang Caitlyn để sốc sát thương hạ gục hàng sau đối phương.',
+        tipsEn: 'Slam AD items early onto Maddie to winstreak Stage 2. Transfer full kit to Caitlyn upon hitting Level 8.'
       },
       {
         id: 'tft-comp-2',
-        name: 'Slow Roll Cấp 6 / 7: Tướng 2 & 3 Tiền 3 Sao',
+        name: 'Hóa Kỹ Thống Trị // Silco Độc Dược & Sevika Đấu Sĩ',
         tier: 'S-TIER',
-        playstyleVi: 'Giữ trên 50 vàng, roll từ từ ở cấp 6 hoặc 7 để nâng tướng chủ lực lên 3 sao',
-        playstyleEn: 'Slow roll above 50 gold at Level 6/7 to achieve 3-star core carries',
-        coreUnits: ['Chủ lực 3 sao', 'Tiên phong cứng', 'Tướng kích hoạt hệ mốc 4/6'],
-        coreItemsOrTactics: ['Huyết Kiếm', 'Quyền Năng Khổng Lồ', 'Nỏ Sét / Dao Điện'],
-        tipsVi: 'Quan sát lobby (soi bài đối thủ), nếu có trên 2 nhà cùng chơi thì nên chuyển hướng sang Fast 8.',
-        tipsEn: 'Scout lobbies continuously; if contested by 2+ players, pivot immediately toward Fast 8.'
+        playstyleVi: 'Tích cộng dồn Shimmer Hóa Kỹ ở chuỗi thua có kiểm soát, nổ hũ ở mốc 300+ Shimmer rồi đổi bài sang form Silco phép',
+        playstyleEn: 'Controlled loss-streak to stack Chem-Baron Shimmer, cash out at 300+ mark and transition into Silco carry',
+        coreUnits: ['Silco (4 tiền - Phép)', 'Sevika (5 tiền - Đấu Sĩ)', 'Renata Glasc', 'Singed', 'Smeech', 'Renni'],
+        coreItemsOrTactics: [
+          'Silco: Bùa Xanh + Quỷ Thư Morello + Mũ Phù Thủy Rabadon',
+          'Sevika: Huyết Kiếm + Quyền Năng Khổng Lồ + Móng Vuốt Sterak',
+          'Singed: Nỏ Sét giảm kháng phép'
+        ],
+        tipsVi: 'Nỏ Sét trên Singed là tối quan trọng để khuếch đại sát thương diện rộng của chiêu thức Silco.',
+        tipsEn: 'Ionic Spark on Singed is mandatory to shred magic resistance for Silco monster poison waves.'
+      },
+      {
+        id: 'tft-comp-3',
+        name: 'Chinh Phục Đao Phủ // Ambessa & Corki Siêu Bạo Kích',
+        tier: 'S-TIER',
+        playstyleVi: 'Form đánh đôi công toàn diện kết hợp sát thương vật lý tầm gần của Ambessa và hỏa lực diện rộng của Corki',
+        playstyleEn: 'Dual-threat physical assault pairing Ambessa melee execution with Corki backline rocket barrages',
+        coreUnits: ['Ambessa (4 tiền)', 'Corki (4 tiền)', 'Swain', 'Draven', 'Rell', 'Mordekaiser'],
+        coreItemsOrTactics: [
+          'Ambessa: Huyết Kiếm + Móng Vuốt Sterak + Bàn Tay Công Lý',
+          'Corki: Vô Cực Kiếm + Cung Xanh + Cuồng Đao Guinsoo',
+          'Swain: Thú Tượng Thạch Giáp'
+        ],
+        tipsVi: 'Xếp Ambessa ở ô thứ 2 từ ngoài vào để cô nàng lướt vòng qua tướng đỡ đòn đối phương và áp sát trực tiếp chủ lực.',
+        tipsEn: 'Place Ambessa on second hex from flank so her dashes bypass enemy frontline directly into enemy squishies.'
       }
     ],
     settings: [
       {
         nameVi: 'Phím tắt Mua & Khóa Cửa Hàng',
         nameEn: 'Shop & Lock Hotkeys',
-        value: 'D (Roll), F (Lên Cấp), E (Bán tướng)',
-        noteVi: 'Cài đặt phím tắt tiêu chuẩn giúp thao tác xả tiền nhanh dưới 15 giây.',
-        noteEn: 'Standard keybindings for sub-15s roll-downs without misclicks.'
+        value: 'D (Roll), F (Lên Cấp), E (Bán tướng), Space (Về sàn)',
+        noteVi: 'Cài đặt phím tắt tiêu chuẩn giúp thao tác xả 50 vàng tìm tướng hoàn thiện bài dưới 15 giây.',
+        noteEn: 'Standard keybindings for sub-15s 50-gold roll-downs without misclicks.'
       },
       {
         nameVi: 'Tốc độ cuộn camera & Soi bài',
         nameEn: 'Camera Scroll & Scouting',
-        value: '1 & 3 (Duyệt bàn cờ đối thủ)',
-        noteVi: 'Dùng phím 1 và 3 để chuyển góc nhìn soi đối thủ liên tục trước mỗi round giao tranh.',
-        noteEn: 'Cycle enemy boards with numerical shortcuts before each combat round.'
+        value: 'Phím 1 & 3 (Duyệt nhanh bàn cờ 7 đối thủ)',
+        noteVi: 'Dùng phím 1 và 3 để chuyển góc nhìn soi đối thủ liên tục trước mỗi round giao tranh để né Lốc và đổi góc Zephyr.',
+        noteEn: 'Cycle enemy boards with numerical shortcuts before each combat round to dodge Zephyrs.'
       }
     ],
     guides: [
@@ -119,7 +168,7 @@ export const GAMING_DATA: GameItem[] = [
         titleVi: 'Nguyên tắc quản trị lợi tức 10 / 20 / 30 / 40 / 50 vàng',
         titleEn: 'Compound Interest Economics: 10 to 50 Gold Rules',
         tag: 'KINH TẾ ECO',
-        summaryVi: 'Mỗi 10 vàng cho thêm 1 vàng lợi tức cuối round. Đạt 50 vàng càng sớm, tiềm lực nâng cấp càng mạnh.',
+        summaryVi: 'Mỗi 10 vàng cho thêm 1 vàng lợi tức cuối round. Đạt 50 vàng càng sớm, tiềm lực nâng cấp tướng 4 tiền càng mạnh.',
         summaryEn: 'Each 10 gold yields +1 interest up to +5 at 50 gold. Maximizing compound interest determines late game strength.',
         keyPointsVi: [
           'Chấp nhận bán bớt quân dự bị nếu việc đó giúp chạm mốc tròn 10, 20 hoặc 30 vàng',
@@ -154,6 +203,19 @@ export const GAMING_DATA: GameItem[] = [
       'Liên Minh Huyền Thoại kết hợp kỹ năng cá nhân thượng thừa với khả năng đọc bản đồ vĩ mô (Macro), kiểm soát tầm nhìn và phối hợp combat đồng đội.',
     descriptionEn:
       'League of Legends demands sharp individual mechanics married with macro vision control, tempo recall timings, and neutral objective setups.',
+    featureBadges: [
+      { iconType: 'trophy', labelVi: 'Tổ hợp Giao tranh & Đẩy lẻ', labelEn: 'Teamfight & Split Comps' },
+      { iconType: 'sliders', labelVi: 'Cài đặt Quick Cast không trễ', labelEn: 'Zero-delay Quick Cast' },
+      { iconType: 'book', labelVi: 'Bộ 3 thế lính Freeze & Push', labelEn: '3 Wave States Trilogy' }
+    ],
+    tabTitles: {
+      tab1Vi: 'LỐI CHƠI & CHIẾN THUẬT META',
+      tab1En: 'META PLAYSTYLES & COMBAT',
+      tab2Vi: 'CÀI ĐẶT THI ĐẤU PRO',
+      tab2En: 'PRO COMPETITIVE SETTINGS',
+      tab3Vi: 'CẨM NANG KIỂM SOÁT MACRO',
+      tab3En: 'MACRO & WAVE PLAYBOOK'
+    },
     metaComps: [
       {
         id: 'lol-meta-1',
@@ -161,7 +223,13 @@ export const GAMING_DATA: GameItem[] = [
         tier: 'S-TIER',
         playstyleVi: 'Đấu sĩ/Đỡ đòn che chắn tuyến trước, Pháp sư và Xạ thủ xả sát thương tối đa từ tuyến sau',
         playstyleEn: 'Frontline tanks absorb poke while mid and ADC free-hit from maximum range',
-        coreUnits: ['Top Đỡ Đòn / Đấu Sĩ', 'Rừng Mở Giao Tranh', 'Mid Pháp Sư Kiểm Soát', 'Xạ Thủ Hyper Carry', 'Hỗ Trợ Enchanter'],
+        coreUnits: [
+          'Top: Aatrox / K\'Sante',
+          'Jungle: Sejuani / Vi / Maokai',
+          'Mid: Orianna / Syndra',
+          'ADC: Jinx / Kai\'Sa',
+          'Support: Thresh / Nautilus'
+        ],
         coreItemsOrTactics: ['Vô Cực Kiếm / Nỏ Tử Thủ', 'Đồng Hồ Cát Zhonya', 'Mặt Nạ Vực Thẳm / Giáp Tâm Linh'],
         tipsVi: 'Luôn di chuyển kiểm soát tầm nhìn trước hang Rồng/Baron ít nhất 45 giây trước khi mục tiêu xuất hiện.',
         tipsEn: 'Establish perimeter vision around Baron/Dragon at least 45 seconds prior to spawn.'
@@ -172,7 +240,13 @@ export const GAMING_DATA: GameItem[] = [
         tier: 'S-TIER',
         playstyleVi: 'Tận dụng 2 đường biên đẩy mạnh để kéo giãn đội hình đối phương và cô lập mục tiêu',
         playstyleEn: 'Dual side-lane split pressure to stretch enemy defenses and catch rotations',
-        coreUnits: ['Đấu Sĩ Đẩy Đường Mạnh', 'Sát Thủ Dồn Sát Thương', 'Hỗ Trợ Móc / Trói'],
+        coreUnits: [
+          'Top: Fiora / Jax',
+          'Jungle: Lee Sin / Viego',
+          'Mid: LeBlanc / Ahri',
+          'ADC: Ezreal / Lucian',
+          'Support: Rakan / Bard'
+        ],
         coreItemsOrTactics: ['Tam Hợp Kiếm / Gươm Vô Danh', 'Kiếm Ma Youmuu', 'Dịch Chuyển (Teleport)'],
         tipsVi: 'Chỉ đẩy cao khi đã có mắt kiểm soát trong rừng đối thủ để tránh bị gank 3 người.',
         tipsEn: 'Only push past river when deep wards secure enemy jungle collapse routes.'
@@ -225,7 +299,7 @@ export const GAMING_DATA: GameItem[] = [
     genreVi: 'Bóng Đá Mô Phỏng Thể Thao',
     genreEn: 'Sports Simulation / Football',
     logo: '/assets/games/fco.svg',
-    logoNeedsInvert: true,
+    logoNeedsInvert: false,
     accentColor: 'text-emerald-400',
     accentBorder: 'hover:border-emerald-500/80',
     glowColor: 'bg-emerald-500/10',
@@ -235,14 +309,33 @@ export const GAMING_DATA: GameItem[] = [
       'FC Online đòi hỏi khả năng phối hợp nhịp nhàng giữa chiến thuật đội hình tổng thể, kiểm soát cự ly đội hình và kỹ thuật bấm bóng, chọc khe QW chính xác.',
     descriptionEn:
       'Master custom tactics, compact defensive line spacing, and lethal finesse shots to conquer ranked 1vs1 divisions.',
+    featureBadges: [
+      { iconType: 'trophy', labelVi: 'Sơ đồ 4-2-3-1 & 4-2-2-2', labelEn: '4-2-3-1 & 4-2-2-2 Formations' },
+      { iconType: 'sliders', labelVi: 'Chuyền Bán Tự Động (Semi)', labelEn: 'Semi-Assisted Passing' },
+      { iconType: 'book', labelVi: 'Kỹ thuật Cứa lòng ZD 45°', labelEn: '45° ZD Finesse Guide' }
+    ],
+    tabTitles: {
+      tab1Vi: 'SƠ ĐỒ CHIẾN THUẬT META',
+      tab1En: 'META FORMATIONS & TACTICS',
+      tab2Vi: 'CÀI ĐẶT TAY CẦM / PHÍM',
+      tab2En: 'CONTROLLER & CAMERA SETUP',
+      tab3Vi: 'CẨM NANG DỨT ĐIỂM & BAN BẬT',
+      tab3En: 'FINISHING & PASSING PLAYBOOK'
+    },
     metaComps: [
       {
         id: 'fco-meta-1',
-        name: 'Sơ Đồ 4-2-3-1 Cân Bằng Toàn Diện (Meta Quốc Dân)',
+        name: 'Sơ Đồ 4-2-3-1 Cân Bằng Toàn Diện (Meta Quốc Dân Mùa Mới)',
         tier: 'S-TIER',
         playstyleVi: 'Cặp tiền vệ phòng ngự CDM bọc lót chắc chắn, bộ 3 tiền vệ công CAM/LAM/RAM cơ động phân phối bóng',
         playstyleEn: 'Double pivot CDMs protect backline while dynamic attacking trident supports lone ST',
-        coreUnits: ['1 ST Cắm toàn diện', '1 CAM Nhạc trưởng', '2 Tiền vệ cánh LAM/RAM', '2 CDM Đánh chặn quét bóng', '4 Hậu vệ'],
+        coreUnits: [
+          'ST: Ronaldo de Lima (R9) / Shevchenko',
+          'CAM: Ruud Gullit / Zinedine Zidane',
+          'LAM/RAM: Son Heung-min / Pavel Nedved',
+          'CDM: Michael Ballack / Rodri / Patrick Vieira',
+          'CB & GK: Van Dijk / Rudiger & Thibaut Courtois'
+        ],
         coreItemsOrTactics: ['Chiến thuật đội: Cân bằng / Áp sát khi mất bóng', 'Độ rộng 50 - Chiều sâu 55', 'Đá ngắn phối hợp'],
         tipsVi: 'Ưu tiên tiền vệ phòng ngự có chỉ số Thể lực trên 105 và thể hình cao trên 1m85 để làm chủ tranh chấp trung tuyến.',
         tipsEn: 'Deploy CDMs with 105+ stamina and 185cm+ physical frames to dominate midfield duels.'
@@ -253,8 +346,13 @@ export const GAMING_DATA: GameItem[] = [
         tier: 'S-TIER',
         playstyleVi: '2 tiền đạo cắm phối hợp đập nhả 1-2 xé toang trung lộ hàng thủ đối phương',
         playstyleEn: 'Twin striker partnership unlocking quick 1-2 give-and-go vertical line breaks',
-        coreUnits: ['1 ST Mục tiêu tì đè', '1 ST Tốc độ chạy chỗ luồn lách', '2 CAM Lệch cánh', '2 CDM Thu hồi bóng'],
-        coreItemsOrTactics: ['Chiến thuật chuyền: Chọc khe kiến tạo', 'Tạt bóng sớm', 'Sút xa ZD hiểm hóc'],
+        coreUnits: [
+          'ST1 (Tì đè làm tường): Harry Kane / Lewandowski',
+          'ST2 (Bứt tốc xẻ nách): Kylian Mbappe / Thierry Henry',
+          '2 CAM Lệch cánh: Kevin De Bruyne / Kaka',
+          '2 CDM Càn quét: Yaya Toure / Frank Rijkaard'
+        ],
+        coreItemsOrTactics: ['Chiến thuật chuyền: Chọc khe kiến tạo ZW', 'Tạt bóng sớm QA', 'Sút xa ZD hiểm hóc'],
         tipsVi: 'Sử dụng nút gọi đồng đội chạy chỗ (Q + Chuyền) để tiền đạo tự động bứt tốc vượt qua bẫy việt vị.',
         tipsEn: 'Trigger manual forward runs with Q-pass triggers to beat offside traps.'
       }
@@ -316,6 +414,19 @@ export const GAMING_DATA: GameItem[] = [
       'PUBG Mobile kiểm tra phản xạ tức thời, khả năng ghìm tâm súng sấy xa bằng con quay hồi chuyển và chiến thuật di chuyển bo địa hình hiểm trở.',
     descriptionEn:
       'Master gyroscope recoil calibration, micro-peeking, smoke cover lanes, and high-ground rotations in competitive final zones.',
+    featureBadges: [
+      { iconType: 'trophy', labelVi: 'Cặp Súng Thi Đấu Chuẩn', labelEn: 'Competitive Gun Loadouts' },
+      { iconType: 'sliders', labelVi: 'Độ nhạy Gyroscope Full', labelEn: 'Full Gyro Sensitivity' },
+      { iconType: 'book', labelVi: 'Chiến thuật Tường Khói Bo 5', labelEn: 'Circle 5 Smoke Wall' }
+    ],
+    tabTitles: {
+      tab1Vi: 'COMBO SÚNG & LOADOUT THI ĐẤU',
+      tab1En: 'PRO WEAPON LOADOUTS',
+      tab2Vi: 'BẢNG ĐỘ NHẠY GYROSCOPE',
+      tab2En: 'GYROSCOPE SENSITIVITY CALIBRATION',
+      tab3Vi: 'CẨM NANG CHIẾN THUẬT BO CUỐI',
+      tab3En: 'FINAL ZONE ROTATION PLAYBOOK'
+    },
     metaComps: [
       {
         id: 'pubgm-meta-1',
@@ -323,7 +434,12 @@ export const GAMING_DATA: GameItem[] = [
         tier: 'S-TIER',
         playstyleVi: 'M416 đảm nhận giao tranh tầm gần và trung bình (0 - 80m), DMR bắn tỉa tầm xa (100 - 300m)',
         playstyleEn: 'M416 handles close-to-mid range spray transfers while DMR snipes high-damage tags at distance',
-        coreUnits: ['M416 (Đủ phụ kiện)', 'Mini14 / SLR', 'Bộ phụ kiện Giảm Giật', 'Scope 3x & 6x hạ 3x'],
+        coreUnits: [
+          'Vũ khí chính: M416 (Đạn 5.56mm)',
+          'Vũ khí phụ: Mini14 / SLR (Bắn tỉa bán tự động)',
+          'Phụ kiện M416: Nòng Giảm Giật + Tay Cầm Thẳng Đứng + Báng Súng Tắc Kè + Băng Đạn Thay Nhanh Mở Rộng',
+          'Ống ngắm: Scope 3x (Sấy) & Scope 6x hạ 3x'
+        ],
         coreItemsOrTactics: ['Tay cầm thẳng đứng (Vertical)', 'Nòng giảm giật (Compensator)', 'Băng đạn mở rộng thay nhanh'],
         tipsVi: 'Nòng giảm giật kết hợp Tay cầm thẳng đứng triệt tiêu tới 40% độ giật dọc của M416 khi ngồi sấy.',
         tipsEn: 'Compensator combined with Vertical Foregrip eliminates up to 40% vertical recoil while crouching.'
@@ -334,7 +450,11 @@ export const GAMING_DATA: GameItem[] = [
         tier: 'S-TIER',
         playstyleVi: 'Dồn sát thương cận chiến cực nhanh với đạn .45 ACP hoặc 7.62mm khi công nhà hoặc giao tranh đô thị',
         playstyleEn: 'Devastating close-quarter DPS with .45 ACP or 7.62mm ARs during urban compound crashes',
-        coreUnits: ['UMP45 (Nòng giảm thanh + Laser)', 'Beryl M762', 'M24 / AWM'],
+        coreUnits: [
+          'Vũ khí chính: UMP45 (.45 ACP) hoặc Beryl M762 (7.62mm)',
+          'Vũ khí tầm xa: M24 / AWM hoặc M416',
+          'Phụ kiện UMP: Nòng Giảm Thanh + Tay Cầm Laser + Băng Đạn Mở Rộng 35 viên'
+        ],
         coreItemsOrTactics: ['Tay cầm Laser tăng độ chụm khi bắn không ngắm (Hipfire)', 'Bộ cứu thương & Nước tăng lực'],
         tipsVi: 'Bắn không bật ngắm (Hipfire) kết hợp di chuyển lách qua lại (Jiggle) ở khoảng cách dưới 10m.',
         tipsEn: 'Use Laser Sight hipfire with high-speed jiggle peeking inside 10-meter rooms.'

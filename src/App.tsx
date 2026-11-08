@@ -19,9 +19,9 @@ export const App: React.FC = () => {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false)
   const [showIntro, setShowIntro] = useState(() => {
     try {
-      return !sessionStorage.getItem('gwm_intro_seen')
+      return !localStorage.getItem('gwm_intro_seen')
     } catch {
-      return true
+      return false
     }
   })
 
@@ -45,7 +45,7 @@ export const App: React.FC = () => {
   const handleIntroComplete = () => {
     setShowIntro(false)
     try {
-      sessionStorage.setItem('gwm_intro_seen', 'true')
+      localStorage.setItem('gwm_intro_seen', 'true')
     } catch {
       // ignore
     }

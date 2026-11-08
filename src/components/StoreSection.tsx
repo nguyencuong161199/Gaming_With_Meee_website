@@ -14,7 +14,7 @@ export const StoreSection: React.FC<StoreSectionProps> = memo(({ lang }) => {
   const t = TRANSLATIONS[lang].store
 
   const formatVND = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)
+    return `${amount.toLocaleString('vi-VN')} VNĐ`
   }
 
   return (

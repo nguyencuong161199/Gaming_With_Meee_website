@@ -50,13 +50,13 @@ export const SocialLinks: React.FC<SocialLinksProps> = memo(({ links, lang = 'EN
                 </span>
               </div>
 
-              <h4 className="font-display font-bold text-sm sm:text-base text-brand-text group-hover:text-brand-accent transition-colors tracking-tight truncate">
+              <h4 className="font-display font-bold text-xs sm:text-sm text-brand-text group-hover:text-brand-accent transition-colors tracking-tight break-all leading-snug">
                 {item.handle}
               </h4>
 
-              {item.description && (
-                <p className="text-brand-subtext text-xs font-light mt-1">
-                  {item.description}
+              {(item.descriptionVi || item.description) && (
+                <p className="text-brand-subtext text-xs font-light mt-1.5 leading-relaxed">
+                  {lang === 'VI' ? (item.descriptionVi || item.description) : (item.descriptionEn || item.description)}
                 </p>
               )}
             </div>

@@ -13,10 +13,10 @@ export const STORE_PRODUCTS: ProductItem[] = [
     status: 'in_stock',
     image: 'https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=800&q=80',
     badge: 'BEST SELLER',
-    description: 'Custom profile PBT keycaps optimized for tactile gaming feel, vibrant cyan/magenta laser legends.',
-    descriptionVi: 'Bộ nút phím cơ PBT Dye-sub dày 1.5mm chống bóng, họa tiết Cyberpunk dạ quang, tương thích mọi switch cơ học.',
-    shopeeUrl: 'https://shopee.vn',
-    features: ['Chất liệu PBT cao cấp', '128 phím tương thích layout 60-100%', 'Chống mài mòn, bám vân tay']
+    description: 'Custom profile PBT keycaps optimized for tactile gaming feel with vibrant cyan and magenta legends.',
+    descriptionVi: 'Bộ nút phím cơ chất liệu PBT Dye-sub dày 1.5mm chống bóng mòn, họa tiết Cyberpunk neon, tương thích switch Cherry MX.',
+    shopeeUrl: 'https://shopee.vn/search?keyword=keycap%20pbt%20cyberpunk%20dye%20sub',
+    features: ['Chất liệu nhựa PBT Dye-Sub cao cấp 1.5mm', '128 phím tương thích layout 60%, 65%, 75%, TKL và Fullsize', 'Chống mài mòn, không bám mồ hôi và vân tay']
   },
   {
     id: 'prod-2',
@@ -30,10 +30,10 @@ export const STORE_PRODUCTS: ProductItem[] = [
     status: 'in_stock',
     image: 'https://images.unsplash.com/photo-1434030216411-0b793f4b4173?auto=format&fit=crop&w=800&q=80',
     badge: '98% PASS RATE',
-    description: 'Comprehensive Scrum Master preparation package: Scrum Guide 2020 breakdown, situational exam bank, flashcards.',
+    description: 'Comprehensive Scrum Master preparation package including Scrum Guide 2020 breakdown, situational exam bank, and flashcards.',
     descriptionVi: 'Trọn bộ tài liệu ôn luyện chứng chỉ Professional Scrum Master I: Sơ đồ tư duy, 300+ câu hỏi tình huống có lời giải chi tiết.',
-    shopeeUrl: 'https://shopee.vn',
-    features: ['Ebook PDF + Flashcard Anki', '300+ câu hỏi có giải thích chi tiết', 'Cập nhật theo Scrum Guide 2020']
+    shopeeUrl: 'https://shopee.vn/search?keyword=tai%20lieu%20on%20thi%20psm%20scrum%20master',
+    features: ['Tài liệu Ebook PDF + Bộ thẻ nhớ Flashcard Anki', '300+ câu hỏi tình huống thực tế có giải thích chi tiết', 'Biên soạn bám sát theo Scrum Guide 2020 mới nhất']
   },
   {
     id: 'prod-3',
@@ -47,10 +47,10 @@ export const STORE_PRODUCTS: ProductItem[] = [
     status: 'out_of_stock',
     image: 'https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?auto=format&fit=crop&w=800&q=80',
     badge: 'TẠM HẾT HÀNG',
-    description: 'Aluminosilicate glass surface for micro-frictionless flick shots, micro-textured silicone anti-slip base.',
+    description: 'Aluminosilicate tempered glass surface engineered for micro-frictionless flick shots and steady tracking.',
     descriptionVi: 'Bề mặt kính Aluminosilicate cường lực siêu mượt, viền bo cong CNC 2.5D, đế cao su chống trượt tuyệt đối.',
-    shopeeUrl: 'https://shopee.vn',
-    features: ['Kính cường lực Aluminosilicate', 'Kích thước 490x420mm', 'Độ bền vĩnh cửu không mòn']
+    shopeeUrl: 'https://shopee.vn/search?keyword=lot%20chuot%20kinh%20cuong%20luc%20gaming',
+    features: ['Kính cường lực Aluminosilicate cao cấp', 'Kích thước tiêu chuẩn thi đấu 490x420mm', 'Độ bền vĩnh cửu không mòn sờn theo thời gian']
   },
   {
     id: 'prod-4',
@@ -64,10 +64,9 @@ export const STORE_PRODUCTS: ProductItem[] = [
     status: 'in_stock',
     image: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=800&q=80',
     badge: 'CHUYÊN SÂU',
-    description: 'Excel calculation templates for CET1, Tier 1 Leverage, RWA projections under Fed Severely Adverse scenarios.',
+    description: 'Excel calculation templates for CET1, Tier 1 Leverage, and RWA projections under Fed stress scenarios.',
     descriptionVi: 'Bộ template Excel tính toán tỷ lệ an toàn vốn CET1, dự phóng tài sản rủi ro RWA theo kịch bản Fed Severely Adverse.',
-    shopeeUrl: 'https://shopee.vn',
-    features: ['File Excel động với công thức sẵn', 'Tài liệu hướng dẫn Basel III / Fed CCAR', 'Case study thực tế ngân hàng']
+    shopeeUrl: 'https://shopee.vn/search?keyword=financial%20risk%20modeling%20stress%20testing',
+    features: ['File Excel động với công thức tính CET1 và RWA sẵn', 'Tài liệu hướng dẫn chuyên sâu chuẩn Basel III / Fed CCAR', 'Case study kịch bản suy thoái thực tế áp dụng cho ngân hàng']
   }
 ]
-

@@ -235,7 +235,11 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({
                   </div>
                   <div className="flex-1 text-sm font-light pt-0.5">
                     <div className="text-brand-text font-normal mb-0.5">{opt.text}</div>
-                    {opt.textVi && <div className="text-xs text-brand-muted">{opt.textVi}</div>}
+                    {opt.textVi &&
+                      opt.textVi.trim().toLowerCase() !== opt.text.trim().toLowerCase() &&
+                      opt.textVi.trim().toLowerCase() !== opt.text.replace(/^the\s+/i, '').trim().toLowerCase() && (
+                        <div className="text-xs text-brand-muted">{opt.textVi}</div>
+                      )}
                   </div>
                 </button>
               )
@@ -278,7 +282,7 @@ export const ExamSimulator: React.FC<ExamSimulatorProps> = ({
         </div>
 
         {/* Right Column: Question Navigator Matrix (4 Cols) */}
-        <div className="lg:col-span-4 bg-brand-secondary/80 border border-brand-border rounded-2xl p-6 shadow-xl sticky top-44">
+        <div className="lg:col-span-4 bg-brand-secondary/80 border border-brand-border rounded-2xl p-5 sm:p-6 shadow-xl lg:sticky lg:top-44">
           <div className="flex items-center justify-between mb-4 pb-3 border-b border-brand-border/60">
             <h3 className="font-mono text-xs font-bold uppercase text-brand-text tracking-wider">
               {lang === 'VI' ? `BẢNG CÂU HỎI (${exam.totalQuestions})` : `QUESTION GRID (${exam.totalQuestions})`}

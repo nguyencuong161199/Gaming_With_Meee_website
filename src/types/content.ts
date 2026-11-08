@@ -42,6 +42,8 @@ export interface SocialLinkItem {
   handle: string
   url: string
   description?: string
+  descriptionVi?: string
+  descriptionEn?: string
 }
 
 export type UpdateTag = 'ANNOUNCEMENT' | 'NEW VIDEO' | 'DEVLOG' | 'COMMUNITY' | 'PATCH NOTES'

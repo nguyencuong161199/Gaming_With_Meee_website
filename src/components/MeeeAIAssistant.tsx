@@ -218,33 +218,40 @@ export const MeeeAIAssistant: React.FC<MeeeAIAssistantProps> = ({
           </div>
 
           {/* Multi-Agent Mode Selector Strip */}
-          <div className="px-3 py-2 bg-slate-900/80 border-b border-white/5 flex items-center gap-1.5 overflow-x-auto scrollbar-none shrink-0">
-            <span className="text-[10px] font-mono text-brand-muted shrink-0 pl-1">
-              {lang === 'VI' ? 'CHẾ ĐỘ:' : 'MODE:'}
-            </span>
-            {[
-              { id: 'general', label: lang === 'VI' ? 'TỔNG QUAN' : 'GENERAL', icon: Sparkles },
-              { id: 'tutor', label: lang === 'VI' ? '🎓 GIA SƯ ĐỀ THI' : '🎓 EXAM TUTOR', icon: BookOpen },
-              { id: 'game', label: '🎮 GAME COACH', icon: Gamepad2 },
-              { id: 'shop', label: '🛍️ NMC STORE', icon: ShoppingBag }
-            ].map((m) => {
-              const Icon = m.icon
-              const isActive = activeMode === m.id
-              return (
-                <button
-                  key={m.id}
-                  onClick={() => setActiveMode(m.id as AgentMode)}
-                  className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-mono tracking-wider transition-all shrink-0 ${
-                    isActive
-                      ? 'bg-brand-accent text-white font-bold shadow-sm shadow-brand-accent/40'
-                      : 'bg-white/5 hover:bg-white/10 text-brand-subtext hover:text-white border border-white/5'
-                  }`}
-                >
-                  <Icon className="w-3 h-3" />
-                  <span>{m.label}</span>
-                </button>
-              )
-            })}
+          <div className="px-3.5 py-2.5 bg-slate-900/90 border-b border-white/10 shrink-0">
+            <div className="flex items-center justify-between mb-1.5 px-0.5">
+              <span className="text-[10px] font-mono text-brand-muted uppercase tracking-wider font-semibold">
+                {lang === 'VI' ? 'CHẾ ĐỘ TƯ VẤN AI:' : 'AI AGENT MODE:'}
+              </span>
+              <span className="text-[10px] font-mono text-brand-accent font-bold">
+                {activeMode.toUpperCase()}
+              </span>
+            </div>
+            <div className="grid grid-cols-2 gap-1.5">
+              {[
+                { id: 'general', label: lang === 'VI' ? '✨ TỔNG QUAN' : '✨ GENERAL', icon: Sparkles },
+                { id: 'tutor', label: lang === 'VI' ? '🎓 GIA SƯ ĐỀ THI' : '🎓 EXAM TUTOR', icon: BookOpen },
+                { id: 'game', label: '🎮 GAME COACH', icon: Gamepad2 },
+                { id: 'shop', label: '🛍️ NMC STORE', icon: ShoppingBag }
+              ].map((m) => {
+                const Icon = m.icon
+                const isActive = activeMode === m.id
+                return (
+                  <button
+                    key={m.id}
+                    onClick={() => setActiveMode(m.id as AgentMode)}
+                    className={`flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-[10px] font-mono tracking-wider transition-all text-center ${
+                      isActive
+                        ? 'bg-brand-accent text-white font-bold shadow-md shadow-brand-accent/40 border border-brand-accent'
+                        : 'bg-white/5 hover:bg-white/10 text-brand-subtext hover:text-white border border-white/5'
+                    }`}
+                  >
+                    <Icon className="w-3 h-3 shrink-0" />
+                    <span className="truncate">{m.label}</span>
+                  </button>
+                )
+              })}
+            </div>
           </div>
 
           {/* Messages Scroll Area */}

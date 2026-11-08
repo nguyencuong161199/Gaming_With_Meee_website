@@ -19,7 +19,7 @@ export const StorePage: React.FC<StorePageProps> = ({ lang, onBack }) => {
   })
 
   const formatVND = (amount: number) => {
-    return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount)
+    return `${amount.toLocaleString('vi-VN')} VNĐ`
   }
 
   return (
@@ -136,7 +136,7 @@ export const StorePage: React.FC<StorePageProps> = ({ lang, onBack }) => {
                     <h3 className="font-display font-bold text-base sm:text-lg text-brand-text group-hover:text-brand-accent transition-colors mb-1 line-clamp-2">
                       {lang === 'VI' ? prod.titleVi : prod.title}
                     </h3>
-                    <p className="text-xs text-brand-subtext font-light line-clamp-2 mb-4 leading-relaxed">
+                    <p className="text-xs text-brand-subtext font-light min-h-[36px] line-clamp-2 mb-4 leading-relaxed">
                       {lang === 'VI' ? prod.descriptionVi : prod.description}
                     </p>
                   </div>
@@ -233,7 +233,7 @@ export const StorePage: React.FC<StorePageProps> = ({ lang, onBack }) => {
                 rel="noreferrer"
                 className="flex-1 py-3 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white font-mono text-xs font-bold uppercase tracking-wider text-center shadow-lg shadow-brand-accent/30 transition-all"
               >
-                {lang === 'VI' ? 'MUA TRÊN SHOPEE (FREESHIP)' : 'BUY ON SHOPEE (OFFICIAL)'}
+                {lang === 'VI' ? 'MUA TRÊN SHOPEE' : 'BUY ON SHOPEE'}
               </a>
               <a
                 href="mailto:nmc.corp16@gmail.com?subject=Inquiry%20Product"

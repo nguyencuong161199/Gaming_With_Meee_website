@@ -168,7 +168,7 @@ export const HomePage: React.FC<HomePageProps> = memo(({
                   ✓ {lang === 'VI' ? 'PSM I™ (15 câu)' : 'PSM I™ (15 questions)'}
                 </span>
                 <span className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border text-[11px] font-mono text-brand-subtext">
-                  ✓ {lang === 'VI' ? 'CCAR-F (5 câu)' : 'CCAR-F (5 questions)'}
+                  ✓ {lang === 'VI' ? 'CCAR-F (10 câu)' : 'CCAR-F (10 questions)'}
                 </span>
                 <span className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border text-[11px] font-mono text-emerald-400">
                   Pass: 85%

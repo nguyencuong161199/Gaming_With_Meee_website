@@ -127,20 +127,17 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
 
                       {/* Feature Highlights Pill Badges */}
                       <div className="flex flex-wrap gap-2 mb-6">
-                        <span className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border/70 text-[11px] font-mono text-brand-subtext flex items-center gap-1.5">
-                          <Trophy className="w-3.5 h-3.5 text-amber-400" />
-                          <span>
-                            {game.metaComps.length} {lang === 'VI' ? 'Đội hình S-Tier' : 'S-Tier Comps'}
+                        {game.featureBadges?.map((badge, bIdx) => (
+                          <span
+                            key={bIdx}
+                            className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border/70 text-[11px] font-mono text-brand-subtext flex items-center gap-1.5"
+                          >
+                            {badge.iconType === 'trophy' && <Trophy className="w-3.5 h-3.5 text-amber-400" />}
+                            {badge.iconType === 'sliders' && <Sliders className="w-3.5 h-3.5 text-cyan-400" />}
+                            {badge.iconType === 'book' && <BookOpen className="w-3.5 h-3.5 text-emerald-400" />}
+                            <span>{lang === 'VI' ? badge.labelVi : badge.labelEn}</span>
                           </span>
-                        </span>
-                        <span className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border/70 text-[11px] font-mono text-brand-subtext flex items-center gap-1.5">
-                          <Sliders className="w-3.5 h-3.5 text-cyan-400" />
-                          <span>{lang === 'VI' ? 'Cài đặt thi đấu' : 'Pro Settings'}</span>
-                        </span>
-                        <span className="px-2.5 py-1 rounded-lg bg-brand-elevated border border-brand-border/70 text-[11px] font-mono text-brand-subtext flex items-center gap-1.5">
-                          <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-                          <span>{lang === 'VI' ? 'Cẩm nang Macro' : 'Macro Playbook'}</span>
-                        </span>
+                        ))}
                       </div>
                     </div>
 
@@ -241,7 +238,9 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
               >
                 <Trophy className="w-4 h-4" />
                 <span>
-                  {lang === 'VI' ? 'ĐỘI HÌNH & CHIẾN THUẬT S-TIER' : 'S-TIER COMPS & FORMATIONS'}
+                  {lang === 'VI'
+                    ? (activeGame.tabTitles?.tab1Vi || 'ĐỘI HÌNH & CHIẾN THUẬT S-TIER')
+                    : (activeGame.tabTitles?.tab1En || 'S-TIER COMPS & FORMATIONS')}
                 </span>
               </button>
 
@@ -255,7 +254,9 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
               >
                 <Sliders className="w-4 h-4" />
                 <span>
-                  {lang === 'VI' ? 'CÀI ĐẶT THI ĐẤU & THÔNG SỐ' : 'PRO SETTINGS & CONTROLS'}
+                  {lang === 'VI'
+                    ? (activeGame.tabTitles?.tab2Vi || 'CÀI ĐẶT THI ĐẤU & THÔNG SỐ')
+                    : (activeGame.tabTitles?.tab2En || 'PRO SETTINGS & CONTROLS')}
                 </span>
               </button>
 
@@ -269,7 +270,9 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
               >
                 <BookOpen className="w-4 h-4" />
                 <span>
-                  {lang === 'VI' ? 'CẨM NANG LEO RANK' : 'RANKED MACRO PLAYBOOK'}
+                  {lang === 'VI'
+                    ? (activeGame.tabTitles?.tab3Vi || 'CẨM NANG LEO RANK')
+                    : (activeGame.tabTitles?.tab3En || 'RANKED MACRO PLAYBOOK')}
                 </span>
               </button>
             </div>
