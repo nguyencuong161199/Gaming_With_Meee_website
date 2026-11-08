@@ -186,8 +186,8 @@ export const AboutPage: React.FC<AboutPageProps> = ({ lang, onBack }) => {
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-elevated border border-brand-border text-xs font-mono text-brand-accent mb-3">
               <span>
                 {lang === 'VI'
-                  ? 'NHÀ SÁNG LẬP: NGUYỄN MINH CƯỜNG (EDWARD) // NMC CORP'
-                  : 'FOUNDER: NGUYEN MINH CUONG (EDWARD) // NMC CORP'}
+                  ? 'NHÀ SÁNG LẬP: NGUYỄN MẠNH CƯỜNG (EDWARD) // NMC CORP'
+                  : 'FOUNDER: NGUYEN MANH CUONG (EDWARD) // NMC CORP'}
               </span>
             </div>
             <h2 className="font-display font-black text-2xl sm:text-3xl text-brand-text uppercase mb-1">

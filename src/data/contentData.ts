@@ -3,13 +3,13 @@ import { SocialLinkItem } from '../types/content'
 export const BRAND = {
   name: "Gaming with meee",
   parentBrand: "NMC Corp",
-  founder: "Nguyễn Minh Cường (Edward)",
+  founder: "Nguyễn Mạnh Cường (Edward)",
   founderShort: "Nguyễn Cường",
   attribution: "A creative brand by NMC Corp",
   tagline: "PLAY. EXPLORE. CREATE.",
   headline: "WELCOME TO MY WORLD.",
   positioning: "Exploring Gaming, Technology & AI.",
-  contactPerson: "Nguyễn Minh Cường (Mr. Edward)",
+  contactPerson: "Nguyễn Mạnh Cường (Mr. Edward)",
   phone: "0337 468 883",
   email: "nmc.corp16@gmail.com",
 } as const
