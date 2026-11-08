@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { ShoppingBag, ArrowUpRight, Check, Filter, X } from 'lucide-react'
+import { ShoppingBag, ArrowUpRight, Check, Filter, X, Bell } from 'lucide-react'
 import { STORE_PRODUCTS } from '../data/storeData'
 import { ProductItem, ProductCategory } from '../types/store'
 import { Language } from '../data/translations'
@@ -12,6 +12,7 @@ interface StorePageProps {
 export const StorePage: React.FC<StorePageProps> = ({ lang, onBack }) => {
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory>('all')
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null)
+  const [notifiedProductIds, setNotifiedProductIds] = useState<string[]>([])
 
   const filteredProducts = STORE_PRODUCTS.filter((prod) => {
     if (selectedCategory === 'all') return true
@@ -20,6 +21,12 @@ export const StorePage: React.FC<StorePageProps> = ({ lang, onBack }) => {
 
   const formatVND = (amount: number) => {
     return `${amount.toLocaleString('vi-VN')} VNĐ`
+  }
+
+  const handleNotify = (id: string) => {
+    if (!notifiedProductIds.includes(id)) {
+      setNotifiedProductIds((prev) => [...prev, id])
+    }
   }
 
   return (
@@ -108,11 +115,15 @@ export const StorePage: React.FC<StorePageProps> = ({ lang, onBack }) => {
                       className={`px-2.5 py-1 rounded-md text-[10px] font-mono font-bold tracking-wider uppercase border shadow-md ${
                         isOutOfStock
                           ? 'bg-rose-950/80 border-rose-500 text-rose-300'
+                          : prod.isDigital
+                          ? 'bg-blue-950/80 border-blue-500 text-blue-300'
                           : 'bg-emerald-950/80 border-emerald-500 text-emerald-300'
                       }`}
                     >
                       {isOutOfStock
-                        ? (lang === 'VI' ? 'HẾT HÀNG' : 'OUT OF STOCK')
+                        ? (lang === 'VI' ? 'TẠM HẾT HÀNG' : 'OUT OF STOCK')
+                        : prod.isDigital
+                        ? (lang === 'VI' ? 'TÀI LIỆU SỐ • TẢI NGAY' : 'DIGITAL ACCESS')
                         : (lang === 'VI' ? `CÒN ${prod.stock} SẢN PHẨM` : `${prod.stock} IN STOCK`)}
                     </span>
                   </div>
@@ -120,7 +131,9 @@ export const StorePage: React.FC<StorePageProps> = ({ lang, onBack }) => {
                   {/* Sold count badge */}
                   <div className="absolute top-3 right-3">
                     <span className="px-2.5 py-1 rounded-md bg-black/60 backdrop-blur-md border border-white/10 text-white/90 text-[10px] font-mono">
-                      {lang === 'VI' ? `Đã bán: ${prod.soldCount}` : `Sold: ${prod.soldCount}`}
+                      {prod.isDigital
+                        ? (lang === 'VI' ? `Đã tải: ${prod.soldCount}` : `Downloads: ${prod.soldCount}`)
+                        : (lang === 'VI' ? `Đã bán: ${prod.soldCount}` : `Sold: ${prod.soldCount}`)}
                     </span>
                   </div>
                 </div>
@@ -156,16 +169,15 @@ export const StorePage: React.FC<StorePageProps> = ({ lang, onBack }) => {
 
                     <button
                       onClick={() => setSelectedProduct(prod)}
-                      disabled={isOutOfStock}
                       className={`w-full py-2.5 px-4 rounded-xl font-mono text-xs font-bold uppercase tracking-wider flex items-center justify-center gap-2 transition-all ${
                         isOutOfStock
-                          ? 'bg-brand-elevated text-brand-muted border border-brand-border cursor-not-allowed opacity-60'
+                          ? 'bg-brand-elevated hover:bg-brand-secondary text-amber-300 hover:text-white border border-amber-500/40 hover:border-amber-400'
                           : 'bg-brand-accent hover:bg-brand-accent-hover text-white shadow-lg shadow-brand-accent/25 active:scale-[0.99]'
                       }`}
                     >
                       <span>
                         {isOutOfStock
-                          ? (lang === 'VI' ? 'TẠM HẾT HÀNG' : 'OUT OF STOCK')
+                          ? (lang === 'VI' ? 'XEM CHI TIẾT & BÁO HÀNG' : 'DETAILS & RESTOCK ALERT')
                           : (lang === 'VI' ? 'XEM CHI TIẾT & ĐẶT HÀNG' : 'VIEW DETAILS & ORDER')}
                       </span>
                       <ArrowUpRight className="w-4 h-4" />
@@ -195,10 +207,14 @@ export const StorePage: React.FC<StorePageProps> = ({ lang, onBack }) => {
 
             <div className="flex items-center gap-2 mb-2">
               <span className="px-2.5 py-0.5 rounded bg-brand-accent/20 text-brand-accent text-[11px] font-mono font-bold uppercase">
-                {selectedProduct.badge || 'NMC OFFICIAL'}
+                {selectedProduct.badge || 'NMC STORE'}
               </span>
-              <span className="text-xs font-mono text-emerald-400 font-bold">
-                {lang === 'VI' ? `CÒN ${selectedProduct.stock} SẢN PHẨM` : `${selectedProduct.stock} IN STOCK`}
+              <span className={`text-xs font-mono font-bold ${selectedProduct.status === 'out_of_stock' ? 'text-amber-400' : 'text-emerald-400'}`}>
+                {selectedProduct.status === 'out_of_stock'
+                  ? (lang === 'VI' ? 'TẠM HẾT HÀNG • ĐĂNG KÝ BÁO HÀNG' : 'OUT OF STOCK • RESTOCK ALERT')
+                  : selectedProduct.isDigital
+                  ? (lang === 'VI' ? 'TÀI LIỆU SỐ • TẢI NGAY' : 'DIGITAL DOWNLOAD')
+                  : (lang === 'VI' ? `CÒN ${selectedProduct.stock} SẢN PHẨM` : `${selectedProduct.stock} IN STOCK`)}
               </span>
             </div>
 
@@ -227,16 +243,35 @@ export const StorePage: React.FC<StorePageProps> = ({ lang, onBack }) => {
             </div>
 
             <div className="flex items-center gap-3">
+              {selectedProduct.status === 'out_of_stock' ? (
+                notifiedProductIds.includes(selectedProduct.id) ? (
+                  <button
+                    disabled
+                    className="flex-1 py-3 rounded-xl bg-emerald-950/60 border border-emerald-500 text-emerald-300 font-mono text-xs font-bold uppercase tracking-wider text-center"
+                  >
+                    ✓ {lang === 'VI' ? 'ĐÃ ĐĂNG KÝ BÁO HÀNG' : 'NOTIFIED! WE WILL EMAIL YOU'}
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleNotify(selectedProduct.id)}
+                    className="flex-1 py-3 rounded-xl bg-amber-600 hover:bg-amber-500 text-white font-mono text-xs font-bold uppercase tracking-wider text-center shadow-lg shadow-amber-900/30 transition-all flex items-center justify-center gap-2"
+                  >
+                    <Bell className="w-4 h-4" />
+                    <span>{lang === 'VI' ? 'BÁO KHI CÓ HÀNG' : 'NOTIFY WHEN IN STOCK'}</span>
+                  </button>
+                )
+              ) : (
+                <a
+                  href={selectedProduct.shopeeUrl || 'https://shopee.vn'}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex-1 py-3 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white font-mono text-xs font-bold uppercase tracking-wider text-center shadow-lg shadow-brand-accent/30 transition-all"
+                >
+                  {lang === 'VI' ? 'TÌM TRÊN SHOPEE' : 'SEARCH ON SHOPEE'}
+                </a>
+              )}
               <a
-                href={selectedProduct.shopeeUrl || 'https://shopee.vn'}
-                target="_blank"
-                rel="noreferrer"
-                className="flex-1 py-3 rounded-xl bg-brand-accent hover:bg-brand-accent-hover text-white font-mono text-xs font-bold uppercase tracking-wider text-center shadow-lg shadow-brand-accent/30 transition-all"
-              >
-                {lang === 'VI' ? 'MUA TRÊN SHOPEE' : 'BUY ON SHOPEE'}
-              </a>
-              <a
-                href="mailto:nmc.corp16@gmail.com?subject=Inquiry%20Product"
+                href={`mailto:nmc.corp16@gmail.com?subject=Inquiry%20Product%20${encodeURIComponent(selectedProduct.title)}`}
                 className="px-4 py-3 rounded-xl bg-brand-elevated border border-brand-border hover:border-brand-accent text-brand-subtext hover:text-white font-mono text-xs transition-all text-center"
               >
                 {lang === 'VI' ? 'LIÊN HỆ' : 'CONTACT'}

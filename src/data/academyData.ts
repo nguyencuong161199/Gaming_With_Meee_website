@@ -129,16 +129,18 @@ export const EXAM_PACKAGES: ExamPackage[] = [
       },
       {
         id: 8,
-        question: 'True or False: The Scrum Master is a management position.',
-        questionVi: 'Đúng hay Sai: Scrum Master là một vị trí quản lý (Management Position)?',
+        question: 'How does the 2020 Scrum Guide define the accountability and leadership style of the Scrum Master?',
+        questionVi: 'Scrum Guide 2020 định nghĩa vai trò và phong cách lãnh đạo của Scrum Master như thế nào?',
         options: [
-          { id: 'A', text: 'True. The Scrum Master manages the Scrum process and effectiveness.', textVi: 'Đúng. Scrum Master quản lý quy trình Scrum và mức độ hiệu quả của cả team.' },
-          { id: 'B', text: 'False. Scrum has no managers at all.', textVi: 'Sai. Trong Scrum hoàn toàn không có khái niệm quản lý.' }
+          { id: 'A', text: 'As a "true leader who serves" the Scrum Team and the larger organization', textVi: 'Là một "nhà lãnh đạo phục vụ thực thụ" (true leader who serves) cho Scrum Team và tổ chức' },
+          { id: 'B', text: 'As a traditional command-and-control project manager who assigns daily tasks', textVi: 'Là một quản lý dự án truyền thống có quyền chỉ huy, kiểm soát và giao việc hàng ngày' },
+          { id: 'C', text: 'As an administrative meeting secretary without any accountability for team effectiveness', textVi: 'Là một thư ký hành chính chỉ ghi chép biên bản cuộc họp và không chịu trách nhiệm về hiệu quả của nhóm' },
+          { id: 'D', text: 'As the technical lead who exclusively decides product architecture', textVi: 'Là một trưởng nhóm kỹ thuật duy nhất có quyền quyết định kiến trúc sản phẩm' }
         ],
         correctAnswers: ['A'],
-        explanation: 'True. The Scrum Master is a manager, not in the traditional sense of managing people, but in the sense of managing the Scrum process, ensuring Scrum is understood and enacted, and fostering team effectiveness.',
-        explanationVi: 'Đúng! Scrum Master là một vị trí quản lý, nhưng không phải quản lý con người theo kiểu cấp trên - cấp dưới, mà là quản lý việc thực thi quy trình Scrum và tính hiệu quả của cả team.',
-        reference: 'Scrum.org Professional Scrum Master Concept',
+        explanation: 'According to the 2020 Scrum Guide, "Scrum Masters are true leaders who serve the Scrum Team and the larger organization." They foster team effectiveness without traditional command-and-control authority.',
+        explanationVi: 'Theo Scrum Guide 2020, "Scrum Master là những nhà lãnh đạo thực thụ phục vụ Scrum Team và tổ chức" (true leaders who serve), giúp cả nhóm tự quản và nâng cao hiệu quả làm việc thay vì quản lý phân cấp truyền thống.',
+        reference: 'Scrum Guide 2020 - Scrum Master Accountabilities',
         topic: 'Scrum Roles & Accountabilities'
       },
       {

@@ -13,7 +13,10 @@ import {
   Play,
   ArrowDownRight,
   Phone,
-  Mail
+  Mail,
+  Flame,
+  Award,
+  Video
 } from 'lucide-react'
 
 interface HomePageProps {
@@ -31,22 +34,22 @@ export const HomePage: React.FC<HomePageProps> = memo(({
 
   return (
     <div className="min-h-screen bg-brand-bg text-brand-text font-sans selection:bg-brand-accent selection:text-white relative overflow-x-hidden pt-16">
-      {/* Ambient Atmospheric Logo & Glow (Lightweight GPU) */}
+      {/* Ambient Atmospheric Glow (Lightweight GPU) */}
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-brand-accent/5 rounded-full blur-[140px]" />
         <div className="absolute top-10 right-10 w-96 h-96 bg-purple-600/5 rounded-full blur-[130px]" />
         <div className="absolute inset-0 grid-backdrop opacity-20" />
       </div>
 
-      {/* 1. HERO SECTION */}
-      <section className="min-h-[85vh] sm:min-h-[90vh] flex flex-col justify-center items-center text-center px-5 sm:px-8 relative z-10 my-auto py-12">
+      {/* 1. HERO SECTION (COMPACT & HIGH CONTRAST, ABOVE THE FOLD) */}
+      <section className="min-h-[75vh] md:min-h-[82vh] flex flex-col justify-center items-center text-center px-4 sm:px-8 relative z-10 py-6 sm:py-10">
         {/* Floating Replay Intro Button */}
         {onReplayIntro && (
-          <div className="absolute top-4 right-4 sm:right-8 z-20">
+          <div className="absolute top-2 right-4 sm:right-8 z-20">
             <button
               onClick={onReplayIntro}
               aria-label="Replay Intro Video"
-              className="group inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-brand-secondary/85 hover:bg-brand-elevated border border-brand-border hover:border-brand-accent backdrop-blur-xl text-xs font-mono tracking-wider transition-all shadow-xl hover:scale-105 active:scale-95"
+              className="group inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-brand-secondary/85 hover:bg-brand-elevated border border-brand-border hover:border-brand-accent backdrop-blur-xl text-xs font-mono tracking-wider transition-all shadow-xl hover:scale-105 active:scale-95"
             >
               <Play className="w-3.5 h-3.5 text-brand-accent group-hover:scale-110 transition-transform fill-brand-accent/20" />
               <span className="text-brand-subtext group-hover:text-brand-text text-[11px]">
@@ -56,23 +59,26 @@ export const HomePage: React.FC<HomePageProps> = memo(({
           </div>
         )}
 
-        {/* Ambient Logo Graphic */}
-        <div className="relative w-40 h-40 sm:w-56 sm:h-56 md:w-64 md:h-64 rounded-3xl overflow-hidden opacity-25 filter contrast-125 brightness-95 pointer-events-none border border-brand-accent/20 shadow-2xl shadow-brand-accent/10 mb-6">
-          <img
-            src="/assets/nmc-gwm-logo.jpeg"
-            alt="NMC GWM Background Logo"
-            className="w-full h-full object-cover scale-105"
-          />
+        {/* High-Contrast Hero Brand Emblem */}
+        <div className="relative mb-4 group">
+          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-brand-accent via-cyan-400 to-amber-400 opacity-70 blur-md group-hover:opacity-100 transition-opacity" />
+          <div className="relative w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-2xl overflow-hidden border-2 border-brand-accent/80 bg-slate-950 shadow-2xl flex items-center justify-center">
+            <img
+              src="/assets/nmc-gwm-logo.jpeg"
+              alt="Gaming With Meee & NMC Corp Logo"
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          </div>
         </div>
 
         {/* Tagline Badge */}
-        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-secondary/90 border border-brand-border text-brand-accent text-xs font-mono font-medium tracking-widest uppercase mb-5 shadow-md backdrop-blur-md">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-brand-secondary/90 border border-brand-border text-brand-accent text-xs font-mono font-medium tracking-widest uppercase mb-4 shadow-md backdrop-blur-md">
           <Sparkles className="w-3.5 h-3.5" />
           <span>{t.hero.tagline}</span>
         </div>
 
         {/* Oversized Headline */}
-        <h1 className="font-display font-black text-5xl sm:text-7xl md:text-8xl lg:text-[88px] text-brand-text leading-[0.9] tracking-tighter uppercase mb-5 max-w-5xl">
+        <h1 className="font-display font-black text-4xl sm:text-6xl md:text-7xl lg:text-[76px] text-brand-text leading-[0.95] tracking-tight uppercase mb-4 max-w-5xl">
           {t.hero.headline1} <br />
           <span className="text-stroke-tech">{t.hero.headline2}</span> <br />
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-text via-brand-accent to-sky-400">
@@ -80,20 +86,20 @@ export const HomePage: React.FC<HomePageProps> = memo(({
           </span>
         </h1>
 
-        {/* Minimalist Subhead (2 Clean Balanced Lines) */}
-        <p className="text-sm sm:text-base md:text-lg text-brand-subtext font-light tracking-wide max-w-xl mb-8 leading-relaxed">
+        {/* Minimalist Subhead with Creator Attribution */}
+        <p className="text-sm sm:text-base md:text-lg text-brand-subtext font-light tracking-wide max-w-xl mb-6 leading-relaxed">
           <span className="block">
-            {t.hero.subheadPrefix} <span className="text-brand-text font-semibold">NMC Corp</span>
+            {t.hero.subheadPrefix} <span className="text-brand-text font-semibold">NMC Corp</span> &bull; {lang === 'VI' ? 'Tác giả:' : 'Creator:'} <strong className="text-brand-accent font-medium">Nguyễn Mạnh Cường (Edward)</strong>
           </span>
-          <span className="block mt-1 sm:mt-1.5">
-            {lang === 'VI' ? 'Khám phá ' : 'Exploring '}
-            <span className="text-brand-accent font-medium">Gaming</span>,{' '}
-            <span className="text-brand-accent font-medium">Technology</span> &amp;{' '}
-            <span className="text-brand-accent font-medium">AI</span>.
+          <span className="block mt-1">
+            {lang === 'VI' ? 'Hệ sinh thái ' : 'Exploring '}
+            <span className="text-brand-accent font-medium">Gaming Esports</span>,{' '}
+            <span className="text-brand-accent font-medium">NMC Academy (PSM I &amp; CCAR)</span> &amp;{' '}
+            <span className="text-brand-accent font-medium">AI Technology</span>.
           </span>
         </p>
 
-        {/* Action CTAs: Direct Jump to Key Hubs */}
+        {/* Action CTAs: Direct Jump to Key Hubs (Comfortably Above the Fold) */}
         <div className="flex flex-wrap items-center justify-center gap-3">
           <button
             onClick={() => onNavigateView('academy')}
@@ -108,7 +114,7 @@ export const HomePage: React.FC<HomePageProps> = memo(({
             onClick={() => onNavigateView('gaming')}
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-secondary/80 hover:bg-brand-elevated border border-brand-border hover:border-brand-accent backdrop-blur-md text-brand-text font-mono text-xs font-medium uppercase tracking-wider transition-all"
           >
-            <Gamepad2 className="w-4 h-4 text-brand-accent" />
+            <Gamepad2 className="w-4 h-4 text-purple-400" />
             <span>{lang === 'VI' ? 'CẨM NANG GAMING' : 'GAMING HUB'}</span>
           </button>
 
@@ -116,9 +122,40 @@ export const HomePage: React.FC<HomePageProps> = memo(({
             onClick={() => onNavigateView('store')}
             className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl bg-brand-secondary/80 hover:bg-brand-elevated border border-brand-border hover:border-brand-accent backdrop-blur-md text-brand-text font-mono text-xs font-medium uppercase tracking-wider transition-all"
           >
-            <ShoppingBag className="w-4 h-4 text-brand-accent" />
+            <ShoppingBag className="w-4 h-4 text-amber-400" />
             <span>{lang === 'VI' ? 'CỬA HÀNG STORE' : 'STORE & GEAR'}</span>
           </button>
+        </div>
+
+        {/* Social Proof Line (Above the fold) */}
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-6 mt-6 pt-5 border-t border-brand-border/40 text-[11px] sm:text-xs font-mono text-brand-subtext">
+          <span className="flex items-center gap-1.5 text-amber-400 font-semibold bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+            <span>⭐</span> 4.9/5 {lang === 'VI' ? 'Đánh giá học viên' : 'Student Rating'}
+          </span>
+          <span className="flex items-center gap-1.5 text-blue-400 font-semibold bg-blue-500/10 px-3 py-1 rounded-full border border-blue-500/20">
+            <span>🎯</span> 1.450+ {lang === 'VI' ? 'lượt thi PSM I & CCAR' : 'Completed Exams'}
+          </span>
+          <span className="flex items-center gap-1.5 text-emerald-400 font-semibold bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+            <span>👥</span> 5.000+ {lang === 'VI' ? 'thành viên Esports' : 'Community Members'}
+          </span>
+        </div>
+
+        {/* 4 Games Quick Ticker */}
+        <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
+          {[
+            { id: 'tft', name: '🎮 TFT Mùa 13 (Arcane)', color: 'text-amber-400 border-amber-500/30 hover:border-amber-400' },
+            { id: 'lol', name: '⚔️ LOL S14 Meta', color: 'text-cyan-400 border-cyan-500/30 hover:border-cyan-400' },
+            { id: 'fco', name: '⚽ FC Online 4-2-3-1', color: 'text-emerald-400 border-emerald-500/30 hover:border-emerald-400' },
+            { id: 'pubgm', name: '🎯 PUBG Mobile Gyro', color: 'text-rose-400 border-rose-500/30 hover:border-rose-400' }
+          ].map((g) => (
+            <button
+              key={g.id}
+              onClick={() => onNavigateView('gaming')}
+              className={`px-3 py-1 rounded-full bg-slate-900/80 border ${g.color} text-[11px] font-mono transition-all hover:scale-105 active:scale-95`}
+            >
+              {g.name}
+            </button>
+          ))}
         </div>
       </section>
 
@@ -325,10 +362,130 @@ export const HomePage: React.FC<HomePageProps> = memo(({
         </div>
       </section>
 
-      {/* 3. SECTION: KẾT NỐI & LIÊN HỆ */}
-      <section id="connect" className="max-w-6xl mx-auto px-5 sm:px-8 py-16 relative z-10 border-t border-brand-border/50">
+      {/* 3. DYNAMIC COMMUNITY & LATEST ACTIVITY SECTION */}
+      <section className="max-w-6xl mx-auto px-5 sm:px-8 py-16 relative z-10 border-t border-brand-border/50">
         <SectionHeading
           number="02"
+          tag={lang === 'VI' ? 'CỘNG ĐỒNG & HOẠT ĐỘNG // COMMUNITY PULSE' : 'COMMUNITY PULSE // LATEST ACTIVITY'}
+          title={lang === 'VI' ? 'CẬP NHẬT MỚI NHẤT & BẢNG VÀNG' : 'LATEST META & HALL OF FAME'}
+          subtitle={
+            lang === 'VI'
+              ? 'Theo dõi liên tục các phân tích meta hotfix, bảng vàng học viên đạt chứng chỉ quốc tế và các cẩm nang thực chiến mới nhất.'
+              : 'Real-time hotfix meta breakdowns, verified student certification scorecards, and pro gameplay tactics.'
+          }
+        />
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+          {/* Card 1: Meta Hotfix */}
+          <div
+            onClick={() => onNavigateView('gaming')}
+            className="group rounded-3xl bg-brand-secondary border border-brand-border hover:border-amber-500/80 p-6 transition-all duration-300 cursor-pointer shadow-xl hover:-translate-y-1 flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <span className="px-2.5 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-400 text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
+                  <Flame className="w-3.5 h-3.5" />
+                  <span>HOTFIX TFT MÙA 13</span>
+                </span>
+                <span className="text-[10px] font-mono text-brand-muted">
+                  {lang === 'VI' ? 'HÔM NAY' : 'TODAY'}
+                </span>
+              </div>
+
+              <h4 className="font-display font-bold text-lg text-brand-text group-hover:text-amber-400 transition-colors mb-2 leading-snug">
+                {lang === 'VI'
+                  ? '6 Cảnh Binh & Caitlyn Siêu Gánh Kèo Thống Trị Meta'
+                  : '6 Enforcer Caitlyn Dominates Set 13 Ranked Meta'}
+              </h4>
+              <p className="text-xs text-brand-subtext font-light leading-relaxed mb-4">
+                {lang === 'VI'
+                  ? 'Bản cập nhật 14.24 tăng cường mốc 6 Cảnh Binh, giúp tỷ lệ vào Top 4 của Caitlyn đạt 68.2% ở bậc Thách Đấu. Đã cập nhật cẩm nang Fast 8.'
+                  : 'Patch 14.24 buffs Enforcer thresholds pushing Caitlyn top-4 rate to 68.2% in Challenger lobbies. Fast-8 tempo guide updated.'}
+              </p>
+            </div>
+
+            <div className="pt-3 border-t border-brand-border/60 flex items-center justify-between font-mono text-xs text-amber-400 font-bold uppercase tracking-wider">
+              <span>{lang === 'VI' ? 'XEM CHI TIẾT ĐỘI HÌNH' : 'VIEW META COMP'}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* Card 2: Academy Hall of Fame */}
+          <div
+            onClick={() => onNavigateView('academy')}
+            className="group rounded-3xl bg-brand-secondary border border-brand-border hover:border-blue-500/80 p-6 transition-all duration-300 cursor-pointer shadow-xl hover:-translate-y-1 flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <span className="px-2.5 py-1 rounded-full bg-blue-500/15 border border-blue-500/30 text-blue-400 text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
+                  <Award className="w-3.5 h-3.5" />
+                  <span>BẢNG VÀNG TUẦN NÀY</span>
+                </span>
+                <span className="text-[10px] font-mono text-emerald-400 font-bold">
+                  97.5% PASS
+                </span>
+              </div>
+
+              <h4 className="font-display font-bold text-lg text-brand-text group-hover:text-blue-400 transition-colors mb-2 leading-snug">
+                {lang === 'VI'
+                  ? '14 Học Viên Vượt Qua Kỳ Thi PSM I Chuẩn Scrum.org'
+                  : '14 Students Cleared Official Scrum.org PSM I Exam'}
+              </h4>
+              <p className="text-xs text-brand-subtext font-light leading-relaxed mb-4">
+                {lang === 'VI'
+                  ? 'Thành tích nổi bật: Trần Hoàng Nam (FPT Software) đạt 78/80 câu thi thật. Ngân hàng đề thi 15 câu đã đồng bộ định nghĩa Scrum Guide 2020.'
+                  : 'Standout score: Tran Hoang Nam (FPT) scored 78/80 on official exam. 15-question bank updated with Scrum Guide 2020 leadership definitions.'}
+              </p>
+            </div>
+
+            <div className="pt-3 border-t border-brand-border/60 flex items-center justify-between font-mono text-xs text-blue-400 font-bold uppercase tracking-wider">
+              <span>{lang === 'VI' ? 'THI THỬ ACADEMY NGAY' : 'TAKE MOCK EXAM'}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </div>
+
+          {/* Card 3: Creator Video Highlight */}
+          <a
+            href={SOCIAL_LINKS.find((s) => s.platform === 'TikTok')?.url || 'https://www.tiktok.com/@_gamingwithmeee'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group rounded-3xl bg-brand-secondary border border-brand-border hover:border-pink-500/80 p-6 transition-all duration-300 cursor-pointer shadow-xl hover:-translate-y-1 flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between gap-2 mb-3">
+                <span className="px-2.5 py-1 rounded-full bg-pink-500/15 border border-pink-500/30 text-pink-400 text-[10px] font-mono font-bold uppercase tracking-wider flex items-center gap-1.5">
+                  <Video className="w-3.5 h-3.5" />
+                  <span>HIGHLIGHT & CLIP TIKTOK</span>
+                </span>
+                <span className="text-[10px] font-mono text-brand-muted">
+                  45K+ VIEWS
+                </span>
+              </div>
+
+              <h4 className="font-display font-bold text-lg text-brand-text group-hover:text-pink-400 transition-colors mb-2 leading-snug">
+                {lang === 'VI'
+                  ? 'Kỹ Thuật Ghìm Tâm Con Quay PUBG Mobile & Sút ZD FC Online'
+                  : 'PUBG Mobile Gyro Spray & FC Online ZD Curler Guides'}
+              </h4>
+              <p className="text-xs text-brand-subtext font-light leading-relaxed mb-4">
+                {lang === 'VI'
+                  ? 'Clip mẹo chỉnh độ nhạy Gyroscope sấy M416 x3 không giật trên kênh Gaming with meee thu hút hàng chục ngàn lượt xem và bình luận.'
+                  : 'Practical video demo on 3x scope spray calibration and finesse finishes on Gaming with meee TikTok channel.'}
+              </p>
+            </div>
+
+            <div className="pt-3 border-t border-brand-border/60 flex items-center justify-between font-mono text-xs text-pink-400 font-bold uppercase tracking-wider">
+              <span>{lang === 'VI' ? 'THEO DÕI TRÊN TIKTOK' : 'WATCH ON TIKTOK'}</span>
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+            </div>
+          </a>
+        </div>
+      </section>
+
+      {/* 4. SECTION: KẾT NỐI & LIÊN HỆ */}
+      <section id="connect" className="max-w-6xl mx-auto px-5 sm:px-8 py-16 relative z-10 border-t border-brand-border/50">
+        <SectionHeading
+          number="03"
           tag={t.connect.tag}
           title={t.connect.title}
           subtitle={t.connect.subtitle}

@@ -105,14 +105,19 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
                         />
                       </div>
 
-                      {/* Developer & Genre Badges */}
-                      <div className="flex items-center gap-2 mb-2 text-xs font-mono">
+                      {/* Developer & Genre Badges + Patch Version */}
+                      <div className="flex flex-wrap items-center gap-2 mb-2 text-xs font-mono">
                         <span className="px-2.5 py-0.5 rounded-md bg-brand-elevated border border-brand-border text-brand-muted">
                           {game.developer}
                         </span>
                         <span className={`font-semibold ${game.accentColor}`}>
                           &bull; {lang === 'VI' ? game.genreVi : game.genreEn}
                         </span>
+                        {game.patchVersion && (
+                          <span className="px-2 py-0.5 rounded-md bg-purple-500/15 border border-purple-500/30 text-[10px] text-purple-300 font-bold">
+                            ⚡ {game.patchVersion}
+                          </span>
+                        )}
                       </div>
 
                       {/* Game Title */}
@@ -211,11 +216,18 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
 
               {/* Game Info */}
               <div className="flex-1 text-center md:text-left">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-elevated border border-brand-border text-xs font-mono mb-3">
-                  <span className="text-brand-muted">{activeGame.developer}</span>
-                  <span className={activeGame.accentColor}>
+                <div className="flex flex-wrap items-center justify-center md:justify-start gap-2 mb-3 text-xs font-mono">
+                  <span className="px-3 py-1 rounded-full bg-brand-elevated border border-brand-border text-brand-muted">
+                    {activeGame.developer}
+                  </span>
+                  <span className={`px-3 py-1 rounded-full bg-brand-elevated border border-brand-border font-semibold ${activeGame.accentColor}`}>
                     &bull; {lang === 'VI' ? activeGame.genreVi : activeGame.genreEn}
                   </span>
+                  {activeGame.patchVersion && (
+                    <span className="px-3 py-1 rounded-full bg-purple-500/20 border border-purple-500/40 text-[11px] font-mono font-bold text-purple-300">
+                      ⚡ {activeGame.patchVersion}
+                    </span>
+                  )}
                 </div>
                 <h1 className="font-display font-black text-3xl sm:text-4xl text-brand-text uppercase tracking-tight mb-2">
                   {lang === 'VI' ? activeGame.nameVi : activeGame.nameEn}
@@ -285,8 +297,8 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
                     <Sparkles className="w-4 h-4" />
                     <span>
                       {lang === 'VI'
-                        ? '// CÁC ĐỘI HÌNH & BÀI ĐÁNH ĐẠT HIỆU QUẢ CAO NHẤT'
-                        : '// HIGHEST WIN-RATE META FORMATIONS'}
+                        ? (activeGame.compSectionTitleVi || '// CÁC ĐỘI HÌNH & BÀI ĐÁNH ĐẠT HIỆU QUẢ CAO NHẤT')
+                        : (activeGame.compSectionTitleEn || '// HIGHEST WIN-RATE META FORMATIONS')}
                     </span>
                   </h3>
                 </div>
@@ -318,8 +330,10 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
 
                         {/* Core Units / Positions */}
                         <div className="mb-4">
-                          <span className="text-[10px] font-mono text-brand-muted block uppercase mb-1.5">
-                            {lang === 'VI' ? 'Quân cờ / Nhân sự chủ chốt:' : 'Core Units / Roster:'}
+                          <span className="text-[10px] font-mono text-brand-muted block uppercase mb-1.5 font-semibold">
+                            {lang === 'VI'
+                              ? (activeGame.unitLabelVi || 'Quân cờ / Nhân sự chủ chốt:')
+                              : (activeGame.unitLabelEn || 'Core Units / Roster:')}
                           </span>
                           <div className="flex flex-wrap gap-1.5">
                             {comp.coreUnits.map((unit, idx) => (
@@ -335,8 +349,10 @@ export const GamingPage: React.FC<GamingPageProps> = ({ lang, onBack }) => {
 
                         {/* Core Items / Tactics */}
                         <div className="mb-5">
-                          <span className="text-[10px] font-mono text-brand-muted block uppercase mb-1.5">
-                            {lang === 'VI' ? 'Trang bị / Chiến thuật cần có:' : 'Key Items / Build Strategy:'}
+                          <span className="text-[10px] font-mono text-brand-muted block uppercase mb-1.5 font-semibold">
+                            {lang === 'VI'
+                              ? (activeGame.itemsLabelVi || 'Trang bị / Chiến thuật cần có:')
+                              : (activeGame.itemsLabelEn || 'Key Items / Build Strategy:')}
                           </span>
                           <div className="flex flex-wrap gap-1.5">
                             {comp.coreItemsOrTactics.map((item, idx) => (

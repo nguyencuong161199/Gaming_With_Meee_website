@@ -16,5 +16,6 @@ export interface ProductItem {
   descriptionVi: string
   shopeeUrl?: string
   features: string[]
+  isDigital?: boolean
 }
 

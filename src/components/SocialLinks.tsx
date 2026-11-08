@@ -29,7 +29,7 @@ export const SocialLinks: React.FC<SocialLinksProps> = memo(({ links, lang = 'EN
   }
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
       {links.map((item) => {
         const isDirectContact = item.platform === 'Email' || item.platform === 'Phone'
         return (
@@ -38,19 +38,21 @@ export const SocialLinks: React.FC<SocialLinksProps> = memo(({ links, lang = 'EN
             href={item.url}
             target={isDirectContact ? undefined : '_blank'}
             rel={isDirectContact ? undefined : 'noopener noreferrer'}
-            className="group relative rounded-xl bg-brand-secondary/90 border border-brand-border hover:border-brand-accent p-4 sm:p-5 transition-all duration-300 flex flex-col justify-between hover:-translate-y-0.5 shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
+            className="group relative rounded-2xl bg-brand-secondary/90 border border-brand-border hover:border-brand-accent p-4 sm:p-5 transition-all duration-300 flex flex-col justify-between hover:-translate-y-1 shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
-                <div className="p-2 rounded-lg bg-brand-elevated border border-brand-border group-hover:scale-105 transition-transform">
+                <div className="p-2 rounded-xl bg-brand-elevated border border-brand-border group-hover:scale-105 transition-transform">
                   {getSocialIcon(item.platform)}
                 </div>
-                <span className="font-mono text-[10px] text-brand-muted tracking-wider uppercase">
+                <span className="font-mono text-[10px] text-brand-muted tracking-wider uppercase font-semibold">
                   {item.platform}
                 </span>
               </div>
 
-              <h4 className="font-display font-bold text-xs sm:text-sm text-brand-text group-hover:text-brand-accent transition-colors tracking-tight break-all leading-snug">
+              <h4 className={`font-mono font-bold text-brand-text group-hover:text-brand-accent transition-colors leading-snug ${
+                item.platform === 'Email' ? 'text-xs break-all' : item.platform === 'Phone' ? 'text-sm whitespace-nowrap' : 'text-sm break-words'
+              }`}>
                 {item.handle}
               </h4>
 
@@ -61,7 +63,7 @@ export const SocialLinks: React.FC<SocialLinksProps> = memo(({ links, lang = 'EN
               )}
             </div>
 
-            <div className="mt-4 pt-2.5 border-t border-brand-border/40 flex items-center justify-between text-[11px] font-mono text-brand-accent font-medium">
+            <div className="mt-4 pt-2.5 border-t border-brand-border/40 flex items-center justify-between text-[11px] font-mono text-brand-accent font-semibold">
               <span>
                 {item.platform === 'Phone' ? t.callNow : item.platform === 'Email' ? t.sendMail : t.visit}
               </span>

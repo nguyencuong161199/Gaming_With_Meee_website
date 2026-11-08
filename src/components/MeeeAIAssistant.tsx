@@ -146,21 +146,24 @@ export const MeeeAIAssistant: React.FC<MeeeAIAssistantProps> = ({
 
   return (
     <>
-      {/* Floating Trigger Button (Bottom-Right) */}
+      {/* Floating Trigger Button (Compact High-Tech Floating Icon) */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           aria-label="Open MEEE AI Assistant"
-          className="fixed bottom-6 right-6 z-40 group flex items-center gap-3 p-3.5 sm:px-4 sm:py-3.5 rounded-full bg-slate-900/90 hover:bg-slate-900 border border-brand-accent/60 hover:border-brand-accent text-white shadow-2xl shadow-brand-accent/30 hover:shadow-brand-accent/50 backdrop-blur-xl transition-all duration-300 hover:scale-105 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
+          title="MEEE AI Assistant (Hỏi đáp Đề thi & Gaming)"
+          className="fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-40 group w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center bg-slate-900/95 hover:bg-slate-900 border border-brand-accent/70 hover:border-brand-accent text-white shadow-xl shadow-cyan-950/60 hover:shadow-brand-accent/40 backdrop-blur-xl transition-all duration-300 hover:scale-110 active:scale-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-accent"
         >
-          {/* Animated Glowing Ring */}
-          <span className="relative flex h-3.5 w-3.5 shrink-0">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-accent opacity-75" />
-            <span className="relative inline-flex rounded-full h-3.5 w-3.5 bg-brand-accent" />
+          {/* Animated Online Status Dot */}
+          <span className="absolute top-1 right-1 flex h-3 w-3">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-slate-950" />
           </span>
 
-          <Bot className="w-5 h-5 text-brand-accent group-hover:rotate-12 transition-transform shrink-0" />
-          <span className="hidden sm:inline font-mono text-xs font-bold uppercase tracking-wider text-brand-text">
+          <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-brand-accent group-hover:rotate-12 group-hover:scale-110 transition-transform" />
+
+          {/* Sleek Tooltip on hover for desktop */}
+          <span className="pointer-events-none absolute right-full mr-3 top-1/2 -translate-y-1/2 px-3 py-1.5 rounded-xl bg-slate-900/95 border border-brand-accent/40 text-[11px] font-mono font-bold text-white uppercase tracking-wider whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity shadow-lg hidden sm:block">
             MEEE AI <span className="text-brand-accent">// ASSISTANT</span>
           </span>
         </button>
@@ -298,8 +301,8 @@ export const MeeeAIAssistant: React.FC<MeeeAIAssistantProps> = ({
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Prompt Suggestions & Context Actions */}
-          <div className="px-3 pt-2 pb-1 border-t border-white/5 bg-slate-900/50 overflow-x-auto scrollbar-none flex items-center gap-1.5 shrink-0">
+          {/* Quick Prompt Suggestions & Context Actions (Wrapped, No Clipping) */}
+          <div className="px-3 py-2 border-t border-white/5 bg-slate-900/60 max-h-24 overflow-y-auto scrollbar-none flex flex-wrap items-center gap-1.5 shrink-0">
             {activeMode === 'tutor' && onOpenAcademy && (
               <button
                 onClick={() => {
@@ -328,7 +331,7 @@ export const MeeeAIAssistant: React.FC<MeeeAIAssistantProps> = ({
               <button
                 key={idx}
                 onClick={() => handleSend(prompt)}
-                className="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-[10px] text-brand-subtext hover:text-brand-accent transition-colors shrink-0 text-left truncate max-w-[240px]"
+                className="px-2.5 py-1 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-[10px] text-brand-subtext hover:text-brand-accent transition-colors text-left"
               >
                 {prompt}
               </button>

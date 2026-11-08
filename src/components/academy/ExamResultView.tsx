@@ -201,7 +201,9 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
         {reviewQuestions.map((q) => {
           const chosen = attempt.userAnswers[q.id] || []
           const correct = q.correctAnswers
+          const isAnswered = chosen.length > 0
           const isCorrect =
+            isAnswered &&
             chosen.length === correct.length &&
             chosen.every((id) => correct.includes(id)) &&
             correct.every((id) => chosen.includes(id))
@@ -210,7 +212,11 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
             <div
               key={q.id}
               className={`p-6 rounded-2xl border transition-all bg-brand-secondary/70 ${
-                isCorrect ? 'border-emerald-500/30' : 'border-rose-500/40 shadow-lg shadow-rose-950/10'
+                isCorrect
+                  ? 'border-emerald-500/30'
+                  : !isAnswered
+                  ? 'border-amber-500/40 shadow-lg shadow-amber-950/10'
+                  : 'border-rose-500/40 shadow-lg shadow-rose-950/10'
               }`}
             >
               {/* Question Header */}
@@ -218,10 +224,14 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                 <div className="flex items-center gap-2.5">
                   <span
                     className={`w-7 h-7 rounded-lg font-mono text-xs font-bold flex items-center justify-center shrink-0 ${
-                      isCorrect ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'
+                      isCorrect
+                        ? 'bg-emerald-500 text-white'
+                        : !isAnswered
+                        ? 'bg-amber-500 text-white'
+                        : 'bg-rose-500 text-white'
                     }`}
                   >
-                    {isCorrect ? '✓' : '✕'}
+                    {isCorrect ? '✓' : !isAnswered ? '—' : '✕'}
                   </span>
                   <span className="font-mono text-xs font-bold text-brand-accent uppercase">
                     {lang === 'VI' ? `CÂU ${q.id} // ${q.topic}` : `QUESTION ${q.id} // ${q.topic}`}
@@ -232,14 +242,26 @@ export const ExamResultView: React.FC<ExamResultViewProps> = ({
                   className={`text-xs font-mono font-bold px-2.5 py-1 rounded-md border ${
                     isCorrect
                       ? 'bg-emerald-950/40 border-emerald-500/50 text-emerald-400'
+                      : !isAnswered
+                      ? 'bg-amber-950/40 border-amber-500/50 text-amber-400'
                       : 'bg-rose-950/40 border-rose-500/50 text-rose-400'
                   }`}
                 >
                   {isCorrect
                     ? (lang === 'VI' ? 'CHÍNH XÁC' : 'CORRECT')
+                    : !isAnswered
+                    ? (lang === 'VI' ? 'CHƯA TRẢ LỜI' : 'UNANSWERED')
                     : (lang === 'VI' ? 'CHƯA ĐÚNG' : 'INCORRECT')}
                 </span>
               </div>
+
+              {/* Unanswered Notice */}
+              {!isAnswered && (
+                <div className="mb-3.5 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/30 text-amber-300 font-mono text-xs flex items-center gap-2">
+                  <span>⚠️</span>
+                  <span>{lang === 'VI' ? 'Đáp án của bạn: Chưa trả lời' : 'Your answer: Unanswered'}</span>
+                </div>
+              )}
 
               {/* Question text */}
               <div className="mb-4">

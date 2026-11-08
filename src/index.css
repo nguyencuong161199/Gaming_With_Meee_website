@@ -69,3 +69,13 @@
     linear-gradient(to right, rgba(38, 53, 74, 0.25) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(38, 53, 74, 0.25) 1px, transparent 1px);
 }
+
+/* Toast auto-dismiss progress countdown */
+@keyframes toastShrink {
+  from { width: 100%; }
+  to { width: 0%; }
+}
+
+.animate-toast-shrink {
+  animation: toastShrink linear forwards;
+}

@@ -3,7 +3,7 @@ import { Language, TRANSLATIONS } from '../data/translations'
 import { STORE_PRODUCTS } from '../data/storeData'
 import { ProductItem } from '../types/store'
 import { SectionHeading } from './SectionHeading'
-import { Eye, X, ArrowUpRight, Check, ShoppingBag } from 'lucide-react'
+import { Eye, X, ArrowUpRight, Check, ShoppingBag, Bell } from 'lucide-react'
 
 interface StoreSectionProps {
   lang: Language
@@ -11,10 +11,17 @@ interface StoreSectionProps {
 
 export const StoreSection: React.FC<StoreSectionProps> = memo(({ lang }) => {
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null)
+  const [notifiedProducts, setNotifiedProducts] = useState<string[]>([])
   const t = TRANSLATIONS[lang].store
 
   const formatVND = (amount: number) => {
     return `${amount.toLocaleString('vi-VN')} VNĐ`
+  }
+
+  const handleNotifyMe = (productId: string) => {
+    if (!notifiedProducts.includes(productId)) {
+      setNotifiedProducts((prev) => [...prev, productId])
+    }
   }
 
   return (
@@ -78,7 +85,11 @@ export const StoreSection: React.FC<StoreSectionProps> = memo(({ lang }) => {
 
                     {/* Stock and Sold info */}
                     <div className="flex items-center justify-between text-[10px] font-mono text-brand-muted mb-3">
-                      <span>{lang === 'VI' ? `Còn: ${prod.stock}` : `Stock: ${prod.stock}`}</span>
+                      <span className={prod.isDigital ? 'text-cyan-400 font-semibold' : ''}>
+                        {prod.isDigital
+                          ? (lang === 'VI' ? '⚡ Tài liệu số • Tải ngay' : '⚡ Digital • Instant')
+                          : (lang === 'VI' ? `Còn: ${prod.stock}` : `Stock: ${prod.stock}`)}
+                      </span>
                       <span>{lang === 'VI' ? `Đã bán: ${prod.soldCount}` : `Sold: ${prod.soldCount}`}</span>
                     </div>
                   </div>
@@ -164,24 +175,47 @@ export const StoreSection: React.FC<StoreSectionProps> = memo(({ lang }) => {
                 </span>
               </div>
 
-              <div className="flex items-center gap-2">
-                {selectedProduct.shopeeUrl && selectedProduct.status !== 'out_of_stock' && (
-                  <a
-                    href={selectedProduct.shopeeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#EE4D2D] hover:bg-[#d63f20] text-white font-mono text-xs font-bold transition-all shadow-md"
+              <div className="flex flex-wrap items-center gap-2">
+                {selectedProduct.status === 'out_of_stock' ? (
+                  <button
+                    onClick={() => handleNotifyMe(selectedProduct.id)}
+                    className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl font-mono text-xs font-bold transition-all shadow-md ${
+                      notifiedProducts.includes(selectedProduct.id)
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-amber-500 hover:bg-amber-400 text-slate-950'
+                    }`}
                   >
-                    <span>MUA TRÊN SHOPEE</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </a>
+                    {notifiedProducts.includes(selectedProduct.id) ? (
+                      <>
+                        <Check className="w-3.5 h-3.5" />
+                        <span>{lang === 'VI' ? '✓ ĐÃ ĐĂNG KÝ BÁO HÀNG' : '✓ NOTIFICATION SET'}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Bell className="w-3.5 h-3.5" />
+                        <span>{lang === 'VI' ? '🔔 BÁO KHI CÓ HÀNG' : '🔔 NOTIFY WHEN IN STOCK'}</span>
+                      </>
+                    )}
+                  </button>
+                ) : (
+                  selectedProduct.shopeeUrl && (
+                    <a
+                      href={selectedProduct.shopeeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-[#EE4D2D] hover:bg-[#d63f20] text-white font-mono text-xs font-bold transition-all shadow-md"
+                    >
+                      <span>{lang === 'VI' ? 'TÌM TRÊN SHOPEE' : 'SEARCH ON SHOPEE'}</span>
+                      <ArrowUpRight className="w-3.5 h-3.5" />
+                    </a>
+                  )
                 )}
                 <a
-                  href="mailto:nmc.corp16@gmail.com?subject=Dat mua san pham NMC Store"
+                  href={`mailto:nmc.corp16@gmail.com?subject=${encodeURIComponent(`Quan tâm sản phẩm: ${selectedProduct.title}`)}`}
                   className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-brand-elevated hover:bg-brand-accent border border-brand-border hover:border-brand-accent text-brand-text hover:text-white font-mono text-xs transition-all"
                 >
                   <ShoppingBag className="w-3.5 h-3.5" />
-                  <span>LIÊN HỆ MUA</span>
+                  <span>{lang === 'VI' ? 'LIÊN HỆ MUA' : 'CONTACT TO ORDER'}</span>
                 </a>
               </div>
             </div>

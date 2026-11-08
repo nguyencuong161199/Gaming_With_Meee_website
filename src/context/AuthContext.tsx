@@ -35,6 +35,16 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
     return null
   })
 
+  // Auto-dismiss auth notification toast after duration (3.5s for success/info, 6s for error)
+  useEffect(() => {
+    if (!authNotification) return
+    const duration = authNotification.type === 'error' ? 6000 : 3500
+    const timer = setTimeout(() => {
+      setAuthNotification(null)
+    }, duration)
+    return () => clearTimeout(timer)
+  }, [authNotification])
+
   // Automatically check if user is Admin based on email or owner name
   const checkRole = useCallback((email: string, name?: string): UserRole => {
     const normEmail = (email || '').toLowerCase().trim()
@@ -49,7 +59,7 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
     return isAdminEmail || isAdminName ? 'admin' : 'user'
   }, [])
 
-  const handleSession = useCallback((session: any) => {
+  const handleSession = useCallback((session: any, showToast = false) => {
     if (!session?.user) return
     const userObj = session.user
     const meta = userObj.user_metadata || {}
@@ -85,10 +95,14 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
     } catch {
       // ignore
     }
-    setAuthNotification({
-      type: 'success',
-      message: `Đăng nhập thành công! Chào mừng ${displayName} (${role === 'admin' ? 'QUẢN TRỊ VIÊN' : 'THÀNH VIÊN'}).`
-    })
+
+    // Only show toast notification if explicitly requested (e.g. fresh OAuth login)
+    if (showToast) {
+      setAuthNotification({
+        type: 'success',
+        message: `Đăng nhập thành công! Chào mừng ${displayName} (${role === 'admin' ? 'QUẢN TRỊ VIÊN' : 'THÀNH VIÊN'}).`
+      })
+    }
   }, [checkRole])
 
   // Listen to Supabase Real Auth State Changes & handle PKCE/OAuth redirects
@@ -131,7 +145,7 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
               console.warn('[GWM AUTH] exchangeCodeForSession notice:', exchangeError.message)
             } else if (data?.session) {
               console.log('[GWM AUTH] Session exchanged successfully!', data.session.user.id)
-              handleSession(data.session)
+              handleSession(data.session, true) // Fresh login via OAuth redirect -> show toast
               window.history.replaceState(null, '', window.location.pathname)
               return
             }
@@ -141,12 +155,12 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
         }
       }
 
-      // Check existing session
+      // Check existing session on mount (silent restore -> DO NOT show toast)
       try {
         const { data: { session }, error } = await supabase.auth.getSession()
         console.log('[GWM AUTH] getSession check:', session?.user ? `Logged in as ${session.user.email || session.user.id}` : 'No active session', error || '')
         if (session?.user) {
-          handleSession(session)
+          handleSession(session, false)
         }
       } catch (err) {
         console.warn('[GWM AUTH] getSession error:', err)
@@ -159,7 +173,9 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
     const { data: authListener } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log('%c[GWM AUTH] onAuthStateChange event:', 'color: #a855f7;', event, session?.user?.id || 'null')
       if (session?.user) {
-        handleSession(session)
+        // Only show toast on genuine SIGNED_IN event (not on INITIAL_SESSION or TOKEN_REFRESHED)
+        const isNewLogin = event === 'SIGNED_IN'
+        handleSession(session, isNewLogin)
       } else if (event === 'SIGNED_OUT') {
         setUser(null)
       }
@@ -295,37 +311,56 @@ export const AuthProviderComponent: React.FC<{ children: ReactNode }> = ({ child
   return (
     <AuthContext.Provider value={value}>
       {children}
-      {/* Real-time On-Screen Auth Feedback Toast */}
+      {/* Real-time On-Screen Auth Feedback Toast (Auto-Dismissing) */}
       {authNotification && (
         <div
           role="status"
           aria-live="polite"
-          className={`fixed bottom-6 right-6 z-[99999] max-w-sm sm:max-w-md p-4 rounded-2xl border shadow-2xl backdrop-blur-xl transition-all duration-300 animate-slide-up flex items-start gap-3 ${authNotification.type === 'error'
-              ? 'bg-rose-950/95 border-rose-500/60 text-rose-100'
+          className={`fixed bottom-6 right-6 z-[99999] max-w-sm sm:max-w-md p-4 rounded-2xl border shadow-2xl backdrop-blur-xl transition-all duration-300 animate-slide-up flex flex-col gap-2 overflow-hidden ${
+            authNotification.type === 'error'
+              ? 'bg-rose-950/95 border-rose-500/60 text-rose-100 shadow-rose-950/50'
               : authNotification.type === 'success'
-                ? 'bg-emerald-950/95 border-emerald-500/60 text-emerald-100'
-                : 'bg-slate-900/95 border-cyan-500/60 text-cyan-100'
-            }`}
+                ? 'bg-emerald-950/95 border-emerald-500/60 text-emerald-100 shadow-emerald-950/50'
+                : 'bg-slate-900/95 border-cyan-500/60 text-cyan-100 shadow-cyan-950/50'
+          }`}
         >
-          <div className="flex-1 text-xs sm:text-sm font-sans leading-relaxed">
-            <div className="font-bold uppercase tracking-wider text-[11px] mb-1 opacity-90 flex items-center gap-1.5">
-              <span>
-                {authNotification.type === 'error'
-                  ? '⚠️ Lỗi Đăng Nhập'
-                  : authNotification.type === 'success'
-                    ? '✅ Thông Báo'
-                    : 'ℹ️ Trạng Thái'}
-              </span>
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1 text-xs sm:text-sm font-sans leading-relaxed">
+              <div className="font-bold uppercase tracking-wider text-[11px] mb-1 opacity-90 flex items-center gap-1.5">
+                <span>
+                  {authNotification.type === 'error'
+                    ? '⚠️ Lỗi Đăng Nhập'
+                    : authNotification.type === 'success'
+                      ? '✅ Thông Báo'
+                      : 'ℹ️ Trạng Thái'}
+                </span>
+              </div>
+              <div>{authNotification.message}</div>
             </div>
-            <div>{authNotification.message}</div>
+            <button
+              onClick={() => setAuthNotification(null)}
+              className="p-1 rounded-lg hover:bg-white/10 text-white/70 hover:text-white transition-colors text-xs shrink-0"
+              aria-label="Đóng thông báo"
+            >
+              ✕
+            </button>
           </div>
-          <button
-            onClick={() => setAuthNotification(null)}
-            className="p-1 rounded-lg hover:bg-white/10 text-white/70 hover:text-white transition-colors text-xs shrink-0"
-            aria-label="Đóng thông báo"
-          >
-            ✕
-          </button>
+
+          {/* Visual Auto-Dismiss Countdown Progress Bar */}
+          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden mt-0.5">
+            <div
+              className={`h-full rounded-full animate-toast-shrink ${
+                authNotification.type === 'error'
+                  ? 'bg-rose-400'
+                  : authNotification.type === 'success'
+                    ? 'bg-emerald-400'
+                    : 'bg-cyan-400'
+              }`}
+              style={{
+                animationDuration: authNotification.type === 'error' ? '6s' : '3.5s'
+              }}
+            />
+          </div>
         </div>
       )}
     </AuthContext.Provider>

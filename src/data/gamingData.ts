@@ -60,6 +60,13 @@ export interface GameItem {
     tab3Vi: string
     tab3En: string
   }
+  patchVersion?: string
+  unitLabelVi?: string
+  unitLabelEn?: string
+  itemsLabelVi?: string
+  itemsLabelEn?: string
+  compSectionTitleVi?: string
+  compSectionTitleEn?: string
   metaComps: GameMetaComp[]
   settings: GameSettingItem[]
   guides: GameGuideItem[]
@@ -99,6 +106,13 @@ export const GAMING_DATA: GameItem[] = [
       tab3Vi: 'CẨM NANG KINH TẾ & LÕI',
       tab3En: 'ECONOMY & AUGMENT PLAYBOOK'
     },
+    patchVersion: 'Patch 14.24 // Mùa 13 (Into the Arcane)',
+    unitLabelVi: 'Tướng Arcane & Tộc Hệ cốt lõi:',
+    unitLabelEn: 'Core Champions & Arcane Synergies:',
+    itemsLabelVi: 'Trang bị chuẩn (BiS) & Lõi Nâng Cấp:',
+    itemsLabelEn: 'BiS Items & Hextech Augments:',
+    compSectionTitleVi: '// CÁC ĐỘI HÌNH META MÙA 13 ĐẠT TỶ LỆ THẮNG CAO NHẤT',
+    compSectionTitleEn: '// HIGHEST WIN-RATE SET 13 ARCANE TEAM COMPS',
     metaComps: [
       {
         id: 'tft-comp-1',
@@ -216,6 +230,13 @@ export const GAMING_DATA: GameItem[] = [
       tab3Vi: 'CẨM NANG KIỂM SOÁT MACRO',
       tab3En: 'MACRO & WAVE PLAYBOOK'
     },
+    patchVersion: 'Mùa Giải 2026 // Patch 14.24',
+    unitLabelVi: 'Tướng chủ chốt theo vai trò đường:',
+    unitLabelEn: 'Core Champions by Lane Role:',
+    itemsLabelVi: 'Trang bị trấn phái & Phép bổ trợ:',
+    itemsLabelEn: 'Core Items & Summoner Spells:',
+    compSectionTitleVi: '// CÁC CHIẾN THUẬT & ĐỘI HÌNH GIAO TRANH HIỆU QUẢ CAO NHẤT',
+    compSectionTitleEn: '// HIGHEST WIN-RATE COMBAT & MACRO STRATEGIES',
     metaComps: [
       {
         id: 'lol-meta-1',
@@ -322,6 +343,13 @@ export const GAMING_DATA: GameItem[] = [
       tab3Vi: 'CẨM NANG DỨT ĐIỂM & BAN BẬT',
       tab3En: 'FINISHING & PASSING PLAYBOOK'
     },
+    patchVersion: 'Roster Update // Gameplay Mùa Mới',
+    unitLabelVi: 'Cầu thủ & Vị trí trong sơ đồ chiến thuật:',
+    unitLabelEn: 'Key Players & Squad Positions:',
+    itemsLabelVi: 'Chiến thuật đơn & Kỹ năng bấm bóng ZD/D:',
+    itemsLabelEn: 'Individual Tactics & Finishing Skills:',
+    compSectionTitleVi: '// CÁC SƠ ĐỒ CHIẾN THUẬT QUỐC DÂN TỐI ƯU QUỸ LƯƠNG',
+    compSectionTitleEn: '// OPTIMAL WAGE-CAP META FORMATIONS',
     metaComps: [
       {
         id: 'fco-meta-1',
@@ -427,6 +455,13 @@ export const GAMING_DATA: GameItem[] = [
       tab3Vi: 'CẨM NANG CHIẾN THUẬT BO CUỐI',
       tab3En: 'FINAL ZONE ROTATION PLAYBOOK'
     },
+    patchVersion: 'Chiến Trường v3.5 // Frozen Realm',
+    unitLabelVi: 'Combo Vũ khí & Cỡ đạn thi đấu:',
+    unitLabelEn: 'Competitive Weapon Pairs & Ammo:',
+    itemsLabelVi: 'Phụ kiện giảm giật & Ống ngắm Scope:',
+    itemsLabelEn: 'Recoil Attachments & Scope Setup:',
+    compSectionTitleVi: '// CÁC COMBO VŨ KHÍ & BỘ TRANG BỊ CHUẨN THI ĐẤU ESPORTS',
+    compSectionTitleEn: '// COMPETITIVE WEAPON LOADOUTS & SPRAY SETUPS',
     metaComps: [
       {
         id: 'pubgm-meta-1',
